@@ -1,0 +1,32 @@
+{
+  "name": "boozebunk",
+  "private": true,
+  "packageManager": "bun@1.2.16",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "typecheck": "turbo run typecheck",
+    "ui:add": "turbo run ui:add --filter=@boozebunk/next",
+    "build:frontend": "turbo run build --filter=@boozebunk/next",
+    "build:backend": "turbo run build --filter=@boozebunk/trpc",
+    "prepare": "husky",
+    "pre-commit": "bun --filter '*' pre-commit",
+    "migration:generate": "turbo run migration:generate --filter=@boozebunk/trpc",
+    "migration:run": "turbo run migration:run --filter=@boozebunk/trpc",
+    "db:seed": "turbo run db:seed --filter=@boozebunk/trpc",
+    "db:reset": "turbo run db:reset --filter=@boozebunk/trpc",
+    "db:studio": "turbo run db:studio --filter=@boozebunk/trpc"
+  },
+  "workspaces": [
+    "frontend/*",
+    "backend/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
+    "turbo": "^2.5.5"
+  }
+}
