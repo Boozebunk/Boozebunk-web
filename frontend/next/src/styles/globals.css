@@ -47,15 +47,12 @@
   --custom-background: oklch(96.75% 0.055 96.15);
   --custom-background-gradient-1: oklch(1 0 0 / 0.33);
   --custom-background-gradient-2: oklch(100% 0 0);
-  /* --foreground: oklch(0.145 0 0); */
   --foreground: oklch(30.79% 0.051 52.5);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* --primary: oklch(0.205 0 0); */
   --primary: oklch(33.579% 0.1378 29.223);
-
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -72,14 +69,6 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  /* --sidebar: oklch(100% 0.00011 271.152);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0); */
   --sidebar: oklch(100% 0 0);
   --sidebar-foreground: oklch(30.79% 0.051 52.5);
   --sidebar-primary: oklch(34.38% 0.124 21.31);
@@ -90,7 +79,7 @@
   --sidebar-ring: oklch(85.86% 0.165 86.94);
 }
 
-/* .dark {
+.dark {
   --background: oklch(0.145 0 0);
   --custom-background: oklch(0% 0 0);
   --custom-background-gradient-1: oklch(0% 0 0);
@@ -125,7 +114,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-} */
+}
 
 @layer base {
   * {
@@ -138,7 +127,8 @@
 
 html,
 body {
-  height: 100%;
+  /* height: 100%; */
+
 }
 
 .admin-welcom-con {
@@ -154,11 +144,10 @@ body {
   opacity: 1;
   background-image:
     repeating-radial-gradient(circle at 0 0, transparent 0, var(--custom-background) 26px),
-    /* repeating-linear-gradient(#ffffff55, #ffffff); */
-      repeating-linear-gradient(
-        var(--custom-background-gradient-1),
-        var(--custom-background-gradient-2)
-      );
+    repeating-linear-gradient(
+      var(--custom-background-gradient-1),
+      var(--custom-background-gradient-2)
+    );
 }
 
 .dark {

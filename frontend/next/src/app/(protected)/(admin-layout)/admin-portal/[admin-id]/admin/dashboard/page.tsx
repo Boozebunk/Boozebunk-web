@@ -1,11 +1,13 @@
-import React from 'react';
+import { Analytics } from '~/components/admin-dashboard/analytics';
+import { TopVendors } from '~/components/admin-dashboard/topVendors';
+import { VendorsActivity } from '~/components/admin-dashboard/vendorsActivity';
 
-function page() {
+export default function Page() {
   return (
     <div>
-      <h1>Admin Dashboard (Analytics and Insights)</h1>
+      <Analytics />
+      <VendorsActivity />
+      <TopVendors />
     </div>
   );
 }
-
-export default page;

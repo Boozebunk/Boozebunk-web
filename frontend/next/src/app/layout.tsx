@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { ThemeProvider } from 'next-themes';
+
 import Providers from '~/providers';
 
 import type { Metadata, Viewport } from 'next';
@@ -50,8 +52,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={'font-sans'}>
-        <Providers>{children}</Providers>
+      <body className="font-sans">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange>
+          <Providers>{children}</Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

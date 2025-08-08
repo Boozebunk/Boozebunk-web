@@ -27,7 +27,7 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <nav className="bg-sidebar border-sidebar-border sticky top-0 z-25 flex items-center justify-between border-b p-3">
+    <nav className="bg-sidebar border-sidebar-border sticky top-0 box-border flex items-center justify-between border-b p-3">
       <SidebarTrigger className="p-5" />
 
       <div className="absolute left-1/2 hidden w-fit -translate-x-1/2 transform p-3 py-5 sm:p-5 md:block">

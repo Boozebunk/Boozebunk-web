@@ -15,13 +15,13 @@ export default async function RootLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <SideBar />
-      <main className="relative box-border w-full overflow-x-hidden scroll-smooth pb-10">
-        <div className="admin-panel-bg pointer-events-none fixed bottom-0 left-0 z-0 h-[70%] w-full" />
-        <div className="relative z-10">
-          <Navbar />
-          {children}
-        </div>
-      </main>
+      <div className="relative box-border min-h-screen w-full overflow-x-hidden">
+        <Navbar />
+        <main className="box-border pb-10">
+          <div className="admin-panel-bg pointer-events-none fixed bottom-0 left-0 z-0 h-[70%] w-full" />
+          <div className="relative z-10">{children}</div>
+        </main>
+      </div>
     </SidebarProvider>
   );
 }
