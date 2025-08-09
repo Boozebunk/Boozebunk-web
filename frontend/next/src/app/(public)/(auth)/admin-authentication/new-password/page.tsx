@@ -23,9 +23,9 @@ export default function Page() {
   return (
     <div className="flex w-full items-center justify-center p-6 lg:w-[40%]">
       <Card className="w-full max-w-sm">
-        <CardHeader className="flex flex-col items-center text-center text-[#442816]">
+        <CardHeader className="flex flex-col items-center text-center">
           <CardTitle className="text-1xl font-bold md:text-2xl">Reset Your Password</CardTitle>
-          <CardDescription className="text-sm text-[#6B0F1A]">
+          <CardDescription className="text-sm">
             Enter and confirm your new password below.
           </CardDescription>
         </CardHeader>
@@ -34,21 +34,18 @@ export default function Page() {
           <CardContent className="flex flex-col gap-5">
             {/* New Password */}
             <div className="grid gap-2">
-              <Label htmlFor="newPassword" className="text-[#442816]">
-                New Password
-              </Label>
+              <Label htmlFor="newPassword">New Password</Label>
               <div className="relative">
                 <Input
                   id="newPassword"
                   type={showNewPassword ? 'text' : 'password'}
                   placeholder="At least 8 characters"
                   required
-                  className="pr-10 focus-visible:ring-[#ffc82e]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword((prev) => !prev)}
-                  className="absolute top-1/2 right-2 -translate-y-1/2 transform text-[#6B0F1A] hover:text-[#442816]"
+                  className="transform] absolute top-1/2 right-2 -translate-y-1/2"
                   tabIndex={-1}>
                   {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -57,21 +54,18 @@ export default function Page() {
 
             {/* Confirm Password */}
             <div className="grid gap-2">
-              <Label htmlFor="confirmPassword" className="text-[#442816]">
-                Confirm New Password
-              </Label>
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Re-enter password"
                   required
-                  className="pr-10 focus-visible:ring-[#ffc82e]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  className="absolute top-1/2 right-2 -translate-y-1/2 transform text-[#6B0F1A] hover:text-[#442816]"
+                  className="absolute top-1/2 right-2 -translate-y-1/2 transform"
                   tabIndex={-1}>
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>

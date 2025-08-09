@@ -62,7 +62,7 @@
   --accent-foreground: oklch(96.416% 0.00011 271.152);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --input: oklch(33.579% 0.1378 29.223 / 0.504);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(33.579% 0.1378 29.223);
   --chart-2: oklch(85.86% 0.165 86.94);
@@ -125,12 +125,6 @@
   }
 }
 
-html,
-body {
-  /* height: 100%; */
-
-}
-
 .admin-welcom-con {
   background-color: #fff5cb;
   opacity: 1;
@@ -148,15 +142,4 @@ body {
       var(--custom-background-gradient-1),
       var(--custom-background-gradient-2)
     );
-}
-
-.dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }

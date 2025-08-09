@@ -17,9 +17,9 @@ export default function Page() {
   return (
     <div className="flex w-full items-center justify-center p-6 lg:w-[40%]">
       <Card className="w-full max-w-sm">
-        <CardHeader className="flex flex-col items-center text-center text-[#442816]">
+        <CardHeader className="flex flex-col items-center text-center">
           <CardTitle className="text-1xl font-bold md:text-2xl">OTP Verification</CardTitle>
-          <CardDescription className="text-sm text-[#6B0F1A]">
+          <CardDescription className="text-sm">
             Please enter the code sent to your email to continue.
           </CardDescription>
         </CardHeader>
@@ -39,9 +39,9 @@ export default function Page() {
           <Button type="submit" className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]">
             Verify
           </Button>
-          <div className="text-center text-sm text-[#442816]">
+          <div className="text-center text-sm">
             Didn’t receive the code?{' '}
-            <a href="#" className="font-semibold text-[#6B0F1A] underline-offset-4 hover:underline">
+            <a href="#" className="font-semibold underline-offset-4 hover:underline">
               Resend OTP
             </a>
           </div>

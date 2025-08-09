@@ -23,10 +23,10 @@ export default function Page() {
   return (
     <div className="flex w-full items-center justify-center p-6 lg:w-[40%]">
       <Card className="w-full max-w-sm">
-        <CardHeader className="flex flex-col items-center text-center text-[#442816]">
+        <CardHeader className="flex flex-col items-center text-center">
           <UserRound className="h-8 w-8 sm:h-10 sm:w-10" />
           <CardTitle className="text-1xl font-bold md:text-2xl">Admin Login</CardTitle>
-          <CardDescription className="text-sm text-[#6B0F1A]">
+          <CardDescription className="text-sm">
             Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
@@ -34,21 +34,11 @@ export default function Page() {
           <form>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email" className="text-[#442816]">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  className="focus-visible:ring-[#ffc82e]"
-                />
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="m@example.com" required />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password" className="text-[#442816]">
-                  Password
-                </Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="flex flex-col gap-2">
                   <div className="relative">
                     <Input
@@ -56,20 +46,17 @@ export default function Page() {
                       type={showPassword ? 'text' : 'password'}
                       placeholder="8+ characters"
                       required
-                      className="pr-10 focus-visible:ring-[#ffc82e]"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute top-1/2 right-2 -translate-y-1/2 transform text-[#6B0F1A] hover:text-[#442816]"
+                      className="absolute top-1/2 right-2 -translate-y-1/2 transform"
                       tabIndex={-1}>
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
 
-                  <a
-                    href="#"
-                    className="self-end text-sm text-[#6B0F1A] underline-offset-4 hover:underline">
+                  <a href="#" className="self-end text-sm underline-offset-4 hover:underline">
                     Forgot password?
                   </a>
                 </div>
