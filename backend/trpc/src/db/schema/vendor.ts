@@ -19,7 +19,6 @@ export const vendorTable = pgTable(
     isActive: boolean("is_active").default(true).notNull(),
     martStatus: text("mart_status").default("OPEN").notNull(),
 
-    // CRITICAL for PostGIS: Stores the geographic point (latitude, longitude)x
     locationCoordinates: geometry("location_coordinates", { type: "Point", srid: 4326 }).notNull(),
 
     createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull(),
@@ -30,8 +29,7 @@ export const vendorTable = pgTable(
   },
   (table) => [
     index("vendor_mart_name_idx").on(table.martName),
-    index("vendor_user_id_idx").on(table.userId), // Index for user_id lookup
-    // Consider adding a spatial index for location_coordinates in your Drizzle config/migrations
+    index("vendor_user_id_idx").on(table.userId),
   ],
 );
 
@@ -41,7 +39,6 @@ export const vendorRelations = relations(vendorTable, ({ one }) => ({
     references: [userTable.id],
   }),
   address: one(vendorAddressesTable, {
-    // One-to-one relation to vendorAddressesTable
     fields: [vendorTable.id],
     references: [vendorAddressesTable.vendorId],
   }),
