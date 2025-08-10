@@ -8,6 +8,8 @@ export const env = createEnv({
     API_PREFIX: z.string().default("/api/trpc"),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     FRONTEND_URL: z.string().url(),
+    JWT_SECRET: z.string(),
+    COOKIE_SECRET: z.string(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
