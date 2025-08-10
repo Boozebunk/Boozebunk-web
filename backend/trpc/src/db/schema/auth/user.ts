@@ -6,7 +6,7 @@ import { adminTable } from "../admin";
 export const userTable = pgTable(
   "users",
   {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified").notNull().default(false),
     role: text("role"),

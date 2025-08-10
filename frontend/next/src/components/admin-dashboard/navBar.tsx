@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
+import { useMutation } from '@tanstack/react-query';
 import { CircleUserRound, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -17,6 +19,8 @@ import {
 } from '~/shared/shadcn/dropdown-menu';
 import { SidebarTrigger } from '~/shared/shadcn/sidebar';
 
+import { trpcHttp } from '~/utils/trpc';
+
 import Logo2 from '../../../public/Assets/Logo-main-2.png';
 import Logo from '../../../public/Assets/Logo-main.png';
 
@@ -25,6 +29,24 @@ import { Greeting } from './greeting';
 export function Navbar() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
+
+  const { mutateAsync: logout } = useMutation(
+    trpcHttp.auth.logout.mutationOptions({
+      onSuccess: () => {
+        console.log('Logged out successfully');
+        router.push('/admin-authentication/sign-in');
+      },
+      onError: (err) => {
+        console.error('Error while logging out:', err);
+      }
+    })
+  );
+
+  const handleLogout = async () => {
+    await logout();
+    console.log('Logging out...');
+  };
 
   return (
     <nav className="bg-sidebar border-sidebar-border sticky top-0 box-border flex items-center justify-between border-b p-3">
@@ -67,7 +89,9 @@ export function Navbar() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">
-              <LogOut /> Logout
+              <Button variant="ghost" onClick={handleLogout}>
+                <LogOut /> Logout
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

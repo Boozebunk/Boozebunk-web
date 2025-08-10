@@ -6,7 +6,7 @@ import { userTable } from "./auth/user";
 export const adminTable = pgTable(
   "admins",
   {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id")
       .notNull()
       .references(() => userTable.id, { onDelete: "cascade" }),

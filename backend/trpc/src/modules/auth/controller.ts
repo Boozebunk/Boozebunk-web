@@ -1,11 +1,13 @@
 import db from "@boozebunk-trpc/db";
+import { adminTable } from "@boozebunk-trpc/db/schema/admin";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
-import { verifyPassword } from "@boozebunk-trpc/utils/authUtils";
+import { hashPassword, verifyPassword } from "@boozebunk-trpc/utils/authUtils";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
 
-import { loginCredentialSchema } from "./dto";
+import { createAdminSchema, loginCredentialSchema } from "./dto";
 
 export const authRouter = createTRPCRouter({
   login: publicProcedure.input(loginCredentialSchema).mutation(async ({ input, ctx }) => {
@@ -27,8 +29,9 @@ export const authRouter = createTRPCRouter({
     //     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Please verify your email before logging in.' });
     //   }
 
-    //Generating JWT token
-    const token = await ctx.req.jwt.sign({
+    // Generating JWT token
+    // The payload type is inferred from fastify-jwt.d.ts
+    const token = await ctx.res.jwtSign({
       id: user.id,
       email: user.email,
       role: user.role,
@@ -50,5 +53,47 @@ export const authRouter = createTRPCRouter({
       message: `${input.role} logged in successfully`,
       user: { id: user.id, email: user.email, role: user.role },
     };
+  }),
+
+  logout: publicProcedure.mutation(async ({ ctx }) => {
+    ctx.res.clearCookie("token", { path: "/" });
+    return { success: true, message: "Logged out Successfully" };
+  }),
+
+  createAdmin: publicProcedure.input(createAdminSchema).mutation(async ({ input }) => {
+    const existingUser = await db.query.user.findFirst({
+      where: eq(userTable.email, input.email),
+    });
+
+    if (existingUser) {
+      throw new TRPCError({ code: "CONFLICT", message: "User Already Exists" });
+    }
+
+    const hashedPassword = await hashPassword(input.password);
+
+    const randomUserId = uuidv4();
+    const [newUser] = await db
+      .insert(userTable)
+      .values({
+        id: randomUserId,
+        email: input.email,
+        password: hashedPassword,
+        role: input.role,
+      })
+      .returning();
+
+    const randomAdminId = uuidv4();
+    await db
+      .insert(adminTable)
+      .values({ id: randomAdminId, userId: newUser?.id || randomAdminId, name: input.name });
+
+    return {
+      success: true,
+      message: `User (${input.role} created successfully)`,
+    };
+  }),
+
+  getSession: publicProcedure.query(({ ctx }) => {
+    return ctx.user;
   }),
 });

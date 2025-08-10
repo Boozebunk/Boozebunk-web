@@ -1,4 +1,4 @@
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -40,10 +40,15 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const authMiddleware = t.middleware(({ next, ctx }) => {
   // We validate if the user is authenticated
   // Assuming ctx.session is available and contains user information
+
+  if (!ctx.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "User not Authenticated" });
+  }
+
   return next({
     ctx: {
       ...ctx,
-      // session data can be added here if needed
+      user: ctx.user,
     },
   });
 });

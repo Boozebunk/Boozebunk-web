@@ -6,7 +6,7 @@ import { vendorTable } from "./vendor";
 export const vendorAddressesTable = pgTable(
   "vendor_addresses",
   {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     vendorId: uuid("vendor_id")
       .notNull()
       .unique()

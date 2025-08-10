@@ -6,7 +6,7 @@ import { userTable } from "./user";
 export const verificationTokensTable = pgTable(
   "verification_tokens",
   {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id")
       .notNull()
       .references(() => userTable.id, { onDelete: "cascade" }),

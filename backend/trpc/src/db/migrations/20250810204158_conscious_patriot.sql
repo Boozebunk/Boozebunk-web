@@ -1,5 +1,5 @@
 CREATE TABLE "vendor_addresses" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"vendor_id" uuid NOT NULL,
 	"address_formatted" text NOT NULL,
 	"address_street_number" text,
@@ -15,7 +15,7 @@ CREATE TABLE "vendor_addresses" (
 );
 --> statement-breakpoint
 CREATE TABLE "admins" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
 	"name" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -23,19 +23,19 @@ CREATE TABLE "admins" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" text NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"role" text,
 	"password" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"last_login_at" date DEFAULT now(),
+	"last_login_at" timestamp DEFAULT now(),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "verification_tokens" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
 	"token" text NOT NULL,
 	"type" text NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE "verification_tokens" (
 );
 --> statement-breakpoint
 CREATE TABLE "vendors" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
 	"mart_name" text NOT NULL,
 	"vendor_contact_name" text,
