@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { loginCredentialSchema } from '@boozebunk-trpc/modules/auth/dto';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, UserRound } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
@@ -27,6 +27,9 @@ import type { LoginCredentials } from '@boozebunk-trpc/modules/auth/dto';
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const queryClient = useQueryClient();
+
   const router = useRouter();
   const form = useForm<LoginCredentials>({
     resolver: zodResolver(loginCredentialSchema),
@@ -41,8 +44,17 @@ export default function Page() {
 
   const { mutateAsync: AdminLogin, isPending } = useMutation(
     trpcHttp.auth.login.mutationOptions({
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         console.log('Logged-In Successfully');
+        // 1. Invalidate the old 'null' session query to mark it as stale
+        await queryClient.invalidateQueries({
+          queryKey: trpcHttp.auth.getSession.queryOptions().queryKey
+        });
+
+        // 2. Manually re-fetch the session query to get the new session data
+        //    before proceeding to the next page. This guarantees the AuthGuard
+        //    will have the correct, non-null session.
+        await queryClient.fetchQuery(trpcHttp.auth.getSession.queryOptions());
         router.push(`/admin-portal/${data.user.id}/admin/dashboard`);
       },
       onError: (err) => {

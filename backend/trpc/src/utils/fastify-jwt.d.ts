@@ -23,6 +23,11 @@ declare module "@fastify/jwt" {
 declare module "fastify" {
   interface FastifyReply {
     // reply.jwtSign() method is added by @fastify/jwt
+    jwtSign: (
+      payload: FastifyJWT["payload"], // Use the payload type defined above
+      options?: import("@fastify/jwt").SignOptions, // Optional: for sign options like expiresIn
+    ) => Promise<string>;
+
     setCookie: (
       name: string,
       value: string,

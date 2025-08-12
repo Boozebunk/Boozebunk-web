@@ -41,6 +41,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     if (isLoading) return;
 
     if (isProtectedRoute) {
+      console.log('in authGuard session', session);
       if (!session) {
         if (isAdminRoute) {
           router.push('/admin-authentication/sign-in');
@@ -58,7 +59,16 @@ export function AuthGuard({ children }: AuthGuardProps) {
       }
     }
     setHasChecked(true);
-  }, [session, isLoading, pathname, router]);
+  }, [
+    session,
+    isLoading,
+    pathname,
+    router,
+    isProtectedRoute,
+    isAdminRoute,
+    isVendorRoute,
+    isAuthPage
+  ]);
 
   if (isLoading || (!hasChecked && (isProtectedRoute || isAuthPage))) {
     return (

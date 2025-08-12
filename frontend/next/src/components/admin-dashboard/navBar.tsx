@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CircleUserRound, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -30,11 +30,19 @@ export function Navbar() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { mutateAsync: logout } = useMutation(
     trpcHttp.auth.logout.mutationOptions({
-      onSuccess: () => {
+      onSuccess: async () => {
         console.log('Logged out successfully');
+        // 1. Invalidate the old session data to mark it as stale
+        await queryClient.invalidateQueries({
+          queryKey: trpcHttp.auth.getSession.queryOptions().queryKey
+        });
+
+        // 2. Force a re-fetch of the session data, which should now return null
+        await queryClient.fetchQuery(trpcHttp.auth.getSession.queryOptions());
         router.push('/admin-authentication/sign-in');
       },
       onError: (err) => {
