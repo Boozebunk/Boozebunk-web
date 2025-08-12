@@ -7,7 +7,7 @@ import { userTable } from "./auth/user";
 export const vendorTable = pgTable(
   "vendors",
   {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id")
       .notNull()
       .unique()

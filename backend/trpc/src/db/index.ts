@@ -3,7 +3,7 @@ import { logger } from "@boozebunk-trpc/fastify.ts";
 import { SQL } from "bun";
 import { drizzle } from "drizzle-orm/bun-sql";
 
-import schema from "./schema/index.js"; // Importing the schema from the index file
+import schema from "./schema"; // Importing the schema from the index file
 
 import type { SQLOptions } from "bun";
 import type { Logger } from "drizzle-orm/logger";

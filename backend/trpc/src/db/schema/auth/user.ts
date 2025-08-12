@@ -1,12 +1,12 @@
 import { relations } from "drizzle-orm";
-import { boolean, date, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 import { adminTable } from "../admin";
 
 export const userTable = pgTable(
   "users",
   {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified").notNull().default(false),
     role: text("role"),
@@ -16,7 +16,7 @@ export const userTable = pgTable(
       .defaultNow()
       .notNull()
       .$onUpdate(() => new Date()),
-    lastLoginAt: date("last_login_at").defaultNow(),
+    lastLoginAt: timestamp("last_login_at", { withTimezone: false }).defaultNow(),
   },
   (table) => [uniqueIndex("email_index").on(table.email)],
 );

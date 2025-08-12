@@ -4,7 +4,7 @@ import { userTable } from "./auth/user";
 import { verificationTokensTable } from "./auth/verification";
 import { vendorTable } from "./vendor";
 
-export const AllSchemas = {
+const tables = {
   // auth tables
   user: userTable,
   verification: verificationTokensTable,
@@ -14,3 +14,6 @@ export const AllSchemas = {
   vendor: vendorTable,
   address: vendorAddressesTable,
 };
+
+export type Tables = typeof tables;
+export default tables;

@@ -1,9 +1,9 @@
 import { createTRPCRouter } from "@boozebunk-trpc/server/trpc";
 
-import { greetingRouter } from "./greetings/controller";
+import { authRouter } from "./auth/controller";
 
 export const appRouter = createTRPCRouter({
-  greeting: greetingRouter,
+  auth: authRouter,
 });
 
 export type AppRouter = typeof appRouter;
