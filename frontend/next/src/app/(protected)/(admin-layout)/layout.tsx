@@ -16,9 +16,9 @@ export default async function RootLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <SideBar />
       <div className="relative box-border min-h-screen w-full overflow-x-hidden">
+        <div className="admin-panel-bg pointer-events-none fixed bottom-0 left-0 z-0 h-[70%] w-full" />
         <Navbar />
-        <main className="box-border pb-10">
-          <div className="admin-panel-bg pointer-events-none fixed bottom-0 left-0 z-0 h-[70%] w-full" />
+        <main className="box-border">
           <div className="relative z-10">{children}</div>
         </main>
       </div>

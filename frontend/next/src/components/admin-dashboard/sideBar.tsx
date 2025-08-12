@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Boxes, Home, MessageSquareText, PackagePlus, Store } from 'lucide-react';
+import { ClipboardList, Home, MessageSquareText, PackagePlus, Store } from 'lucide-react';
 
 import {
   Sidebar,
@@ -22,12 +22,12 @@ import Logo from '../../../public/Assets/Logo-main.png';
 const items = [
   {
     title: 'Dashboard',
-    url: '#',
+    url: '/admin-portal/190/admin/dashboard',
     icon: Home
   },
   {
     title: 'Feedbacks',
-    url: '#',
+    url: '/admin-portal/190/admin/feedbacks',
     icon: MessageSquareText
   }
 ];
@@ -41,7 +41,9 @@ export function SideBar() {
             <SidebarMenuButton
               asChild
               className="w-fit bg-[#fff5cb] p-5 py-5 hover:bg-[#fff5cb] active:bg-[#fff5cb]">
-              <Link href="/" className="flex items-center justify-baseline text-2xl">
+              <Link
+                href="/admin-portal/190/admin/dashboard"
+                className="flex items-center justify-baseline text-2xl">
                 <Image src={Logo} alt="logo" className="w-6" />
                 <Image src={Logo2} alt="logo" className="ml-[-5px] w-35" />
               </Link>
@@ -77,7 +79,7 @@ export function SideBar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="mb-2 p-5 py-6">
-                  <Link href="#">
+                  <Link href="/admin-portal/190/admin/vendors-list">
                     <Store className="mr-2 !size-6" />
                     <span className="text-[17px] font-medium">Vendors</span>
                   </Link>
@@ -86,7 +88,7 @@ export function SideBar() {
                 <SidebarMenuSub className="ml-7 gap-2">
                   <SidebarMenuSubItem>
                     <SidebarMenuButton asChild className="py-5">
-                      <Link href="#">
+                      <Link href="/admin-portal/190/admin/vendor-registration">
                         <PackagePlus className="mr-2 !size-5" />
                         <span className="text-[15px] font-medium">Register Vendor</span>
                       </Link>
@@ -95,9 +97,9 @@ export function SideBar() {
 
                   <SidebarMenuSubItem>
                     <SidebarMenuButton asChild className="py-5">
-                      <Link href="#">
-                        <Boxes className="mr-2 !size-5" />
-                        <span className="text-[15px] font-medium">Inventory</span>
+                      <Link href="/admin-portal/190/admin/vendors-queries">
+                        <ClipboardList className="mr-2 !size-5" />
+                        <span className="text-[15px] font-medium">Vendor Queries</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuSubItem>
