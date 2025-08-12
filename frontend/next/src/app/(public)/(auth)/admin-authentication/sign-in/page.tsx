@@ -11,7 +11,6 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '~/shared/shadcn/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/shadcn/card';
-import { Checkbox } from '~/shared/shadcn/checkbox';
 import {
   Form,
   FormControl,
@@ -21,7 +20,6 @@ import {
   FormMessage
 } from '~/shared/shadcn/form';
 import { Input } from '~/shared/shadcn/input';
-import { Label } from '~/shared/shadcn/label';
 
 import { trpcHttp } from '~/utils/trpc';
 
@@ -130,10 +128,6 @@ export default function Page() {
                 name="role"
                 render={({ field }) => <input type="hidden" {...field} value="admin" readOnly />}
               />
-              <div className="flex items-center gap-3 self-start">
-                <Checkbox id="logged-in" />
-                <Label htmlFor="logged-in">Remember me</Label>
-              </div>
               <Button
                 type="submit"
                 className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]"
