@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { loginCredentialSchema } from '@boozebunk-trpc/modules/auth/dto';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Eye, EyeOff, UserRound } from 'lucide-react';
+import { Eye, EyeOff, Loader2, UserRound } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '~/shared/shadcn/button';
@@ -144,7 +144,7 @@ export default function Page() {
                 type="submit"
                 className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]"
                 disabled={isPending}>
-                Login
+                {isPending ? <Loader2 /> : 'Login'}
               </Button>
             </form>
           </Form>

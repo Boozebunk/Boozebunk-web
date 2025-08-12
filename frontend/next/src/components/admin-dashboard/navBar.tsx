@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CircleUserRound, LogOut, Moon, Sun } from 'lucide-react';
+import { CircleUserRound, Loader2, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import { Button } from '~/shared/shadcn/button';
@@ -32,7 +32,7 @@ export function Navbar() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { mutateAsync: logout } = useMutation(
+  const { mutateAsync: logout, isPending } = useMutation(
     trpcHttp.auth.logout.mutationOptions({
       onSuccess: async () => {
         console.log('Logged out successfully');
@@ -98,7 +98,7 @@ export function Navbar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">
               <Button variant="ghost" onClick={handleLogout}>
-                <LogOut /> Logout
+                <LogOut /> {isPending ? <Loader2 /> : 'Logout'}
               </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
