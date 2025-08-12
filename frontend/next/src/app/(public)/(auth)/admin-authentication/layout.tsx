@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+
+import { PageLoader } from '~/shared/components/pageLoader';
 
 import { trpcHttp } from '~/utils/trpc';
 
@@ -42,12 +43,7 @@ export default function RootLayout({
   }, [session, isLoading, router]);
 
   if (isLoading || session) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <Loader2 className="text-primary h-8 w-8 animate-spin" />
-        <p className="text-muted-foreground">boozebunk...</p>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (

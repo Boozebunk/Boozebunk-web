@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+
+import { PageLoader } from '~/shared/components/pageLoader';
 
 import { trpcHttp } from '~/utils/trpc';
 
@@ -49,13 +50,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
           router.push('/vendor-authentication/sign-in');
         }
         return;
-      } else if (isAuthPage && session) {
-        if (session.role === 'admin') {
-          router.replace('/admin-portal/' + session.id + '/admin/dashboard');
-        } else if (session.role === 'vendor') {
-          router.replace('/vendor-portal/' + session.id + '/vendor/dashboard');
-        }
-        return;
       }
     }
     setHasChecked(true);
@@ -71,12 +65,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   ]);
 
   if (isLoading || (!hasChecked && (isProtectedRoute || isAuthPage))) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <Loader2 className="text-primary h-8 w-8 animate-spin" />
-        <p className="text-muted-foreground">boozebunk...</p>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return <>{children}</>;
