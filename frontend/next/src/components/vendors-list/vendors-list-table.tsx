@@ -10,9 +10,11 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { ChevronDown, MoreHorizontal } from 'lucide-react';
+import { format } from 'date-fns';
+import { CalendarIcon, ChevronDown, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
+import { Calendar } from '~/shared/shadcn/calendar';
 import { Card } from '~/shared/shadcn/card';
 import {
   DropdownMenu,
@@ -24,6 +26,15 @@ import {
 } from '~/shared/shadcn/dropdown-menu';
 import { Input } from '~/shared/shadcn/input';
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from '~/shared/shadcn/pagination';
+import { Popover, PopoverContent, PopoverTrigger } from '~/shared/shadcn/popover';
+import {
   Table,
   TableBody,
   TableCell,
@@ -31,6 +42,7 @@ import {
   TableHeader,
   TableRow
 } from '~/shared/shadcn/table';
+import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
 
 import type {
   ColumnDef,
@@ -38,6 +50,7 @@ import type {
   SortingState,
   VisibilityState
 } from '@tanstack/react-table';
+import type { DateRange } from 'react-day-picker';
 
 export type Vendor = {
   id: string;
@@ -53,7 +66,8 @@ export type Vendor = {
   lastRegistered: string;
 };
 
-const data: Vendor[] = [
+// Sample Data
+const baseActive: Vendor[] = [
   {
     id: 'v1',
     martName: 'FreshBazaar',
@@ -79,7 +93,17 @@ const data: Vendor[] = [
       state: 'Maharashtra'
     },
     lastRegistered: '2024-01-10T12:00:00Z'
-  },
+  }
+];
+
+const activeVendors: Vendor[] = Array.from({ length: 5 }, (_, i) =>
+  baseActive.map((v) => ({
+    ...v,
+    id: `${v.id}-${i + 1}`
+  }))
+).flat();
+
+const baseFrozen: Vendor[] = [
   {
     id: 'v3',
     martName: 'DailyFresh',
@@ -105,36 +129,27 @@ const data: Vendor[] = [
       state: 'Telangana'
     },
     lastRegistered: '2024-03-12T16:20:00Z'
-  },
-  {
-    id: 'v5',
-    martName: 'Namma Supermarket',
-    vendorName: 'Karthik Iyer',
-    email: 'karthik.iyer@example.com',
-    phone: '98760-54321',
-    location: {
-      area: 'Indiranagar',
-      city: 'Bengaluru',
-      state: 'Karnataka'
-    },
-    lastRegistered: '2024-04-01T11:15:00Z'
   }
 ];
 
-export const columns: ColumnDef<Vendor>[] = [
+const frozenVendors: Vendor[] = Array.from({ length: 5 }, (_, i) =>
+  baseFrozen.map((v) => ({
+    ...v,
+    id: `${v.id}-${i + 1}`
+  }))
+).flat();
+
+// Columns
+const getColumns = (isFrozen: boolean): ColumnDef<Vendor>[] => [
+  {
+    id: 'sno',
+    header: () => <div className="w-12 text-center">S.No</div>,
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>
+  },
   {
     accessorKey: 'martName',
     header: () => (
-      <Button
-        className="text-sm md:text-xl"
-        variant="ghost"
-        onClick={
-          (
-            {
-              // currentTarget
-            }
-          ) => {} /* no sorting on this for now */
-        }>
+      <Button className="text-sm md:text-xl" variant="ghost" onClick={() => {}}>
         Mart Name
       </Button>
     ),
@@ -175,43 +190,40 @@ export const columns: ColumnDef<Vendor>[] = [
     cell: ({ row }) => {
       const dateStr = row.getValue('lastRegistered') as string;
       const date = new Date(dateStr);
-      const formatted = date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
+      const formatted = format(date, 'yyyy-MM-dd');
       return <div className="text-right text-sm">{formatted}</div>;
+    },
+    filterFn: (row, id, value: DateRange | undefined) => {
+      if (!value?.from || !value?.to) return true;
+      const date = new Date(row.getValue(id) as string);
+      return date >= value.from && date <= value.to;
     }
   },
   {
     id: 'actions',
     enableHiding: false,
-    cell: (
-      {
-        // row
-      }
-    ) => {
-      //   const vendor = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit vendor</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="mt-2">Freeze vendor</DropdownMenuItem>
-            <DropdownMenuItem className="mt-2" variant="destructive">
-              Remove vendor
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    }
+    cell: () => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {isFrozen ? (
+            <DropdownMenuItem>Restore Vendor</DropdownMenuItem>
+          ) : (
+            <>
+              <DropdownMenuItem>Edit vendor</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Freeze vendor</DropdownMenuItem>
+            </>
+          )}
+          <DropdownMenuItem className="text-red-600">Remove vendor</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
   }
 ];
 
@@ -220,10 +232,19 @@ export function VendorsList() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [isFrozen, setIsFrozen] = React.useState(false);
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined);
+
+  const data = isFrozen ? frozenVendors : activeVendors;
+
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 5
+  });
 
   const table = useReactTable({
     data,
-    columns,
+    columns: getColumns(isFrozen),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -232,30 +253,76 @@ export function VendorsList() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection
+      rowSelection,
+      pagination
     }
   });
 
   return (
-    <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
+    <div className="flex flex-col gap-3 p-3 lg:px-10">
       <h1 className="font-medium md:text-2xl">
         <strong>List</strong> of all the Vendors
       </h1>
-      <div className="gap-2 py-0">
-        <div className="flex items-center gap-3 pb-4 lg:gap-[50%]">
-          <Input
-            placeholder="Filter by vendor name or email..."
-            value={(table.getColumn('vendorName')?.getFilterValue() as string) ?? ''}
-            onChange={(event) => table.getColumn('vendorName')?.setFilterValue(event.target.value)}
-            className="max-w-[100%] text-sm md:text-lg"
-          />
+
+      {/* Date Range Filter */}
+      <div className="flex flex-col items-start gap-3 sm:flex-row">
+        {/* Toggle for Active/Frozen */}
+        <ToggleGroup
+          type="single"
+          value={isFrozen ? 'frozen' : 'active'}
+          onValueChange={(val) => {
+            if (val) setIsFrozen(val === 'frozen');
+          }}
+          className="bg-background w-fit">
+          <ToggleGroupItem value="active" aria-label="Active Vendors">
+            Active Vendors
+          </ToggleGroupItem>
+          <ToggleGroupItem value="frozen" aria-label="Frozen Vendors">
+            Frozen Vendors
+          </ToggleGroupItem>
+        </ToggleGroup>
+
+        <div className="flex items-start gap-5">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={`max-w-[250px] justify-between text-left font-normal ${
+                  !dateRange?.from && 'text-muted-foreground'
+                }`}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateRange?.from && dateRange?.to ? (
+                  <>
+                    {format(dateRange.from, 'MMM dd, yyyy')} -{' '}
+                    {format(dateRange.to, 'MMM dd, yyyy')}
+                  </>
+                ) : (
+                  <span>Pick a date range</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="range"
+                selected={dateRange}
+                onSelect={(range) => {
+                  setDateRange(range || undefined);
+                  table.getColumn('lastRegistered')?.setFilterValue(range || undefined);
+                }}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
+
+          {/* Column visibility dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button variant="outline">
                 Columns <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -270,13 +337,32 @@ export function VendorsList() {
                       className="capitalize"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => column.toggleVisibility(!!value)}>
-                      {column.id === 'vendorDetails' ? 'Vendor Details' : column.id}
+                      {column.id === 'vendorDetails'
+                        ? 'Vendor Details'
+                        : column.id === 'sno'
+                          ? 'S.No'
+                          : column.id}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      </div>
+
+      <div className="gap-2 py-0">
+        <div className="flex flex-col items-start gap-5 pb-4">
+          {/* Text filter */}
+          <Input
+            placeholder="Filter by vendor name or email..."
+            value={(table.getColumn('vendorDetails')?.getFilterValue() as string) ?? ''}
+            onChange={(event) =>
+              table.getColumn('vendorDetails')?.setFilterValue(event.target.value)
+            }
+            className="max-w-[550px] text-sm md:text-lg"
+          />
+        </div>
+
         <Card className="overflow-hidden rounded-md border p-0 md:p-5">
           <Table>
             <TableHeader className="text-sm font-semibold md:text-xl">
@@ -307,7 +393,7 @@ export function VendorsList() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
                     No results.
                   </TableCell>
                 </TableRow>
@@ -315,29 +401,39 @@ export function VendorsList() {
             </TableBody>
           </Table>
         </Card>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          {/* <div className="text-muted-foreground flex-1 text-sm">
-            {table.getFilteredSelectedRowModel().rows.length} of{' '}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div> */}
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}>
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}>
-              Next
-            </Button>
-          </div>
+
+        <div className="flex justify-center py-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => table.previousPage()}
+                  aria-disabled={!table.getCanPreviousPage()}
+                  className={!table.getCanPreviousPage() ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+
+              {Array.from({ length: table.getPageCount() }).map((_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    isActive={table.getState().pagination.pageIndex === i}
+                    onClick={() => table.setPageIndex(i)}>
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => table.nextPage()}
+                  aria-disabled={!table.getCanNextPage()}
+                  className={!table.getCanNextPage() ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
-      </div>{' '}
+      </div>
     </div>
   );
 }

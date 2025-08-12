@@ -18,7 +18,7 @@ export const env = createEnv({
     NEXT_PUBLIC_API_ENDPOINT: z.string().url('Invalid API endpoint')
   },
   runtimeEnv: {
-    NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT!
+    NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT ?? 'http://localhost:3000'
   },
   skipValidation: process.env.NODE_ENV !== 'production'
 });
