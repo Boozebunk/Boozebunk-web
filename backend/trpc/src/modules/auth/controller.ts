@@ -1,11 +1,13 @@
 import db from "@boozebunk-trpc/db";
 import { adminTable } from "@boozebunk-trpc/db/schema/admin";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
+import { verificationTokensTable } from "@boozebunk-trpc/db/schema/auth/verification";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { hashPassword, verifyPassword } from "@boozebunk-trpc/utils/authUtils";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
+import z from "zod";
 
 import { createAdminSchema, loginCredentialSchema } from "./dto";
 
@@ -117,4 +119,45 @@ export const authRouter = createTRPCRouter({
       });
     }
   }),
+
+  requestPasswordReset: publicProcedure
+    .input(
+      z.object({
+        email: z.email("Invalid email format"),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const user = await db.query.user.findFirst({
+          where: eq(userTable.email, input.email),
+        });
+
+        if (!user) {
+          return {
+            success: false,
+            message: "Account does not exist. Please enter a registered email.",
+          };
+        }
+
+        const resetToken = uuidv4();
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+        await db.insert(verificationTokensTable).values({
+          id: uuidv4(),
+          userId: user.id,
+          token: resetToken,
+          type: "password_reset",
+          expiresAt: expiresAt,
+        });
+
+        // const resetLink = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/accounts/${resetToken}/reset-password`;
+
+        // simply need to send the email to the registered user.
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `An error occurred while requesting password reset: ${error}`,
+        });
+      }
+    }),
 });
