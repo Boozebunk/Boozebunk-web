@@ -124,7 +124,7 @@ export default function Page() {
               />
             </CardContent>
 
-            <CardFooter className="flex flex-col gap-3">
+            <CardFooter className="my-10 flex flex-col gap-3">
               <Button type="submit" className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]">
                 Save New Password
               </Button>
