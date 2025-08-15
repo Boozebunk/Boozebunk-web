@@ -13,7 +13,6 @@ import {
   CardHeader,
   CardTitle
 } from '~/shared/shadcn/card';
-import { Checkbox } from '~/shared/shadcn/checkbox';
 import { Input } from '~/shared/shadcn/input';
 import { Label } from '~/shared/shadcn/label';
 
@@ -65,10 +64,6 @@ export default function Page() {
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 self-start">
-            <Checkbox id="logged-in" />
-            <Label htmlFor="logged-in">Remember me</Label>
-          </div>
           <Button type="submit" className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]">
             Login
           </Button>
