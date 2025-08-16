@@ -2,8 +2,10 @@ import db from "@boozebunk-trpc/db";
 import { adminTable } from "@boozebunk-trpc/db/schema/admin";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
 import { verificationTokensTable } from "@boozebunk-trpc/db/schema/auth/verification";
+import { env } from "@boozebunk-trpc/env";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { hashPassword, verifyPassword } from "@boozebunk-trpc/utils/authUtils";
+import { sendEmail } from "@boozebunk-trpc/utils/ses-sender";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
@@ -19,7 +21,7 @@ export const authRouter = createTRPCRouter({
       });
 
       if (!user || user.role != input.role) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Credentials" });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Email Account" });
       }
 
       const isPasswordValid = await verifyPassword(input.password, user.password);
@@ -123,7 +125,7 @@ export const authRouter = createTRPCRouter({
   requestPasswordReset: publicProcedure
     .input(
       z.object({
-        email: z.email("Invalid email format"),
+        email: z.email("Invalid Email"),
       }),
     )
     .mutation(async ({ input }) => {
@@ -139,9 +141,13 @@ export const authRouter = createTRPCRouter({
           };
         }
 
+        // Deleting all the tokens if any already existing
+        await db.delete(verificationTokensTable).where(eq(verificationTokensTable.userId, user.id));
+
         const resetToken = uuidv4();
         const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
+        //Create a new Token record
         await db.insert(verificationTokensTable).values({
           id: uuidv4(),
           userId: user.id,
@@ -150,13 +156,65 @@ export const authRouter = createTRPCRouter({
           expiresAt: expiresAt,
         });
 
-        // const resetLink = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/accounts/${resetToken}/reset-password`;
+        const resetLink = `${env.FRONTEND_URL}/accounts/${resetToken}/reset-password`;
 
-        // simply need to send the email to the registered user.
+        console.log("send email being called");
+        await sendEmail(input.email, "Password Reset for Boozebunk", "reset-password", {
+          resetLink,
+        });
+
+        return {
+          success: true,
+          message: "Password reset email sent. Please check your inbox.",
+        };
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `An error occurred while requesting password reset: ${error}`,
+        });
+      }
+    }),
+
+  changePassword: publicProcedure
+    .input(z.object({ token_id: z.string(), password: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        const token = await db.query.verification.findFirst({
+          where: eq(verificationTokensTable.token, input.token_id),
+        });
+
+        if (!token) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Expired password reset token. Please retry.",
+          });
+        }
+
+        const hashedPassword = await hashPassword(input.password);
+
+        //changing password
+        await db
+          .update(userTable)
+          .set({
+            password: hashedPassword,
+          })
+          .where(eq(userTable.id, token.userId));
+
+        const user = await db.query.user.findFirst({
+          where: eq(userTable.id, token.userId),
+        });
+
+        await db.delete(verificationTokensTable).where(eq(verificationTokensTable.id, token.id));
+
+        return {
+          success: true,
+          message: "Password Changed Successfully",
+          userRole: user?.role || "vendor",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `An error occurred while changing password: ${err}`,
         });
       }
     }),

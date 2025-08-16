@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { loginCredentialSchema } from '@boozebunk-trpc/modules/auth/dto';
@@ -128,9 +129,11 @@ export default function Page() {
                       </div>
                     </FormControl>
                     <FormMessage />
-                    <a href="#" className="self-end text-sm underline-offset-4 hover:underline">
+                    <Link
+                      href="/accounts/email-verification"
+                      className="self-end text-sm underline-offset-4 hover:underline">
                       Forgot password?
-                    </a>
+                    </Link>
                   </FormItem>
                 )}
               />

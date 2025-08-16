@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
@@ -26,9 +28,11 @@ import {
 } from '~/shared/shadcn/form';
 import { Input } from '~/shared/shadcn/input';
 
+import { trpcHttp } from '~/utils/trpc';
+
 const passwordSchema = z
   .object({
-    newPassword: z.string().min(8, 'Password must be at least 8 characters long.'),
+    newPassword: z.string().min(3, 'Password must be at least 3 characters long.'),
     confirmPassword: z.string()
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -40,6 +44,32 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const router = useRouter();
+  const params = useParams();
+  const resetToken = params['reset-token'] as string;
+
+  const { mutateAsync: ResetPassword, isPending } = useMutation(
+    trpcHttp.auth.changePassword.mutationOptions({
+      onSuccess: (data) => {
+        console.log('Password Successfully Changed');
+
+        if (data.userRole === 'admin') {
+          router.push('/admin-authentication/sign-in');
+        } else if (data.userRole === 'vendor') {
+          router.push('/vendor-authentication/sign-in');
+        }
+      },
+      onError: (err) => {
+        console.error(err);
+      }
+    })
+  );
+
+  const handleSubmit = async (data: PasswordForm) => {
+    console.log('Submitting new password');
+    await ResetPassword({ token_id: resetToken, password: data.confirmPassword });
+  };
 
   const form = useForm<PasswordForm>({
     resolver: zodResolver(passwordSchema),
@@ -62,7 +92,7 @@ export default function Page() {
         </CardHeader>
 
         <Form {...form}>
-          <form>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col justify-center">
             <CardContent className="flex flex-col gap-5">
               {/* password  */}
               <FormField
@@ -125,8 +155,11 @@ export default function Page() {
             </CardContent>
 
             <CardFooter className="my-10 flex flex-col gap-3">
-              <Button type="submit" className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]">
-                Save New Password
+              <Button
+                type="submit"
+                className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]"
+                disabled={isPending}>
+                {isPending ? <Loader2 /> : 'Save New Password'}
               </Button>
             </CardFooter>
           </form>
