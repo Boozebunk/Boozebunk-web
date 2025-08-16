@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-export function Greeting() {
-  const name = 'Ayush';
-
+export function Greeting({ name }: { name: string }) {
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) return 'Good morning';

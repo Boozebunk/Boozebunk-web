@@ -133,7 +133,7 @@
     repeating-linear-gradient(#ffffff55, #ffffff);
 }
 
-.admin-panel-bg {
+.panel-bg {
   background-color: var(--custom-background);
   opacity: 1;
   background-image:

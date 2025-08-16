@@ -30,7 +30,7 @@ export function Navbar() {
       <SidebarTrigger className="p-5" />
 
       <div className="absolute left-1/2 hidden w-fit -translate-x-1/2 transform p-3 py-5 sm:p-5 md:block">
-        <Greeting name="Ayush" />
+        <Greeting name="Partner" />
       </div>
 
       <Button

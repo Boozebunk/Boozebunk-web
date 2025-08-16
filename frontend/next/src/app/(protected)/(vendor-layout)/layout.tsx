@@ -2,8 +2,8 @@ import { cookies } from 'next/headers';
 
 import { SidebarProvider } from '~/shared/shadcn/sidebar';
 
-import { Navbar } from '~/components/admin-dashboard/navBar';
-import { SideBar } from '~/components/admin-dashboard/sideBar';
+import { Navbar } from '~/components/vendor-dashboard/navBar';
+import { SideBar } from '~/components/vendor-dashboard/sideBar';
 
 export default async function RootLayout({
   children

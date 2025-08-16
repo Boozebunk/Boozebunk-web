@@ -13,6 +13,17 @@ import {
 import { format } from 'date-fns';
 import { CalendarIcon, ChevronDown, MoreHorizontal } from 'lucide-react';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '~/shared/shadcn/alert-dialog';
 import { Button } from '~/shared/shadcn/button';
 import { Calendar } from '~/shared/shadcn/calendar';
 import { Card } from '~/shared/shadcn/card';
@@ -220,7 +231,28 @@ const getColumns = (isFrozen: boolean): ColumnDef<Vendor>[] => [
               <DropdownMenuItem>Freeze vendor</DropdownMenuItem>
             </>
           )}
-          <DropdownMenuItem className="text-red-600">Remove vendor</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="mt-1" variant="destructive">
+                  Remove vendor
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure you want to remove this vendor?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently remove the vendor from the
+                    platform.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     )
