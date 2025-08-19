@@ -1,5 +1,5 @@
 {
-  "id": "dee76017-8294-4c46-ba89-e8f8850acd57",
+  "id": "36e1a4ab-a2ec-4c42-8dc2-3826ac387f4a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -27,23 +27,11 @@
           "primaryKey": false,
           "notNull": true
         },
-        "address_street_number": {
-          "name": "address_street_number",
+        "address_area": {
+          "name": "address_area",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
-        },
-        "address_route": {
-          "name": "address_route",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "address_locality": {
-          "name": "address_locality",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "address_city": {
           "name": "address_city",
@@ -59,12 +47,6 @@
         },
         "address_postal_code": {
           "name": "address_postal_code",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "google_place_id": {
-          "name": "google_place_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false

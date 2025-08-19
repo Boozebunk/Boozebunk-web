@@ -13,14 +13,10 @@ export const vendorAddressesTable = pgTable(
       .references(() => vendorTable.id, { onDelete: "cascade" }),
 
     addressFormatted: text("address_formatted").notNull(), // "123 Main St, City, State..."
-    addressStreetNumber: text("address_street_number"),
-    addressRoute: text("address_route"), // Street name
-    addressLocality: text("address_locality"), // Neighborhood/Sub-locality (e.g., Hitech City)
+    addressArea: text("address_area").notNull(),
     addressCity: text("address_city").notNull(),
     addressState: text("address_state").notNull(),
     addressPostalCode: text("address_postal_code"),
-
-    googlePlaceId: text("google_place_id"), // Original Google Place ID for reference
 
     createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: false })

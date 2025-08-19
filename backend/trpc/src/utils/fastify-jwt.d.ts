@@ -2,17 +2,19 @@
 import "@fastify/jwt";
 import "@fastify/cookie";
 
+import type { UUIDTypes } from "uuid";
+
 // Define the shape of your JWT payload
 declare module "@fastify/jwt" {
   interface FastifyJWT {
     payload: {
-      id: string; // User ID (UUID)
+      id: UUIDTypes; // User ID (UUID)
       email: string;
       role: "admin" | "vendor";
     };
     // The 'user' type is what gets attached to request.user after verification
     user: {
-      id: string;
+      id: UUIDTypes;
       email: string;
       role: "admin" | "vendor";
     };
