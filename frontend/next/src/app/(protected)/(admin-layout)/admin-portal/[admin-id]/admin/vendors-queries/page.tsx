@@ -222,11 +222,11 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
-      <h1 className="font-medium md:text-2xl">
+      <h1 className="text-lg font-medium md:text-2xl">
         <strong>Vendors</strong> Queries
       </h1>
       <div className="gap-2 py-0">
-        <div className="flex items-center gap-3 pb-4 lg:gap-[50%]">
+        <div className="mb-3 flex items-center gap-3 lg:gap-[50%]">
           <Input
             placeholder="Filter by vendor name or email..."
             value={(table.getColumn('vendorName')?.getFilterValue() as string) ?? ''}

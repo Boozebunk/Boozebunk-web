@@ -78,7 +78,7 @@ function StarRating({ value }: { value: number }) {
 export default function Page() {
   const [filter, setFilter] = React.useState('recent');
   const [pageIndex, setPageIndex] = React.useState(0);
-  const pageSize = 2; // show 2 feedback entries per page
+  const pageSize = 5; // show 2 feedback entries per page
 
   // Apply sorting based on filter
   const sortedFeedback = React.useMemo(() => {
@@ -102,27 +102,25 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-2 p-3 sm:gap-4 lg:px-10">
-      <div className="flex items-start justify-between">
-        <h1 className="font-medium md:text-2xl">
-          <strong>Users</strong> Feedback
-        </h1>
+      <h1 className="text-lg font-medium md:text-2xl">
+        <strong>Users</strong> Feedback
+      </h1>
 
-        <Select
-          value={filter}
-          onValueChange={(v) => {
-            setFilter(v);
-            setPageIndex(0);
-          }}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="recent">Recent</SelectItem>
-            <SelectItem value="high">High Rated</SelectItem>
-            <SelectItem value="low">Low Rated</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <Select
+        value={filter}
+        onValueChange={(v) => {
+          setFilter(v);
+          setPageIndex(0);
+        }}>
+        <SelectTrigger className="w-[200px]">
+          <SelectValue placeholder="Filter by" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="recent">Recent</SelectItem>
+          <SelectItem value="high">High Rated</SelectItem>
+          <SelectItem value="low">Low Rated</SelectItem>
+        </SelectContent>
+      </Select>
 
       <Card className="p-5">
         <Table>

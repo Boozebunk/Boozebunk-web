@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Boxes, Home } from 'lucide-react';
+import { Boxes, Home, PackagePlus } from 'lucide-react';
 
 import {
   Sidebar,
@@ -11,24 +11,13 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem
 } from '~/shared/shadcn/sidebar';
 
 import Logo2 from '../../../public/Assets/Logo-main-2.png';
 import Logo from '../../../public/Assets/Logo-main.png';
-
-const items = [
-  {
-    title: 'Dashboard',
-    url: '/admin-portal/190/admin/dashboard',
-    icon: Home
-  },
-  {
-    title: 'Inventory',
-    url: '/admin-portal/190/admin/feedbacks',
-    icon: Boxes
-  }
-];
 
 export function SideBar() {
   return (
@@ -56,16 +45,51 @@ export function SideBar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="p-5 py-6">
-                    <Link href={item.url}>
-                      <item.icon className="mr-2 !size-6" />
-                      <span className="text-[17px] font-medium">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="p-5 py-6">
+                  <Link href="/vendor-portal/0999/vendor/dashboard">
+                    <Home className="mr-2 !size-6" />
+                    <span className="text-[17px] font-medium">Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <div className="bg-sidebar-border h-[1px] w-[80%] self-center" />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="mb-2 p-5 py-6">
+                  <Link href="/vendor-portal/0999/vendor/stock-list">
+                    <Boxes className="mr-2 !size-6" />
+                    <span className="text-[17px] font-medium">Stock</span>
+                  </Link>
+                </SidebarMenuButton>
+
+                <SidebarMenuSub className="ml-7 gap-2">
+                  <SidebarMenuSubItem>
+                    <SidebarMenuButton asChild className="py-5">
+                      <Link href="/vendor-portal/0999/vendor/outofstock-items">
+                        <Boxes className="mr-2 !size-5" />
+                        <span className="text-[15px] font-medium">Update Stock</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <SidebarMenuButton asChild className="py-5">
+                      <Link href="/vendor-portal/0999/vendor/add-product">
+                        <PackagePlus className="mr-2 !size-5" />
+                        <span className="text-[15px] font-medium">New Product</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

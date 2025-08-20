@@ -297,7 +297,7 @@ export function VendorsList() {
 
   return (
     <div className="flex flex-col gap-3 p-3 lg:px-10">
-      <h1 className="font-medium md:text-2xl">
+      <h1 className="text-lg font-medium md:text-2xl">
         <strong>List</strong> of all the Vendors
       </h1>
 
@@ -382,18 +382,14 @@ export function VendorsList() {
         </div>
       </div>
 
-      <div className="gap-2 py-0">
-        <div className="flex flex-col items-start gap-5 pb-4">
-          {/* Text filter */}
-          <Input
-            placeholder="Filter by vendor name or email..."
-            value={(table.getColumn('vendorDetails')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('vendorDetails')?.setFilterValue(event.target.value)
-            }
-            className="max-w-[550px] text-sm md:text-lg"
-          />
-        </div>
+      <div className="mt-3 gap-2 py-0">
+        {/* Text filter */}
+        <Input
+          placeholder="Filter by vendor name or email..."
+          value={(table.getColumn('vendorDetails')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('vendorDetails')?.setFilterValue(event.target.value)}
+          className="mb-3 max-w-[550px] text-sm md:text-lg"
+        />
 
         <Card className="overflow-hidden rounded-md border p-0 md:p-5">
           <Table>

@@ -64,7 +64,7 @@ const topMarts = [
 export function TopVendors() {
   return (
     <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
-      <h1 className="font-medium md:text-2xl">
+      <h1 className="text-lg font-medium md:text-2xl">
         <strong>Top 5</strong> Most Viewed Marts
       </h1>
 

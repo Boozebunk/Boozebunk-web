@@ -12,7 +12,7 @@ const lowStockItems = [
 
 export function OutOfStock() {
   return (
-    <Card className="p-5 md:col-span-2 lg:col-span-1">
+    <Card className="p-5 lg:col-span-1">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold sm:text-xl">Out of Stock Items</h2>
         <span className="rounded-md bg-red-100 px-3 py-1 text-sm font-semibold text-red-600 sm:text-xl">
@@ -39,7 +39,9 @@ export function OutOfStock() {
       </Table>
 
       <CardFooter className="justify-center">
-        <Link href="#" className="text-primary font-medium hover:underline active:underline">
+        <Link
+          href="/vendor-portal/0999/vendor/outofstock-items"
+          className="text-primary font-medium hover:underline active:underline">
           View all out of stock items
         </Link>
       </CardFooter>

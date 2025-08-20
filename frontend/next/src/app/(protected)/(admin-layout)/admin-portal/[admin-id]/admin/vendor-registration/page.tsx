@@ -17,10 +17,10 @@ import { Label } from '~/shared/shadcn/label';
 
 export default function VendorRegistrationPage() {
   return (
-    <div className="bg-background flex min-h-screen w-full justify-center p-0 sm:p-5 sm:py-0">
+    <div className="bg-background flex min-h-screen w-full justify-center p-0 pb-5 sm:p-5 sm:py-0">
       <Card className="h-fit w-full border-0 bg-transparent shadow-none">
         {/* Header */}
-        <CardHeader className="flex flex-col items-center gap-2 text-center">
+        <CardHeader className="flex flex-col items-center gap-1 text-center">
           <Store className="text-primary h-10 w-10 sm:h-12 sm:w-12" />
           <CardTitle className="text-2xl font-bold">Vendor Registration</CardTitle>
           <CardDescription className="max-w-lg text-sm">

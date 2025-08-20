@@ -15,6 +15,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: 'Boozebunk - Liquor Management and Information Platform',
+  icons: {
+    icon: '/favicon.ico'
+  },
   description:
     'Find your favorite drinks fast! Our platform helps customers locate nearby liquor marts and empowers mart owners to easily manage their stock.',
   keywords: [

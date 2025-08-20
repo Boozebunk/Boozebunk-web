@@ -137,7 +137,7 @@ const TrafficCard = ({ stat }: { stat: (typeof visitorStats)[number] }) => {
 export function Analytics() {
   return (
     <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
-      <h1 className="font-medium md:text-2xl">
+      <h1 className="text-lg font-medium md:text-2xl">
         <strong>Website</strong> Traffic Overview
       </h1>
       <div className="hidden w-full flex-row justify-between gap-5 lg:flex">
