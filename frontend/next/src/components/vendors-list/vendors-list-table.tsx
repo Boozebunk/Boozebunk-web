@@ -2,54 +2,23 @@
 
 import * as React from 'react';
 
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { CalendarIcon, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { CalendarIcon, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
 import { Calendar } from '~/shared/shadcn/calendar';
-import { Card } from '~/shared/shadcn/card';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/shared/shadcn/dropdown-menu';
 import { Input } from '~/shared/shadcn/input';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '~/shared/shadcn/pagination';
 import { Popover, PopoverContent, PopoverTrigger } from '~/shared/shadcn/popover';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/shared/shadcn/table';
-import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
+import { DataTable } from '~/shared/components/dataTable';
 
-import type {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState
-} from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import type { DateRange } from 'react-day-picker';
 
 export type Vendor = {
@@ -67,7 +36,7 @@ export type Vendor = {
 };
 
 // Sample Data
-const baseActive: Vendor[] = [
+const SampleData: Vendor[] = [
   {
     id: 'v1',
     martName: 'FreshBazaar',
@@ -96,51 +65,8 @@ const baseActive: Vendor[] = [
   }
 ];
 
-const activeVendors: Vendor[] = Array.from({ length: 5 }, (_, i) =>
-  baseActive.map((v) => ({
-    ...v,
-    id: `${v.id}-${i + 1}`
-  }))
-).flat();
-
-const baseFrozen: Vendor[] = [
-  {
-    id: 'v3',
-    martName: 'DailyFresh',
-    vendorName: 'Amit Patel',
-    email: 'amit.patel@example.com',
-    phone: '99345-67890',
-    location: {
-      area: 'Navrangpura',
-      city: 'Ahmedabad',
-      state: 'Gujarat'
-    },
-    lastRegistered: '2024-02-05T09:45:00Z'
-  },
-  {
-    id: 'v4',
-    martName: 'Annapurna Stores',
-    vendorName: 'Sushma Reddy',
-    email: 'sushma.reddy@example.com',
-    phone: '98450-12345',
-    location: {
-      area: 'Banjara Hills',
-      city: 'Hyderabad',
-      state: 'Telangana'
-    },
-    lastRegistered: '2024-03-12T16:20:00Z'
-  }
-];
-
-const frozenVendors: Vendor[] = Array.from({ length: 5 }, (_, i) =>
-  baseFrozen.map((v) => ({
-    ...v,
-    id: `${v.id}-${i + 1}`
-  }))
-).flat();
-
 // Columns
-const getColumns = (isFrozen: boolean): ColumnDef<Vendor>[] => [
+const columns: ColumnDef<Vendor>[] = [
   {
     id: 'sno',
     header: () => <div className="w-12 text-center">S.No</div>,
@@ -211,15 +137,9 @@ const getColumns = (isFrozen: boolean): ColumnDef<Vendor>[] => [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {isFrozen ? (
-            <DropdownMenuItem>Restore Vendor</DropdownMenuItem>
-          ) : (
-            <>
-              <DropdownMenuItem>Edit vendor</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Freeze vendor</DropdownMenuItem>
-            </>
-          )}
+          <DropdownMenuItem>Edit vendor</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Freeze vendor</DropdownMenuItem>
           <DropdownMenuItem className="text-red-600">Remove vendor</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -228,39 +148,11 @@ const getColumns = (isFrozen: boolean): ColumnDef<Vendor>[] => [
 ];
 
 export function VendorsList() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [isFrozen, setIsFrozen] = React.useState(false);
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined);
-
-  const data = isFrozen ? frozenVendors : activeVendors;
 
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 5
-  });
-
-  const table = useReactTable({
-    data,
-    columns: getColumns(isFrozen),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination
-    }
   });
 
   return (
@@ -269,170 +161,56 @@ export function VendorsList() {
         <strong>List</strong> of all the Vendors
       </h1>
 
-      {/* Date Range Filter */}
+      {/* Text filter and Date filter */}
       <div className="flex flex-col items-start gap-3 sm:flex-row">
-        {/* Toggle for Active/Frozen */}
-        <ToggleGroup
-          type="single"
-          value={isFrozen ? 'frozen' : 'active'}
-          onValueChange={(val) => {
-            if (val) setIsFrozen(val === 'frozen');
-          }}
-          className="bg-background w-fit">
-          <ToggleGroupItem value="active" aria-label="Active Vendors">
-            Active Vendors
-          </ToggleGroupItem>
-          <ToggleGroupItem value="frozen" aria-label="Frozen Vendors">
-            Frozen Vendors
-          </ToggleGroupItem>
-        </ToggleGroup>
-
-        <div className="flex items-start gap-5">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={`max-w-[250px] justify-between text-left font-normal ${
-                  !dateRange?.from && 'text-muted-foreground'
-                }`}>
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {dateRange?.from && dateRange?.to ? (
-                  <>
-                    {format(dateRange.from, 'MMM dd, yyyy')} -{' '}
-                    {format(dateRange.to, 'MMM dd, yyyy')}
-                  </>
-                ) : (
-                  <span>Pick a date range</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="range"
-                selected={dateRange}
-                onSelect={(range) => {
-                  setDateRange(range || undefined);
-                  table.getColumn('lastRegistered')?.setFilterValue(range || undefined);
-                }}
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover>
-
-          {/* Column visibility dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Columns <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}>
-                      {column.id === 'vendorDetails'
-                        ? 'Vendor Details'
-                        : column.id === 'sno'
-                          ? 'S.No'
-                          : column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      <div className="gap-2 py-0">
+        {/* Text filter */}
         <div className="flex flex-col items-start gap-5 pb-4">
-          {/* Text filter */}
           <Input
             placeholder="Filter by vendor name or email..."
-            value={(table.getColumn('vendorDetails')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('vendorDetails')?.setFilterValue(event.target.value)
-            }
+            // Filtering logic should be handled inside DataTable if needed
             className="max-w-[550px] text-sm md:text-lg"
           />
         </div>
 
-        <Card className="overflow-hidden rounded-md border p-0 md:p-5">
-          <Table>
-            <TableHeader className="text-sm font-semibold md:text-xl">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell className="px-3 py-5 font-medium" key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
+        {/* Date filter */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={`max-w-[250px] justify-between text-left font-normal ${
+                !dateRange?.from && 'text-muted-foreground'
+              }`}>
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {dateRange?.from && dateRange?.to ? (
+                <>
+                  {format(dateRange.from, 'MMM dd, yyyy')} - {format(dateRange.to, 'MMM dd, yyyy')}
+                </>
               ) : (
-                <TableRow>
-                  <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
+                <span>Pick a date range</span>
               )}
-            </TableBody>
-          </Table>
-        </Card>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={(range) => {
+                setDateRange(range || undefined);
+                // Filtering logic should be handled inside DataTable if needed
+              }}
+              numberOfMonths={2}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
 
-        <div className="flex justify-center py-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => table.previousPage()}
-                  aria-disabled={!table.getCanPreviousPage()}
-                  className={!table.getCanPreviousPage() ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: table.getPageCount() }).map((_, i) => (
-                <PaginationItem key={i}>
-                  <PaginationLink
-                    isActive={table.getState().pagination.pageIndex === i}
-                    onClick={() => table.setPageIndex(i)}>
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => table.nextPage()}
-                  aria-disabled={!table.getCanNextPage()}
-                  className={!table.getCanNextPage() ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+      <div className="gap-2 py-0">
+        <DataTable
+          columns={columns}
+          data={SampleData}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+        />
       </div>
     </div>
   );

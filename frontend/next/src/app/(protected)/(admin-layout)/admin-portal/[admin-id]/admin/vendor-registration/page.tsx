@@ -57,18 +57,6 @@ export default function VendorRegistrationPage() {
       onSuccess: () => {
         console.log('Vendor Registration Successful');
         form.reset();
-        // form.setValue('martName', '');
-        // form.setValue('licenseNumber', '');
-        // form.setValue('vendorName', '');
-        // form.setValue('email', '');
-        // form.setValue('phoneNumber', '');
-        // form.setValue('addressFormatted', '');
-        // form.setValue('addressArea', '');
-        // form.setValue('addressPostalCode', '');
-        // form.setValue('addressCity', '');
-        // form.setValue('addressState', '');
-        // form.setValue('locationCoordinates.lat', 0);
-        // form.setValue('locationCoordinates.lng', 0);
       },
       onError: (error) => {
         console.error('Vendor Registration Error:', error);
