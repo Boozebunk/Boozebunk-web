@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { boolean, geometry, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 import { vendorAddressesTable } from "./address";
@@ -30,6 +30,12 @@ export const vendorTable = pgTable(
   (table) => [
     index("vendor_mart_name_idx").on(table.martName),
     index("vendor_user_id_idx").on(table.userId),
+    sql`CREATE INDEX vendors_search_idx ON ${table} USING gin(
+        setweight(to_tsvector('english', coalesce(${table.martName}, '')), 'A') ||
+        setweight(to_tsvector('english', coalesce(${table.vendorName}, '')), 'B') ||
+        setweight(to_tsvector('english', coalesce(${table.phoneNumber}, '')), 'C') ||
+        setweight(to_tsvector('english', coalesce(${table.licenseNumber}, '')), 'D')
+    )`,
   ],
 );
 

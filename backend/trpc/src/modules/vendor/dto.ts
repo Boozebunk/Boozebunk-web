@@ -32,6 +32,15 @@ export const googlePlacesResponseSchema = z.object({
     .optional(),
 });
 
+export const gettingVendorInputSchema = z.object({
+  search: z.string().optional(),
+  isActive: z.boolean().default(true),
+  fromDate: z.date().optional(),
+  toDate: z.date().optional(),
+  pageIndex: z.number().min(0).default(0),
+  pageSize: z.number().min(1).default(5),
+});
+
 export type GooglePlacesResponse = z.infer<typeof googlePlacesResponseSchema>;
 
 export type VendorRegistration = z.infer<typeof vendorRegistrationSchema>;

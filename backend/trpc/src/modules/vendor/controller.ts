@@ -6,9 +6,9 @@ import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trp
 import { generatePassword, hashPassword } from "@boozebunk-trpc/utils/authUtils";
 import { sendEmail } from "@boozebunk-trpc/utils/ses-sender";
 import { TRPCError } from "@trpc/server";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, gt, lt, or, sql } from "drizzle-orm";
 
-import { vendorRegistrationSchema } from "./dto";
+import { gettingVendorInputSchema, vendorRegistrationSchema } from "./dto";
 
 export const vendorRouter = createTRPCRouter({
   createVendor: protectedProcedure.input(vendorRegistrationSchema).mutation(async ({ input }) => {
@@ -75,5 +75,86 @@ export const vendorRouter = createTRPCRouter({
         message: `Sever not Creating an Vendor ${err}`,
       });
     }
+  }),
+
+  getVendorsList: protectedProcedure.input(gettingVendorInputSchema).query(async ({ input }) => {
+    const { search, isActive, pageIndex, pageSize, fromDate, toDate } = input;
+
+    const whereConditions = [];
+    whereConditions.push(eq(vendorTable.isActive, isActive));
+
+    if (search && search.trim() !== "") {
+      // --- FIX: Construct tsquery for flexible prefix matching ---
+      const searchTerms = search.trim().split(/\s+/).filter(Boolean); // Split by whitespace, remove empty strings
+      // Combine with OR (|) for flexibility, and :* for prefix matching
+      const tsQueryString = searchTerms.map((term) => `${term}:*`).join(" | ");
+      const tsQuery = sql`to_tsquery('english', ${tsQueryString})`; // Create the tsquery
+
+      whereConditions.push(
+        or(
+          sql`setweight(to_tsvector('english', coalesce(${vendorTable.martName}, '')), 'A') ||
+                setweight(to_tsvector('english', coalesce(${vendorTable.vendorName}, '')), 'B') ||
+                setweight(to_tsvector('english', coalesce(${vendorTable.phoneNumber}, '')), 'C') ||
+                setweight(to_tsvector('english', coalesce(${vendorTable.licenseNumber}, '')), 'D') @@ ${tsQuery}`,
+
+          sql`to_tsvector('english', coalesce(${userTable.email}, '')) @@ ${tsQuery}`,
+
+          sql`setweight(to_tsvector('english', coalesce(${vendorAddressesTable.addressState}, '')), 'A') ||
+                setweight(to_tsvector('english', coalesce(${vendorAddressesTable.addressPostalCode}, '')), 'B') ||
+                setweight(to_tsvector('english', coalesce(${vendorAddressesTable.addressCity}, '')), 'C') ||
+                setweight(to_tsvector('english', coalesce(${vendorAddressesTable.addressArea}, '')), 'D') @@ ${tsQuery}`,
+        ),
+      );
+    }
+
+    if (fromDate && toDate) {
+      const endDateInclusive = new Date(toDate);
+      endDateInclusive.setDate(endDateInclusive.getDate() + 1);
+      whereConditions.push(
+        and(gt(vendorTable.createdAt, fromDate), lt(vendorTable.createdAt, endDateInclusive)),
+      );
+    }
+
+    const finalWhereConditions = and(...whereConditions);
+
+    const totalCountResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(vendorTable)
+      .leftJoin(userTable, eq(vendorTable.userId, userTable.id))
+      .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
+      .where(finalWhereConditions);
+
+    const totalCount = totalCountResult[0]?.count || 0;
+
+    const vendors = await db
+      .select({
+        id: vendorTable.id,
+        martName: vendorTable.martName,
+        vendorName: vendorTable.vendorName,
+        phoneNumber: vendorTable.phoneNumber,
+        RegisteredOn: vendorTable.createdAt,
+        isActive: vendorTable.isActive,
+        licenseNumber: vendorTable.licenseNumber,
+        // Select email from userTable
+        vendorEmail: userTable.email,
+        // Select address components from vendorAddressesTable
+        addressCity: vendorAddressesTable.addressCity,
+        addressState: vendorAddressesTable.addressState,
+        addressPostalCode: vendorAddressesTable.addressPostalCode,
+        addressArea: vendorAddressesTable.addressArea,
+      })
+      .from(vendorTable)
+      .leftJoin(userTable, eq(vendorTable.userId, userTable.id))
+      .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
+      .where(finalWhereConditions)
+      .orderBy(vendorTable.createdAt)
+      .limit(pageSize)
+      .offset(pageIndex * pageSize);
+
+    return {
+      success: true,
+      vendorsData: vendors,
+      totalCount,
+    };
   }),
 });

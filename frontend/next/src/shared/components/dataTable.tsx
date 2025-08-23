@@ -1,10 +1,11 @@
+// frontend/next/src/shared/components/data-table.tsx
+
 import * as React from 'react';
 
 import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
@@ -42,39 +43,43 @@ type DataTableProps<TData> = {
   data: TData[];
   pagination: { pageIndex: number; pageSize: number };
   onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
+  totalRowCount: number; // NEW: Only totalRowCount is needed from backend
 };
 
 export function DataTable<TData>({
   columns,
   data,
   pagination,
-  onPaginationChange
+  onPaginationChange,
+  totalRowCount // NEW
 }: DataTableProps<TData>) {
   const [columnVisibility, setColumnVisibility] = React.useState<Record<string, boolean>>({});
   const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({});
+
+  // Calculate pageCount on the frontend
+  const pageCount = Math.ceil(totalRowCount / pagination.pageSize);
 
   const table = useReactTable<TData>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: (updaterOrValue) => {
-      if (typeof updaterOrValue === 'function') {
-        const newPagination = updaterOrValue(pagination);
-        onPaginationChange(newPagination);
-      } else {
-        onPaginationChange(updaterOrValue);
-      }
+      const newPagination =
+        typeof updaterOrValue === 'function' ? updaterOrValue(pagination) : updaterOrValue;
+      onPaginationChange(newPagination);
     },
     state: {
       columnVisibility,
       rowSelection,
       pagination
-    }
+    },
+    manualPagination: true,
+    pageCount: pageCount, // Use the frontend-calculated pageCount
+    rowCount: totalRowCount // Provide totalRowCount
   });
 
   return (
@@ -106,6 +111,12 @@ export function DataTable<TData>({
               ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* totalResults */}
+        <div>
+          <p className="text-muted-foreground text-sm">
+            Total Results: <span className="font-medium">{totalRowCount}</span>
+          </p>
+        </div>
       </div>
       <Card className="overflow-hidden rounded-md border p-0 md:p-5">
         <Table>
@@ -135,7 +146,7 @@ export function DataTable<TData>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

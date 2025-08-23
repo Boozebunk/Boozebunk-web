@@ -12,7 +12,7 @@
     "lint:fix": "eslint . --fix",
     "pre-commit": "lint-staged",
     "migration:generate": "bun --bun run drizzle-kit generate",
-    "migration:custom": "bun --bun run drizzle-kit generate --custom --name",
+    "migration:custom": "bun drizzle-kit generate --custom",
     "migration:run": "bun --bun run src/db/migrate.ts",
     "migration:push": "drizzle-kit push",
     "db:seed": "bun --bun run src/db/seed"
