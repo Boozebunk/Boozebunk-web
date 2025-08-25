@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { ThemeProvider } from 'next-themes';
 
+import { Toaster } from '~/shared/shadcn/sonner';
+
 import Providers from '~/providers';
 
 import type { Metadata, Viewport } from 'next';
@@ -62,6 +64,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <Providers>{children}</Providers>
+          <Toaster position="top-right" offset={50} richColors />
         </ThemeProvider>
       </body>
     </html>
