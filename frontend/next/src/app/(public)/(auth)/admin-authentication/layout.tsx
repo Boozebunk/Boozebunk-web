@@ -18,7 +18,7 @@ interface SessionTypes {
   role: 'admin' | 'vendor';
 }
 
-export default function RootLayout({
+export default function AuthAdminLayout({
   children
 }: Readonly<{
   children: React.ReactNode;

@@ -22,7 +22,7 @@ import { ComponentLoader } from '~/shared/components/componentLoader';
 import { DataTable } from '~/shared/components/dataTable';
 import { CustomDialog } from '~/shared/components/dialogBox';
 
-import { VendorsOverview } from '~/components/vendors-list/vendorsOverview';
+import { VendorsOverview } from '~/components/admin-dashboard/vendors-list/vendorsOverview';
 import { trpcHttp } from '~/utils/trpc';
 
 import type { ColumnDef } from '@tanstack/react-table';

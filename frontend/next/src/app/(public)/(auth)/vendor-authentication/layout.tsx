@@ -1,12 +1,50 @@
+'use client';
+
+import { useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+import { useQuery } from '@tanstack/react-query';
+
+import { PageLoader } from '~/shared/components/pageLoader';
+
+import { trpcHttp } from '~/utils/trpc';
 
 import Logo from '../../../../../public/Assets/Logo.png';
 
-export default function RootLayout({
+interface SessionTypes {
+  id: string;
+  email: string;
+  role: 'admin' | 'vendor';
+}
+
+export default function AuthVendorLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+
+  const { data: session, isLoading } = useQuery(
+    trpcHttp.auth.getSession.queryOptions<SessionTypes>()
+  );
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (session) {
+      console.log('in layout.tsx sign-in sesssion ', session);
+      if (session.role === 'admin') {
+        router.push(`/admin-portal/${session.id}/admin/dashboard`);
+      } else if (session.role === 'vendor') {
+        router.push(`/vendor-portal/${session.id}/vendor/dashboard`);
+      }
+    }
+  }, [session, isLoading, router]);
+
+  if (isLoading || session) {
+    return <PageLoader />;
+  }
   return (
     <div className="flex h-full min-h-screen w-full flex-col items-center lg:flex-row lg:justify-items-normal">
       <div className="admin-welcom-con flex w-full flex-col items-center justify-center lg:h-screen lg:w-[60%]">
