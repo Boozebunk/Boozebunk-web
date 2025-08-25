@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
 
 import { Button } from '~/shared/shadcn/button';
@@ -52,9 +53,11 @@ export default function Page() {
     trpcHttp.auth.requestPasswordReset.mutationOptions({
       onSuccess: (data) => {
         console.log(data.message);
+        toast.success('Email successfully verified');
         setEmailSent(true);
       },
       onError: (err) => {
+        toast.error(err.message);
         console.log(err);
       }
     })

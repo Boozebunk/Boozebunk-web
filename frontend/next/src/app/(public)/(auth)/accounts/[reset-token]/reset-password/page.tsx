@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
 
 import { Button } from '~/shared/shadcn/button';
@@ -53,6 +54,7 @@ export default function Page() {
     trpcHttp.auth.changePassword.mutationOptions({
       onSuccess: (data) => {
         console.log('Password Successfully Changed');
+        toast.success('Password Changed successfully');
 
         if (data.userRole === 'admin') {
           router.push('/admin-authentication/sign-in');
@@ -61,6 +63,7 @@ export default function Page() {
         }
       },
       onError: (err) => {
+        toast.error(err.message);
         console.error(err);
       }
     })

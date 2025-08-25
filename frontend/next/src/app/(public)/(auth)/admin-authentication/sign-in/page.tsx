@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, Loader2, UserRound } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/shadcn/card';
@@ -47,6 +48,7 @@ export default function Page() {
     trpcHttp.auth.login.mutationOptions({
       onSuccess: async (data) => {
         console.log('Logged-In Successfully');
+        toast.success('Logged In Successfully');
         // 1. Invalidate the old 'null' session query to mark it as stale
         await queryClient.invalidateQueries({
           queryKey: trpcHttp.auth.getSession.queryOptions().queryKey
@@ -59,6 +61,7 @@ export default function Page() {
         router.push(`/admin-portal/${data.user.id}/admin/dashboard`);
       },
       onError: (err) => {
+        toast.error(err.message);
         console.log('Error while loggin in -> frontend/next ', err);
       }
     })

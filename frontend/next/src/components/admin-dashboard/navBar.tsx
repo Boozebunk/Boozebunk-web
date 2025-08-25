@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CircleUserRound, Loader2, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
 import {
@@ -36,6 +37,7 @@ export function Navbar() {
     trpcHttp.auth.logout.mutationOptions({
       onSuccess: async () => {
         console.log('Logged out successfully');
+        toast.success('Logged out Successfully');
         // 1. Invalidate the old session data to mark it as stale
         await queryClient.invalidateQueries({
           queryKey: trpcHttp.auth.getSession.queryOptions().queryKey
@@ -46,6 +48,7 @@ export function Navbar() {
         router.push('/admin-authentication/sign-in');
       },
       onError: (err) => {
+        toast.error(err.message);
         console.error('Error while logging out:', err);
       }
     })

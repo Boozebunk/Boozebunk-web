@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { CalendarIcon, MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
 import { Calendar } from '~/shared/shadcn/calendar';
@@ -193,9 +194,11 @@ export default function Page() {
     trpcHttp.vendor.editVendorActivity.mutationOptions({
       onSuccess: () => {
         console.log('Successfully Edited');
+        toast.success('successfully updated vendor activity');
         refetchVendorsList();
       },
       onError: (err) => {
+        toast.error(err.message);
         console.log(`Error while updating vendor activity ${err}`);
       }
     })
@@ -206,9 +209,11 @@ export default function Page() {
     trpcHttp.vendor.deleteVendor.mutationOptions({
       onSuccess: () => {
         console.log('Vendor Deleted Successfully');
+        toast.success('vendor deleted Successfully');
         refetchVendorsList();
       },
       onError: (err) => {
+        toast.error(err.message);
         console.log('Vendor deletion error ', err);
       }
     })

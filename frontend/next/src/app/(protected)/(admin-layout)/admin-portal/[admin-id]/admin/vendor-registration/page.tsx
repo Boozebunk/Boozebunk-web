@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2, Store } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
 import {
@@ -56,9 +57,11 @@ export default function VendorRegistrationPage() {
     trpcHttp.vendor.createVendor.mutationOptions({
       onSuccess: () => {
         console.log('Vendor Registration Successful');
+        toast.success('Vendor created successfully');
         form.reset();
       },
       onError: (error) => {
+        toast.error(error.message);
         console.error('Vendor Registration Error:', error);
       }
     })

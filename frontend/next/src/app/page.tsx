@@ -6,6 +6,7 @@ import { createAdminSchema } from '@boozebunk-trpc/modules/auth/dto';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   Form,
@@ -36,9 +37,11 @@ function Page() {
   const { mutateAsync: createAdmin } = useMutation(
     trpcHttp.auth.createAdmin.mutationOptions({
       onSuccess: () => {
+        toast.success('Admin created Successfully');
         console.log('Admin created successfully');
       },
       onError: (err: unknown) => {
+        toast.error('Admin creation failed');
         console.error('Error creating admin:', err);
       }
     })
