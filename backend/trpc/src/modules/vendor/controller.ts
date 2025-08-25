@@ -7,6 +7,7 @@ import { generatePassword, hashPassword } from "@boozebunk-trpc/utils/authUtils"
 import { sendEmail } from "@boozebunk-trpc/utils/ses-sender";
 import { TRPCError } from "@trpc/server";
 import { and, eq, gt, lt, or, sql } from "drizzle-orm";
+import z from "zod";
 
 import { gettingVendorInputSchema, vendorRegistrationSchema } from "./dto";
 
@@ -157,4 +158,72 @@ export const vendorRouter = createTRPCRouter({
       totalCount,
     };
   }),
+
+  editVendorActivity: protectedProcedure
+    .input(z.object({ vendorId: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        const vendor = await db.query.vendor.findFirst({
+          where: eq(vendorTable.id, input.vendorId),
+        });
+
+        if (!vendor) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Vendor does not exists",
+          });
+        }
+
+        await db
+          .update(vendorTable)
+          .set({
+            isActive: vendor.isActive ? false : true,
+          })
+          .where(eq(vendorTable.id, input.vendorId));
+
+        return {
+          success: true,
+          message: "Successfully Update Vendor Activity",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Vendor Activity updation failed ${err}`,
+        });
+      }
+    }),
+
+  deleteVendor: protectedProcedure
+    .input(z.object({ vendorId: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        const vendor = await db.query.vendor.findFirst({
+          where: eq(vendorTable.id, input.vendorId),
+        });
+
+        if (!vendor) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Vendor does not exists",
+          });
+        }
+
+        // Vendor and Address data automatically get deletes as set delete on cascade
+        await db.delete(userTable).where(eq(userTable.id, vendor.userId));
+        await db.delete(vendorTable).where(eq(vendorTable.id, input.vendorId));
+        await db
+          .delete(vendorAddressesTable)
+          .where(eq(vendorAddressesTable.vendorId, input.vendorId));
+
+        return {
+          success: true,
+          message: "Vendor Successfully Deleted",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Vendor Deletion failed ${err}`,
+        });
+      }
+    }),
 });

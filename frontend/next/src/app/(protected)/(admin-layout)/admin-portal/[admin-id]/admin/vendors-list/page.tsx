@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { CalendarIcon, MoreHorizontal } from 'lucide-react';
 
@@ -49,7 +49,7 @@ export default function Page() {
     pageIndex: 0,
     pageSize: 4
   });
-  const [isActive, setIsActive] = React.useState(true);
+  const [isActiveToggle, setIsActiveToggle] = React.useState(true);
   const [openVendorActiveDialog, setOpenVendorActiveDialog] = React.useState(false);
   const [openVendorDelete, setOpenVendorDelete] = React.useState(false);
 
@@ -159,6 +159,7 @@ export default function Page() {
                 <DropdownMenuItem
                   className="text-red-600"
                   onClick={() => {
+                    setVendorId(vendor.id);
                     setOpenVendorDelete(true);
                   }}>
                   Delete vendor
@@ -172,10 +173,14 @@ export default function Page() {
   ];
 
   //fetching vendors data - filtered and paginated
-  const { data: vendorsList, isLoading } = useQuery(
+  const {
+    data: vendorsList,
+    isLoading,
+    refetch: refetchVendorsList
+  } = useQuery(
     trpcHttp.vendor.getVendorsList.queryOptions({
       search,
-      isActive,
+      isActive: isActiveToggle,
       fromDate: dateRange?.from,
       toDate: dateRange?.to,
       pageIndex: pagination.pageIndex,
@@ -183,12 +188,38 @@ export default function Page() {
     })
   );
 
-  const handleVendorAccountStatusChange = async () => {
-    console.log('Change vendor Account ', vendorId);
+  //Edit activity of vendor mutation
+  const { mutateAsync: EditVendorActivity } = useMutation(
+    trpcHttp.vendor.editVendorActivity.mutationOptions({
+      onSuccess: () => {
+        console.log('Successfully Edited');
+        refetchVendorsList();
+      },
+      onError: (err) => {
+        console.log(`Error while updating vendor activity ${err}`);
+      }
+    })
+  );
+
+  //Delete Vendor mutation
+  const { mutateAsync: DeleteVendor } = useMutation(
+    trpcHttp.vendor.deleteVendor.mutationOptions({
+      onSuccess: () => {
+        console.log('Vendor Deleted Successfully');
+        refetchVendorsList();
+      },
+      onError: (err) => {
+        console.log('Vendor deletion error ', err);
+      }
+    })
+  );
+
+  const handleVendorAccountActivityChange = async () => {
+    await EditVendorActivity({ vendorId });
   };
 
   const handleDeleteVendorAccount = async () => {
-    console.log('Delete vendor Account ', vendorId);
+    await DeleteVendor({ vendorId });
   };
 
   return (
@@ -201,7 +232,7 @@ export default function Page() {
         onOpenChange={setOpenVendorActiveDialog}
         open={openVendorActiveDialog}
         onAction={() => {
-          handleVendorAccountStatusChange();
+          handleVendorAccountActivityChange();
         }}
       />
       <CustomDialog
@@ -224,8 +255,8 @@ export default function Page() {
         <div className="flex flex-col items-start gap-3 sm:flex-row">
           {/*Active/Frozen filter*/}
           <div className="flex flex-row gap-2">
-            <Button onClick={() => setIsActive(true)}>Active</Button>
-            <Button variant="secondary" onClick={() => setIsActive(false)}>
+            <Button onClick={() => setIsActiveToggle(true)}>Active</Button>
+            <Button variant="secondary" onClick={() => setIsActiveToggle(false)}>
               Froozen
             </Button>
           </div>
