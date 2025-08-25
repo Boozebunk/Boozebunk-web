@@ -19,6 +19,7 @@ import { Input } from '~/shared/shadcn/input';
 import { Popover, PopoverContent, PopoverTrigger } from '~/shared/shadcn/popover';
 import { ComponentLoader } from '~/shared/components/componentLoader';
 import { DataTable } from '~/shared/components/dataTable';
+import { CustomDialog } from '~/shared/components/dialogBox';
 
 import { VendorsOverview } from '~/components/vendors-list/vendorsOverview';
 import { trpcHttp } from '~/utils/trpc';
@@ -49,6 +50,12 @@ export default function Page() {
     pageSize: 4
   });
   const [isActive, setIsActive] = React.useState(true);
+  const [openVendorActiveDialog, setOpenVendorActiveDialog] = React.useState(false);
+  const [openVendorDelete, setOpenVendorDelete] = React.useState(false);
+
+  const [activeFroozenContext, setActiveFroozenContext] = React.useState('Activate');
+
+  const [vendorId, setVendorId] = React.useState<string>('');
 
   const columns: ColumnDef<VendorsDataType>[] = [
     {
@@ -119,29 +126,52 @@ export default function Page() {
       cell: ({ row }) => {
         const vendor = row.original;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Edit vendor</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {vendor.isActive ? (
-                <DropdownMenuItem>Freeze vendor</DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem>Activate vendor</DropdownMenuItem>
-              )}
-              <DropdownMenuItem className="text-red-600">Delete vendor</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Edit vendor</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {vendor.isActive ? (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setActiveFroozenContext('Freeze');
+                      setVendorId(vendor.id);
+                      setOpenVendorActiveDialog(true);
+                    }}>
+                    Freeze vendor
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setActiveFroozenContext('Activate');
+                      setVendorId(vendor.id);
+                      setOpenVendorActiveDialog(true);
+                    }}>
+                    Activate vendor
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  className="text-red-600"
+                  onClick={() => {
+                    setOpenVendorDelete(true);
+                  }}>
+                  Delete vendor
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         );
       }
     }
   ];
 
+  //fetching vendors data - filtered and paginated
   const { data: vendorsList, isLoading } = useQuery(
     trpcHttp.vendor.getVendorsList.queryOptions({
       search,
@@ -153,8 +183,37 @@ export default function Page() {
     })
   );
 
+  const handleVendorAccountStatusChange = async () => {
+    console.log('Change vendor Account ', vendorId);
+  };
+
+  const handleDeleteVendorAccount = async () => {
+    console.log('Delete vendor Account ', vendorId);
+  };
+
   return (
     <div>
+      {/* Custom Dialog Boxes */}
+      <CustomDialog
+        title="Confirm Your Action?"
+        description={`Are you sure you want to ${activeFroozenContext} this vendor Account?`}
+        actionText={activeFroozenContext == 'Activate' ? 'Activate' : 'Freeze'}
+        onOpenChange={setOpenVendorActiveDialog}
+        open={openVendorActiveDialog}
+        onAction={() => {
+          handleVendorAccountStatusChange();
+        }}
+      />
+      <CustomDialog
+        title="Confirm Your Action?"
+        description={`Are you sure you want to Delete this vendor Account?, note that this action cannot be un-done`}
+        actionText="Delete"
+        onOpenChange={setOpenVendorDelete}
+        open={openVendorDelete}
+        onAction={() => {
+          handleDeleteVendorAccount();
+        }}
+      />
       <VendorsOverview />
       <div className="flex flex-col gap-3 p-3 lg:px-10">
         <h1 className="font-medium md:text-2xl">

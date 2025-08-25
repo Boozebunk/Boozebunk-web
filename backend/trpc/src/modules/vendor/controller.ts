@@ -87,7 +87,7 @@ export const vendorRouter = createTRPCRouter({
       // --- FIX: Construct tsquery for flexible prefix matching ---
       const searchTerms = search.trim().split(/\s+/).filter(Boolean); // Split by whitespace, remove empty strings
       // Combine with OR (|) for flexibility, and :* for prefix matching
-      const tsQueryString = searchTerms.map((term) => `${term}:*`).join(" | ");
+      const tsQueryString = searchTerms.map((term) => `${term}:*`).join(" & ");
       const tsQuery = sql`to_tsquery('english', ${tsQueryString})`; // Create the tsquery
 
       whereConditions.push(
