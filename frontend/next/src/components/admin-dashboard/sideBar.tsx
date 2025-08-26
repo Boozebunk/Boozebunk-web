@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useQuery } from '@tanstack/react-query';
 import { ClipboardList, Home, MessageSquareText, PackagePlus, Store } from 'lucide-react';
 
 import {
@@ -16,23 +17,33 @@ import {
   SidebarMenuSubItem
 } from '~/shared/shadcn/sidebar';
 
+import { trpcHttp } from '~/utils/trpc';
+
 import Logo2 from '../../../public/Assets/Logo-main-2.png';
 import Logo from '../../../public/Assets/Logo-main.png';
 
-const items = [
-  {
-    title: 'Dashboard',
-    url: '/admin-portal/190/admin/dashboard',
-    icon: Home
-  },
-  {
-    title: 'Feedbacks',
-    url: '/admin-portal/190/admin/feedbacks',
-    icon: MessageSquareText
-  }
-];
+interface SessionTypes {
+  id: string;
+  email: string;
+  role: 'admin' | 'vendor';
+}
 
 export function SideBar() {
+  const { data: session } = useQuery(trpcHttp.auth.getSession.queryOptions<SessionTypes>());
+
+  const items = [
+    {
+      title: 'Dashboard',
+      url: `/admin-portal/${session?.id}/admin/dashboard`,
+      icon: Home
+    },
+    {
+      title: 'Feedbacks',
+      url: `/admin-portal/${session?.id}/admin/feedbacks`,
+      icon: MessageSquareText
+    }
+  ];
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
