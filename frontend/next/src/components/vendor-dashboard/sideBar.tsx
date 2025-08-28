@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -39,7 +41,7 @@ export function SideBar() {
               asChild
               className="w-fit bg-[#fff5cb] p-5 py-5 hover:bg-[#fff5cb] active:bg-[#fff5cb]">
               <Link
-                href={`/admin-portal/${session?.id}/admin/dashboard`}
+                href={`/vendor-portal/${session?.id}/vendor/dashboard`}
                 className="flex items-center justify-baseline text-2xl">
                 <Image src={Logo} alt="logo" className="w-6" />
                 <Image src={Logo2} alt="logo" className="ml-[-5px] w-35" />
@@ -74,7 +76,7 @@ export function SideBar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="mb-2 p-5 py-6">
-                  <Link href="/vendor-portal/0999/vendor/stock-list">
+                  <Link href={`/vendor-portal/${session?.id}/vendor/stock-list`}>
                     <Boxes className="mr-2 !size-6" />
                     <span className="text-[17px] font-medium">Stock</span>
                   </Link>
@@ -83,16 +85,7 @@ export function SideBar() {
                 <SidebarMenuSub className="ml-7 gap-2">
                   <SidebarMenuSubItem>
                     <SidebarMenuButton asChild className="py-5">
-                      <Link href="/vendor-portal/0999/vendor/outofstock-items">
-                        <Boxes className="mr-2 !size-5" />
-                        <span className="text-[15px] font-medium">Update Stock</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuSubItem>
-
-                  <SidebarMenuSubItem>
-                    <SidebarMenuButton asChild className="py-5">
-                      <Link href="/vendor-portal/0999/vendor/add-product">
+                      <Link href={`/vendor-portal/${session?.id}/vendor/add-product`}>
                         <PackagePlus className="mr-2 !size-5" />
                         <span className="text-[15px] font-medium">New Product</span>
                       </Link>
