@@ -168,12 +168,18 @@ export default function VendorRegistrationPage() {
       <div className="bg-background flex min-h-screen w-full justify-center p-0 sm:p-5 sm:py-0">
         <Card className="h-fit w-full border-0 bg-transparent shadow-none">
           <CardHeader className="flex flex-col items-center gap-2 text-center">
-            <Store className="text-primary h-10 w-10 sm:h-12 sm:w-12" />
+            <Store className="text-primary h-6 w-6 sm:h-12 sm:w-12" />
             <CardTitle className="text-2xl font-bold">Vendor Registration</CardTitle>
             <CardDescription className="max-w-lg text-sm">
               Fill in the details below to register the liquor mart as a vendor.
             </CardDescription>
           </CardHeader>
+
+          {/* Container for Google Autocomplete */}
+          <div>
+            <span>Search For A Mart</span>
+            <div className="bg-white" id="autocomplete-container" />
+          </div>
 
           <CardContent className="space-y-8">
             <Form {...form}>
@@ -184,12 +190,18 @@ export default function VendorRegistrationPage() {
                     <FormField
                       control={form.control}
                       name="martName"
-                      render={({}) => (
+                      render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Search for a place</FormLabel>
+                          <FormLabel>Mart Name</FormLabel>
                           <FormControl>
-                            {/* Container for Google Autocomplete */}
-                            <div id="autocomplete-container" />
+                            <Input
+                              id="martName"
+                              className="text-sm"
+                              type="text"
+                              placeholder="e.g. LIC-123456"
+                              required
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
