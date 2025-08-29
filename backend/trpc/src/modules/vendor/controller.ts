@@ -210,10 +210,10 @@ export const vendorRouter = createTRPCRouter({
 
         // Vendor and Address data automatically get deletes as set delete on cascade
         await db.delete(userTable).where(eq(userTable.id, vendor.userId));
-        await db.delete(vendorTable).where(eq(vendorTable.id, input.vendorId));
-        await db
-          .delete(vendorAddressesTable)
-          .where(eq(vendorAddressesTable.vendorId, input.vendorId));
+        // await db.delete(vendorTable).where(eq(vendorTable.id, input.vendorId));
+        // await db
+        //   .delete(vendorAddressesTable)
+        //   .where(eq(vendorAddressesTable.vendorId, input.vendorId));
 
         return {
           success: true,
