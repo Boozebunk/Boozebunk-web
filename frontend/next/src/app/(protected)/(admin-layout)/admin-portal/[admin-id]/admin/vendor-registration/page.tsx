@@ -187,11 +187,6 @@ export default function VendorRegistrationPage() {
                 <section className="space-y-4">
                   <h2 className="border-b pb-1 text-lg font-semibold">Business Info</h2>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    {/* Container for Google Autocomplete */}
-                    <div>
-                      <span>Search For A Mart</span>
-                      <div className="bg-white" id="autocomplete-container" />
-                    </div>
                     <FormField
                       control={form.control}
                       name="martName"
