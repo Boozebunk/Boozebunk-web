@@ -13,4 +13,4 @@ CREATE INDEX IF NOT EXISTS "vendor_addresses_search_idx" ON "vendor_addresses" U
         setweight(to_tsvector('english', coalesce("address_postal_code", '')), 'B') ||
         setweight(to_tsvector('english', coalesce("address_city", '')), 'C') ||
         setweight(to_tsvector('english', coalesce("address_area", '')), 'D'))
-)
+);

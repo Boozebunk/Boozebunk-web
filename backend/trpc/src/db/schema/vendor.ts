@@ -18,7 +18,8 @@ export const vendorTable = pgTable(
     licenseNumber: text("license_number"),
     isActive: boolean("is_active").default(true).notNull(),
     martStatus: text("mart_status").default("OPEN").notNull(),
-
+    martOpenTime: text("mart_open_time").notNull().default("10:00 AM"),
+    martCloseTime: text("mart_close_time").notNull().default("08:00 PM"),
     locationCoordinates: geometry("location_coordinates", { type: "Point", srid: 4326 }).notNull(),
 
     createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull(),
