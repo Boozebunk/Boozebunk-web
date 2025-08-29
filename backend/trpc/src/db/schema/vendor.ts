@@ -3,6 +3,7 @@ import { boolean, geometry, index, pgTable, text, timestamp, uuid } from "drizzl
 
 import { vendorAddressesTable } from "./address";
 import { userTable } from "./auth/user";
+import { vendorStockTable } from "./stock";
 
 export const vendorTable = pgTable(
   "vendors",
@@ -40,7 +41,7 @@ export const vendorTable = pgTable(
   ],
 );
 
-export const vendorRelations = relations(vendorTable, ({ one }) => ({
+export const vendorRelations = relations(vendorTable, ({ one, many }) => ({
   user: one(userTable, {
     fields: [vendorTable.userId],
     references: [userTable.id],
@@ -49,4 +50,5 @@ export const vendorRelations = relations(vendorTable, ({ one }) => ({
     fields: [vendorTable.id],
     references: [vendorAddressesTable.vendorId],
   }),
+  stock: many(vendorStockTable),
 }));

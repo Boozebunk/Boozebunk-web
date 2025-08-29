@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 
-import { ImagePlus, PackagePlus } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { ImagePlus, Loader2, PackagePlus } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
 import {
@@ -23,6 +25,8 @@ import {
 import { Input } from '~/shared/shadcn/input';
 import { Label } from '~/shared/shadcn/label';
 import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
+
+import { trpcHttp } from '~/utils/trpc';
 
 import liquorDataJson from './StockInfo.json';
 
@@ -71,7 +75,7 @@ function ComboboxInput({ label, placeholder, value, onChange, options }: Combobo
           className="h-9"
         />
         {open && (
-          <CommandGroup className="bg-muted top-full z-10 mt-1 max-h-48 w-full rounded-md border shadow-md">
+          <CommandGroup className="bg-muted top-full z-10 mt-1 max-h-48 w-full overflow-y-scroll rounded-md border shadow-md">
             {filteredOptions.length === 0 ? (
               <CommandEmpty>No results found.</CommandEmpty>
             ) : (
@@ -98,17 +102,17 @@ function ComboboxInput({ label, placeholder, value, onChange, options }: Combobo
 
 export default function VendorRegistrationPage() {
   const [preview, setPreview] = React.useState<string | null>(null);
-  const [availability, setAvailability] = React.useState<'in' | 'out'>('in');
 
-  // Controlled combobox states
   const [brand, setBrand] = React.useState('');
   const [category, setCategory] = React.useState('');
   const [type, setType] = React.useState('');
   const [size, setSize] = React.useState('');
+  const [productName, setProductName] = React.useState('');
+  const [availability, setAvailability] = React.useState(true);
+  const [price, setPrice] = React.useState(0);
 
   const brandOptions = liquorData.brands;
   const categoryOptions = liquorData.categories.map((cat) => cat.name);
-
   // find selected category object
   const selectedCategory = liquorData.categories.find((cat) => cat.name === category);
   const typeOptions = selectedCategory ? selectedCategory.types : [];
@@ -129,19 +133,32 @@ export default function VendorRegistrationPage() {
     };
   }, [preview]);
 
-  function handleSubmit(e: React.FormEvent) {
+  const { mutateAsync: AddStock, isPending } = useMutation(
+    trpcHttp.stock.addStock.mutationOptions({
+      onSuccess: () => {
+        toast.success('Stock Added Successfully');
+      },
+      onError: (err) => {
+        toast.error('Error Occurred');
+        console.log(err);
+      }
+    })
+  );
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Collect form data
+
     const payload = {
+      productName,
       brand,
       category,
       type,
       size,
+      price: price.toString(),
       availability
-      // you'd also collect productName, price via refs/state
     };
-    console.log('Submitting product:', payload);
-    // Add your API call here
+    console.log(payload);
+    await AddStock(payload);
   }
 
   return (
@@ -211,9 +228,13 @@ export default function VendorRegistrationPage() {
                 <Label className="text-lg font-semibold">Availability</Label>
                 <ToggleGroup
                   type="single"
-                  value={availability}
+                  value={availability ? 'in' : 'out'}
                   onValueChange={(value) => {
-                    if (value) setAvailability(value as 'in' | 'out');
+                    if (value === 'in') {
+                      setAvailability(false);
+                    } else {
+                      setAvailability(true);
+                    }
                   }}
                   className="bg-muted grid w-max grid-cols-2 rounded-xl p-1">
                   <ToggleGroupItem
@@ -242,6 +263,10 @@ export default function VendorRegistrationPage() {
                   id="productName"
                   className="text-sm"
                   type="text"
+                  value={productName}
+                  onChange={(e) => {
+                    setProductName(e.target.value);
+                  }}
                   placeholder="e.g. Jack Daniel's Old No. 7"
                   required
                 />
@@ -294,6 +319,10 @@ export default function VendorRegistrationPage() {
                   type="number"
                   min="0"
                   placeholder="e.g. 2000"
+                  value={price}
+                  onChange={(e) => {
+                    setPrice(parseFloat(e.target.value));
+                  }}
                   required
                 />
               </div>
@@ -305,8 +334,9 @@ export default function VendorRegistrationPage() {
           <Button
             type="submit"
             onClick={handleSubmit}
-            className="flex w-full items-center justify-center gap-2 bg-[#6B0F1A] text-white hover:bg-[#44101b]">
-            Add Product
+            className="flex w-full items-center justify-center gap-2 bg-[#6B0F1A] text-white hover:bg-[#44101b]"
+            disabled={isPending}>
+            {isPending ? <Loader2 /> : 'Add Product'}
             <PackagePlus />
           </Button>
         </CardFooter>

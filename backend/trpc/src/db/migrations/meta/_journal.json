@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1755627429981,
-      "tag": "20250819181709_flippant_blizzard",
+      "when": 1756506382870,
+      "tag": "20250829222622_wild_praxagora",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1755874554726,
-      "tag": "20250822145554_exotic_gunslinger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1756472744659,
-      "tag": "20250829130544_crazy_multiple_man",
+      "when": 1756506399241,
+      "tag": "20250829222639_fantastic_stick",
       "breakpoints": true
     }
   ]
