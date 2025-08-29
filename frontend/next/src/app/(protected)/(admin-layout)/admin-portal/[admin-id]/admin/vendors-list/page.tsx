@@ -18,6 +18,7 @@ import {
 } from '~/shared/shadcn/dropdown-menu';
 import { Input } from '~/shared/shadcn/input';
 import { Popover, PopoverContent, PopoverTrigger } from '~/shared/shadcn/popover';
+import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
 import { ComponentLoader } from '~/shared/components/componentLoader';
 import { DataTable } from '~/shared/components/dataTable';
 import { CustomDialog } from '~/shared/components/dialogBox';
@@ -74,7 +75,7 @@ export default function Page() {
       cell: ({ row }) => {
         const vendor = row.original;
         return (
-          <div className="ml-3 flex flex-col gap-1 font-medium">
+          <div className="ml-3 flex min-w-[150px] flex-col gap-1 font-medium whitespace-normal">
             <span>{vendor.martName}</span>
             <span>{vendor.licenseNumber}</span>
           </div>
@@ -101,11 +102,13 @@ export default function Page() {
       cell: ({ row }) => {
         const vendor = row.original;
         return (
-          <div className="flex flex-col gap-1 text-sm leading-tight lg:flex-row">
-            {vendor.addressArea},{' '}
-            <span className="text-muted-foreground">
-              {vendor.addressCity}, {vendor.addressState}
+          <div className="flex flex-col gap-1 text-sm leading-tight">
+            <span className="text-muted-foreground min-w-[250px] text-left text-sm whitespace-normal">
+              {vendor.addressArea}
             </span>
+
+            <span>{vendor.addressCity}</span>
+            <span>{vendor.addressState}</span>
             <span>{vendor.addressPostalCode}</span>
           </div>
         );
@@ -113,7 +116,7 @@ export default function Page() {
     },
     {
       accessorKey: 'Registered On',
-      header: () => <div className="text-right">Last Registered</div>,
+      header: () => <div className="text-right">Registered On</div>,
       cell: ({ row }) => {
         const vendor = row.original;
         const date = new Date(vendor.RegisteredOn);
@@ -257,56 +260,63 @@ export default function Page() {
         </h1>
 
         {/* Filters Row */}
-        <div className="flex flex-col items-start gap-3 sm:flex-row">
-          {/*Active/Frozen filter*/}
-          <div className="flex flex-row gap-2">
-            <Button onClick={() => setIsActiveToggle(true)}>Active</Button>
-            <Button variant="secondary" onClick={() => setIsActiveToggle(false)}>
-              Froozen
-            </Button>
-          </div>
+        <div className="flex flex-col items-start gap-3 lg:flex-row">
+          <div className="flex items-start gap-3">
+            {/*Active/Frozen filter*/}
+            <ToggleGroup variant="outline" type="multiple">
+              <ToggleGroup
+                type="single"
+                value={isActiveToggle ? 'Active' : 'Frozen'}
+                onValueChange={(val) => setIsActiveToggle(val === 'Active')}
+                className="border-none">
+                <ToggleGroupItem value="Active" aria-label="Set Active">
+                  Active
+                </ToggleGroupItem>
+                <ToggleGroupItem value="Frozen" aria-label="Set Frozen">
+                  Frozen
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </ToggleGroup>
 
+            {/* Date filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={`max-w-[250px] justify-between text-left font-normal ${
+                    !dateRange?.from && 'text-muted-foreground'
+                  }`}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange?.from && dateRange?.to ? (
+                    <>
+                      {format(dateRange.from, 'MMM dd, yyyy')} -{' '}
+                      {format(dateRange.to, 'MMM dd, yyyy')}
+                    </>
+                  ) : (
+                    <span>Pick a date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={(range) => {
+                    setDateRange(range || undefined);
+                  }}
+                  numberOfMonths={2}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
           {/* Search Bar */}
-          <div className="flex flex-row items-start gap-5 pb-4">
-            <Input
-              placeholder="Find vendor by any shown details below..."
-              className="max-w-[550px] text-sm md:text-lg"
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-            />
-          </div>
-
-          {/* Date filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={`max-w-[250px] justify-between text-left font-normal ${
-                  !dateRange?.from && 'text-muted-foreground'
-                }`}>
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {dateRange?.from && dateRange?.to ? (
-                  <>
-                    {format(dateRange.from, 'MMM dd, yyyy')} -{' '}
-                    {format(dateRange.to, 'MMM dd, yyyy')}
-                  </>
-                ) : (
-                  <span>Pick a date range</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="range"
-                selected={dateRange}
-                onSelect={(range) => {
-                  setDateRange(range || undefined);
-                }}
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover>
+          <Input
+            placeholder="Search for a vendor by any of his details..."
+            className="text-sm sm:w-[550px] md:text-lg"
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
         </div>
 
         {/* Vendors Table */}
@@ -321,6 +331,7 @@ export default function Page() {
               onPaginationChange={setPagination}
               totalRowCount={vendorsList?.totalCount ?? 0}
             />
+            ...
           </div>
         )}
       </div>

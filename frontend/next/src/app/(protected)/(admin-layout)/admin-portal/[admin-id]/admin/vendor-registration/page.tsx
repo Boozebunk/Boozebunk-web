@@ -401,8 +401,9 @@ export default function VendorRegistrationPage() {
                   </div>
                 </section>
 
-                <CardFooter className="flex flex-row gap-4">
+                <CardFooter className="flex flex-row gap-3 p-0">
                   <Button
+                    variant={'outline'}
                     onClick={() => {
                       form.reset();
                     }}>
@@ -410,7 +411,7 @@ export default function VendorRegistrationPage() {
                   </Button>
                   <Button
                     type="submit"
-                    className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]"
+                    className="flex-1 bg-[#6B0F1A] text-white hover:bg-[#44101b]"
                     disabled={isPending}>
                     {isPending ? <Loader2 /> : 'Register Vendor'}
                   </Button>

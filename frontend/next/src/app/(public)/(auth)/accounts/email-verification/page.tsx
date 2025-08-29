@@ -91,7 +91,7 @@ export default function Page() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className="flex flex-col justify-center">
+              className="flex flex-col justify-center gap-3">
               <CardContent className="flex justify-center">
                 <div className="grid w-full gap-2.5">
                   <FormField
@@ -117,8 +117,7 @@ export default function Page() {
                   {isPending ? <Loader2 /> : 'Verify Email'}
                 </Button>
                 <div className="text-center text-sm">
-                  A link to reset the password will be sent to you email after verification of the
-                  your account.
+                  After your account is verified, a password reset link will be sent to your email.
                 </div>
               </CardFooter>
             </form>

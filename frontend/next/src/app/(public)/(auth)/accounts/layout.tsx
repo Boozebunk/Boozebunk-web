@@ -19,15 +19,15 @@ export default function RootLayout({
               Welcome!
             </h1>
             <span className="md:text-1xl text-sm font-semibold text-[#442816] lg:text-3xl">
-              Lets get you reset your password.
+              Let’s reset your password.
             </span>
             <p className="hidden text-lg leading-relaxed text-[#442816] md:text-xl lg:block">
               {' '}
-              you&apos;re supposed to enter you registered email account with boozebunk platform and
-              then an email will be sent to the registered email where you will be given a link,
-              upon clicking you will have a web-page where you can change your password —{' '}
+              Please enter the email address registered with the BoozeBunk platform. A password
+              reset link will be sent to this email. Click the link to open a webpage where you can
+              set a new password —{' '}
               <em className="font-medium text-[#6B0F1A]">
-                Change Password With-in 1hr you get the link!
+                The password reset link is valid for 1 hour.
               </em>
             </p>
           </div>

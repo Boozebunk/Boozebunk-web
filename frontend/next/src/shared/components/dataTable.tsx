@@ -51,7 +51,7 @@ export function DataTable<TData>({
   data,
   pagination,
   onPaginationChange,
-  totalRowCount // NEW
+  totalRowCount
 }: DataTableProps<TData>) {
   const [columnVisibility, setColumnVisibility] = React.useState<Record<string, boolean>>({});
   const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({});
@@ -85,7 +85,7 @@ export function DataTable<TData>({
   return (
     <>
       {/* Column visibility dropdown */}
-      <div className="mb-2 flex items-start gap-5">
+      <div className="mb-2 flex items-center gap-5">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
@@ -112,11 +112,9 @@ export function DataTable<TData>({
           </DropdownMenuContent>
         </DropdownMenu>
         {/* totalResults */}
-        <div>
-          <p className="text-muted-foreground text-sm">
-            Total Results: <span className="font-medium">{totalRowCount}</span>
-          </p>
-        </div>
+        <p className="text-sm font-semibold">
+          Total Results: <span className="font-medium">{totalRowCount}</span>
+        </p>
       </div>
       <Card className="overflow-hidden rounded-md border p-0 md:p-5">
         <Table>

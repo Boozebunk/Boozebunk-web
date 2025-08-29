@@ -69,7 +69,7 @@ const data: Vendor[] = [
     phone: '98765-12345',
     location: { area: 'Connaught Place', city: 'New Delhi', state: 'Delhi' },
     description:
-      'Need restock of apples and mangoes urgently iam very much satisfied with how well your platofrma has played a part in increasin the sales of the store by a bigh big marghin thanks to each of you guys for this fanatastic platofrm of yours.',
+      'We display a wide range of premium whiskey and wine, showing real-time stock availability for our customers. Note: We do not sell products directly; we only update inventory status.',
     queryDate: '2025-08-07T10:15:00Z'
   },
   {
@@ -79,7 +79,8 @@ const data: Vendor[] = [
     email: 'priya.sharma@example.com',
     phone: '98234-56789',
     location: { area: 'Bandra West', city: 'Mumbai', state: 'Maharashtra' },
-    description: 'Looking for organic wheat supplier.',
+    description:
+      'Our store showcases the availability of various craft beers and spirits so that users can see stock levels at a glance. We do not sell the items ourselves.',
     queryDate: '2025-08-05T09:00:00Z'
   },
   {
@@ -89,7 +90,8 @@ const data: Vendor[] = [
     email: 'amit.patel@example.com',
     phone: '99345-67890',
     location: { area: 'Navrangpura', city: 'Ahmedabad', state: 'Gujarat' },
-    description: 'Require bulk onions at wholesale price.',
+    description:
+      'High stock of popular vodka and rum brands displayed for customers. Only inventory info is provided; we are not a selling outlet.',
     queryDate: '2025-08-06T14:20:00Z'
   },
   {
@@ -99,7 +101,8 @@ const data: Vendor[] = [
     email: 'sushma.reddy@example.com',
     phone: '98450-12345',
     location: { area: 'Banjara Hills', city: 'Hyderabad', state: 'Telangana' },
-    description: 'Requesting new vendor partnership details.',
+    description:
+      'Displaying current stock of wines and liqueurs for users to check availability. We do not process any sales; it’s purely an information display.',
     queryDate: '2025-08-04T16:20:00Z'
   },
   {
@@ -109,7 +112,8 @@ const data: Vendor[] = [
     email: 'karthik.iyer@example.com',
     phone: '98760-54321',
     location: { area: 'Indiranagar', city: 'Bengaluru', state: 'Karnataka' },
-    description: 'Need price list for dairy products.',
+    description:
+      'Showcasing high stock levels of local and imported spirits for customer reference. Note: We provide stock info only; no direct sales are conducted.',
     queryDate: '2025-08-03T11:15:00Z'
   }
 ];

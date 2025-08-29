@@ -95,7 +95,9 @@ export default function Page() {
         </CardHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col justify-center">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="flex flex-col justify-center gap-7">
             <CardContent className="flex flex-col gap-5">
               {/* password  */}
               <FormField
@@ -157,7 +159,7 @@ export default function Page() {
               />
             </CardContent>
 
-            <CardFooter className="my-10 flex flex-col gap-3">
+            <CardFooter className="flex flex-col gap-3">
               <Button
                 type="submit"
                 className="w-full bg-[#6B0F1A] text-white hover:bg-[#44101b]"
