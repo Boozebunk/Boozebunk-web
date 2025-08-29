@@ -14,3 +14,11 @@ CREATE INDEX IF NOT EXISTS "vendor_addresses_search_idx" ON "vendor_addresses" U
         setweight(to_tsvector('english', coalesce("address_city", '')), 'C') ||
         setweight(to_tsvector('english', coalesce("address_area", '')), 'D'))
 );
+
+CREATE INDEX IF NOT EXISTS "vendor_stock_search_idx" ON "vendor_stock" USING gin((
+setweight(to_tsvector('english', coalesce("brand_name", '')), 'A') ||
+setweight(to_tsvector('english', coalesce("product_name")), 'B') ||
+setweight(to_tsvector('english', coalesce("category")), 'C') ||
+setweight(to_tsvector('english', coalesce("type")), 'D') ||
+setweight(to_tsvector('english', coalesce("size")), 'E')
+));
