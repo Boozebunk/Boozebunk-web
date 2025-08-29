@@ -175,7 +175,13 @@ export default function VendorRegistrationPage() {
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-8">
+          {/* Container for Google Autocomplete */}
+          <div className="flex flex-col gap-1 px-3 md:px-8">
+            <h2 className="text-lg font-semibold">Search For A Mart</h2>
+            <div id="autocomplete-container" />
+          </div>
+
+          <CardContent className="space-y-8 px-5 md:px-10">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
                 <section className="space-y-4">
