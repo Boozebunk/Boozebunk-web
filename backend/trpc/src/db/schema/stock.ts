@@ -1,4 +1,4 @@
-import { index, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 import { vendorTable } from "./vendor";
 
@@ -15,6 +15,7 @@ export const vendorStockTable = pgTable(
     type: text("type"),
     size: text("size").notNull(),
     price: numeric("price").notNull(),
+    availability: boolean("availability").notNull().default(true),
 
     productImageUrl: text("product_image_url"),
 
@@ -28,5 +29,6 @@ export const vendorStockTable = pgTable(
     index("vendor_stock_vendor_id_idx").on(table.vendorId),
     index("vendor_stock_brand_name_idx").on(table.brandName),
     index("vendor_stock_product_name_idx").on(table.productName),
+    index("vendor_stock_availability_idx").on(table.availability),
   ],
 );
