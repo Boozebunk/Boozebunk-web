@@ -38,7 +38,7 @@ export const vendorStockTable = pgTable(
             setweight(to_tsvector('english', coalesce(${table.productName}, '')), 'B') ||
             setweight(to_tsvector('english', coalesce(${table.category}, '')), 'C') ||
             setweight(to_tsvector('english', coalesce(${table.type}, '')), 'D') ||
-            setweight(to_tsvector('english', coalesce(${table.size}, '')), 'E')
+            setweight(to_tsvector('english', coalesce(${table.size}, '')), 'D')
         )
     )`,
   ],

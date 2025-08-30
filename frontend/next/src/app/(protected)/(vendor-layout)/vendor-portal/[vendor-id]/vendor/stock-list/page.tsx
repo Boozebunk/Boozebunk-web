@@ -2,136 +2,118 @@
 
 import * as React from 'react';
 
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-import { ChevronDown, MoreHorizontal, Pencil } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Loader2, MoreHorizontal, Pencil } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
-import { Card } from '~/shared/shadcn/card';
 import { Checkbox } from '~/shared/shadcn/checkbox';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/shared/shadcn/dropdown-menu';
 import { Input } from '~/shared/shadcn/input';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '~/shared/shadcn/pagination';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/shared/shadcn/table';
 import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
+import { ComponentLoader } from '~/shared/components/componentLoader';
+import { DataTable } from '~/shared/components/dataTable';
 
-import type {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState
-} from '@tanstack/react-table';
+import { trpcHttp } from '~/utils/trpc';
 
-const stockItems = [
-  { id: 1, stockName: "Jack Daniel's", size: '750ml', category: 'Whiskey' },
-  { id: 2, stockName: 'Grey Goose', size: '1L', category: 'Vodka' },
-  { id: 3, stockName: 'Johnnie Walker Black', size: '750ml', category: 'Whiskey' },
-  { id: 4, stockName: 'Bombay Sapphire', size: '1L', category: 'Gin' }
-];
+import type { ColumnDef } from '@tanstack/react-table';
 
 type StockItem = {
+  id: string;
+  brand: string;
+  productName: string;
   category: string;
-  id: number;
-  stockName: string;
+  type: string | null;
   size: string;
+  price: string;
+  availability: boolean;
 };
 
 export default function Page() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-
-  // Availability keyed by item ID (default = 'out')
-  const [rowAvailability, setRowAvailability] = React.useState<Record<number, 'in' | 'out'>>(() =>
-    stockItems.reduce(
-      (acc, item) => {
-        acc[item.id] = 'out';
-        return acc;
-      },
-      {} as Record<number, 'in' | 'out'>
-    )
-  );
-
-  // Stock filter toggle
   const [stockFilter, setStockFilter] = React.useState<'all' | 'in' | 'out'>('all');
+  const [search, setSearch] = React.useState('');
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 4
+  });
 
-  // Add this state along with stockFilter
-  const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
+  const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([]);
 
-  // Get unique categories dynamically
-  const categories = React.useMemo(
-    () => ['all', ...Array.from(new Set(stockItems.map((item) => item.category)))],
-    []
+  // fetching vendor Stock Data
+  const {
+    data: stockData,
+    isLoading,
+    refetch: refetchVendorStocks
+  } = useQuery(
+    trpcHttp.stock.getVendorStock.queryOptions({
+      search,
+      stockFilter,
+      pageIndex: pagination.pageIndex,
+      pageSize: pagination.pageSize
+    })
   );
 
-  const filteredStockItems = React.useMemo(() => {
-    return stockItems.filter((item) => {
-      const matchesAvailability = stockFilter === 'all' || rowAvailability[item.id] === stockFilter;
-      const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
-      return matchesAvailability && matchesCategory;
-    });
-  }, [stockFilter, categoryFilter, rowAvailability]);
+  const { mutateAsync: updateStock, isPending: isUpdatingStock } = useMutation(
+    trpcHttp.stock.updateVendorStock.mutationOptions({
+      onSuccess: () => {
+        toast.success('Successfully Updated Stock(s)');
+        refetchVendorStocks();
+        setSelectedRowIds([]);
+      },
+      onError: (err) => {
+        setSelectedRowIds([]);
+        toast.error('Error While Updating Stock');
+        console.error('Failed to update stock:', err);
+      }
+    })
+  );
+
+  const handleMassUpdate = (newStatus: boolean) => {
+    if (selectedRowIds.length === 0) {
+      toast.error('Please select at least one item to update.');
+      return;
+    }
+    console.log(selectedRowIds);
+    updateStock({ stockIds: selectedRowIds, availability: newStatus });
+  };
+
+  const handleIndividualUpdate = (stockId: string, newStatus: boolean) => {
+    updateStock({ stockIds: [stockId], availability: newStatus });
+  };
 
   const columns: ColumnDef<StockItem>[] = [
     {
       id: 'select_sno',
-      header: ({ table }) => (
+      header: () => (
         <div className="mr-5 flex items-center gap-2 font-medium">
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected()
-                ? true
-                : table.getIsSomePageRowsSelected()
-                  ? 'indeterminate'
-                  : false
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-          <span>Edit All</span>
+          <span>Select</span>
         </div>
       ),
-      cell: ({ row, table }) => {
-        const pageIndex = table.getState().pagination.pageIndex;
-        const pageSize = table.getState().pagination.pageSize;
-        const sno = pageIndex * pageSize + row.index + 1;
-
+      cell: ({ row }) => {
         return (
           <div className="flex items-center gap-2">
             <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              checked={selectedRowIds.includes(row.original.id)}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  // Add the ID only if it's not already in the array to prevent duplicates
+                  if (!selectedRowIds.includes(row.original.id)) {
+                    setSelectedRowIds([...selectedRowIds, row.original.id]);
+                  }
+                } else {
+                  // Filter out the ID
+                  setSelectedRowIds(selectedRowIds.filter((id) => id !== row.original.id));
+                }
+              }}
               aria-label="Select row"
             />
-            <span>{sno}</span>
+            <span>{row.index + 1}</span>
           </div>
         );
       },
@@ -139,26 +121,40 @@ export default function Page() {
       enableHiding: false
     },
     {
-      id: 'stockDetails',
-      header: 'Stock Details',
+      id: 'Brand-Product',
+      header: 'Brand / Product',
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <div className="flex flex-col">
-            <span className="text-sm font-medium sm:text-lg">{item.stockName}</span>
-            <span className="text-muted-foreground text-xs md:text-sm">{item.size}</span>
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium sm:text-lg">{item.brand}</span>
+            <span className="text-sm font-normal sm:text-lg">{item.productName}</span>
           </div>
         );
       }
     },
     {
-      id: 'Category',
-      header: 'Category',
+      id: 'Category-Type',
+      header: 'Category / Type',
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <div className="flex flex-col">
-            <span className="text-sm font-normal sm:text-lg">{item.category}</span>{' '}
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-normal sm:text-lg">{item.category}</span>
+            <span className="text-sm font-normal sm:text-lg">{item.type}</span>
+          </div>
+        );
+      }
+    },
+    {
+      id: 'Size-Price',
+      header: 'Size / Price',
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-normal sm:text-lg">{item.size}</span>
+            <span className="text-sm font-normal sm:text-lg">{item.price}</span>
           </div>
         );
       }
@@ -172,10 +168,15 @@ export default function Page() {
           <div className="flex justify-end">
             <ToggleGroup
               type="single"
-              value={rowAvailability[item.id]}
-              onValueChange={(value) =>
-                setRowAvailability((prev) => ({ ...prev, [item.id]: value as 'in' | 'out' }))
-              }
+              value={item.availability ? 'in' : 'out'}
+              onValueChange={(val) => {
+                if (val) {
+                  const newStatus = val === 'in';
+                  if (newStatus !== item.availability) {
+                    handleIndividualUpdate(item.id, newStatus);
+                  }
+                }
+              }}
               className="bg-muted grid w-max grid-cols-2 rounded-xl p-1">
               <ToggleGroupItem
                 value="in"
@@ -222,33 +223,6 @@ export default function Page() {
     }
   ];
 
-  const table = useReactTable({
-    data: filteredStockItems,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection
-    },
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 5
-      }
-    }
-  });
-
-  const pageCount = table.getPageCount();
-
   return (
     <div className="flex flex-col gap-3 p-3 lg:px-10">
       <h1 className="font-medium md:text-2xl">
@@ -273,99 +247,25 @@ export default function Page() {
               Out of Stock
             </ToggleGroupItem>
           </ToggleGroup>
-
-          <div className="flex items-start gap-5">
-            {/* NEW Category filter dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  <strong>Category:</strong>&nbsp;
-                  {categoryFilter === 'all' ? 'All' : categoryFilter} <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {categories.map((cat) => (
-                  <DropdownMenuItem key={cat} onClick={() => setCategoryFilter(cat)}>
-                    {cat}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Column visibility dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  Columns <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) => column.toggleVisibility(!!value)}>
-                        {column.id === 'select_sno'
-                          ? 'S.No'
-                          : column.id === 'stockDetails'
-                            ? 'Stock Details'
-                            : column.id === 'Category'
-                              ? 'Category'
-                              : column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
         </div>
 
+        {/* Stock updation buttons */}
         <div className="flex items-start gap-3">
           <Button
             className="w-fit bg-green-600 text-white"
-            disabled={Object.keys(rowSelection).length === 0}
-            onClick={() => {
-              const selectedRows = Object.keys(rowSelection)
-                .map((key) => {
-                  const row = table.getRowModel().rows.find((r) => r.id === key);
-                  if (!row) return null;
-                  const itemId = (row.original as StockItem).id;
-                  return {
-                    id: itemId,
-                    availability: rowAvailability[itemId]
-                  };
-                })
-                .filter(Boolean);
-              console.log('Updating availability for:', selectedRows);
-              // TODO: send selectedRows to backend
-            }}>
-            Update to In-Stock
+            onClick={() => handleMassUpdate(true)}
+            disabled={isUpdatingStock || selectedRowIds.length === 0}>
+            {isUpdatingStock ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Update to In-Stock'}
           </Button>
-
           <Button
             className="w-fit bg-red-600 text-white"
-            disabled={Object.keys(rowSelection).length === 0}
-            onClick={() => {
-              const selectedRows = Object.keys(rowSelection)
-                .map((key) => {
-                  const row = table.getRowModel().rows.find((r) => r.id === key);
-                  if (!row) return null;
-                  const itemId = (row.original as StockItem).id;
-                  return {
-                    id: itemId,
-                    availability: rowAvailability[itemId]
-                  };
-                })
-                .filter(Boolean);
-              console.log('Updating availability for:', selectedRows);
-              // TODO: send selectedRows to backend
-            }}>
-            Update to Out-0f-Stock
+            onClick={() => handleMassUpdate(false)}
+            disabled={isUpdatingStock || selectedRowIds.length === 0}>
+            {isUpdatingStock ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              'Update to Out-of-Stock'
+            )}
           </Button>
         </div>
       </div>
@@ -373,82 +273,23 @@ export default function Page() {
       <div className="mt-3 gap-2 py-0">
         <Input
           placeholder="Search by stock name..."
-          value={(table.getColumn('stockDetails')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('stockDetails')?.setFilterValue(event.target.value)}
           className="mb-3 max-w-[100%] text-sm sm:w-[50%] md:text-lg"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
         />
-
-        <Card className="overflow-hidden rounded-md border p-0 md:p-5">
-          <Table>
-            <TableHeader className="text-sm font-semibold md:text-xl">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell className="px-3 py-5 font-medium" key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </Card>
-
-        {/* Pagination */}
-        <div className="mt-4 flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => table.previousPage()}
-                  className={!table.getCanPreviousPage() ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: pageCount }).map((_, index) => (
-                <PaginationItem key={index}>
-                  <PaginationLink
-                    href="#"
-                    isActive={table.getState().pagination.pageIndex === index}
-                    onClick={() => table.setPageIndex(index)}>
-                    {index + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() => table.nextPage()}
-                  className={!table.getCanNextPage() ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        {isLoading ? (
+          <ComponentLoader />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={stockData?.vendorStocks ?? []}
+            pagination={pagination}
+            onPaginationChange={setPagination}
+            totalRowCount={stockData?.totalCount ?? 0}
+          />
+        )}
       </div>
     </div>
   );

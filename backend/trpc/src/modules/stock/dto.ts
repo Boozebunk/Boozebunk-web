@@ -9,3 +9,10 @@ export const vendorAddStockSchema = z.object({
   price: z.string(),
   availability: z.boolean().default(true),
 });
+
+export const gettingVendorStockSchema = z.object({
+  search: z.string(),
+  stockFilter: z.string(),
+  pageIndex: z.number().min(0).default(0),
+  pageSize: z.number().min(1).default(5),
+});
