@@ -180,4 +180,38 @@ export const vendorStockRouter = createTRPCRouter({
         });
       }
     }),
+
+  deleteVendorStock: protectedProcedure
+    .input(
+      z.object({
+        stockId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const existingVendor = await db.query.vendor.findFirst({
+          where: eq(vendorTable.userId, ctx.user.id as string),
+          columns: { id: true },
+        });
+
+        if (!existingVendor) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Vendor account does not exist!",
+          });
+        }
+
+        await db.delete(vendorStockTable).where(eq(vendorStockTable.id, input.stockId));
+
+        return {
+          success: true,
+          message: "Stock Deleted Successfully",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Error deleting stock ${err}`,
+        });
+      }
+    }),
 });
