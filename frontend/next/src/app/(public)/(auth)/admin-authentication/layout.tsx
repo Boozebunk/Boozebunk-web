@@ -14,6 +14,7 @@ import Logo from '../../../../../public/Assets/Logo.png';
 
 interface SessionTypes {
   id: string;
+  roleId: string;
   email: string;
   role: 'admin' | 'vendor';
 }
@@ -35,9 +36,9 @@ export default function AuthAdminLayout({
     if (session) {
       console.log('in layout.tsx sign-in sesssion ', session);
       if (session.role === 'admin') {
-        router.push(`/admin-portal/${session.id}/admin/dashboard`);
+        router.push(`/admin-portal/${session.id}/admin/${session.roleId}/dashboard`);
       } else if (session.role === 'vendor') {
-        router.push(`/vendor-portal/${session.id}/vendor/dashboard`);
+        router.push(`/vendor-portal/${session.id}/vendor/${session.roleId}/dashboard`);
       }
     }
   }, [session, isLoading, router]);

@@ -17,6 +17,7 @@ interface AuthGuardProps {
 
 interface SessionTypes {
   id: string;
+  roleId: string;
   email: string;
   role: 'admin' | 'vendor';
 }
@@ -52,10 +53,10 @@ export function AuthGuard({ children }: AuthGuardProps) {
         return;
       } else {
         if (isAdminRoute && session.role !== 'admin') {
-          router.replace(`/vendor-portal/${session.id}/vendor/dashboard`);
+          router.replace(`/vendor-portal/${session.id}/vendor/${session.roleId}/dashboard`);
           return;
         } else if (isVendorRoute && session.role !== 'vendor') {
-          router.replace(`/admin-portal/${session.id}/admin/dashboard`);
+          router.replace(`/admin-portal/${session.id}/admin/${session.roleId}/dashboard`);
           return;
         }
       }

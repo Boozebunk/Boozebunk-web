@@ -26,6 +26,7 @@ import Logo from '../../../public/Assets/Logo-main.png';
 
 interface SessionTypes {
   id: string;
+  roleId: string;
   email: string;
   role: 'admin' | 'vendor';
 }
@@ -41,7 +42,7 @@ export function SideBar() {
               asChild
               className="w-fit bg-[#fff5cb] p-5 py-5 hover:bg-[#fff5cb] active:bg-[#fff5cb]">
               <Link
-                href={`/vendor-portal/${session?.id}/vendor/dashboard`}
+                href={`/vendor-portal/${session?.id}/vendor/${session?.roleId}/dashboard`}
                 className="flex items-center justify-baseline text-2xl">
                 <Image src={Logo} alt="logo" className="w-6" />
                 <Image src={Logo2} alt="logo" className="ml-[-5px] w-35" />
@@ -59,7 +60,7 @@ export function SideBar() {
             <SidebarMenu className="gap-2">
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="p-5 py-6">
-                  <Link href={`/vendor-portal/${session?.id}/vendor/dashboard`}>
+                  <Link href={`/vendor-portal/${session?.id}/vendor/${session?.roleId}/dashboard`}>
                     <Home className="mr-2 !size-6" />
                     <span className="text-[17px] font-medium">Dashboard</span>
                   </Link>
@@ -76,7 +77,7 @@ export function SideBar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild className="mb-2 p-5 py-6">
-                  <Link href={`/vendor-portal/${session?.id}/vendor/stock-list`}>
+                  <Link href={`/vendor-portal/${session?.id}/vendor/${session?.roleId}/stock-list`}>
                     <Boxes className="mr-2 !size-6" />
                     <span className="text-[17px] font-medium">Stock</span>
                   </Link>
@@ -85,7 +86,8 @@ export function SideBar() {
                 <SidebarMenuSub className="ml-7 gap-2">
                   <SidebarMenuSubItem>
                     <SidebarMenuButton asChild className="py-5">
-                      <Link href={`/vendor-portal/${session?.id}/vendor/add-product`}>
+                      <Link
+                        href={`/vendor-portal/${session?.id}/vendor/${session?.roleId}/add-product`}>
                         <PackagePlus className="mr-2 !size-5" />
                         <span className="text-[15px] font-medium">New Product</span>
                       </Link>

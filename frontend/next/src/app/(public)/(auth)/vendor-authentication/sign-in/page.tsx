@@ -58,7 +58,7 @@ export default function Page() {
         //    before proceeding to the next page. This guarantees the AuthGuard
         //    will have the correct, non-null session.
         await queryClient.fetchQuery(trpcHttp.auth.getSession.queryOptions());
-        router.push(`/vendor-portal/${data.user.id}/vendor/dashboard`);
+        router.push(`/vendor-portal/${data.user.id}/vendor/${data.user.roleId}/dashboard`);
       },
       onError: (err) => {
         toast.error(err.message);
