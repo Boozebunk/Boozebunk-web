@@ -58,6 +58,13 @@ export const vendorRouter = createTRPCRouter({
           addressState: input.addressState,
           addressPostalCode: input.addressPostalCode,
         });
+
+        await tx
+          .update(userTable)
+          .set({
+            roleId: vendor[0]?.id,
+          })
+          .where(eq(userTable.id, vendor[0]?.userId || ""));
       });
 
       await sendEmail(input.email, `Welcome to Boozebunk ${input.vendorName}`, "welcome-vendor", {

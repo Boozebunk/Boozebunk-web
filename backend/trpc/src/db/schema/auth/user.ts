@@ -18,6 +18,7 @@ export const userTable = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
     lastLoginAt: timestamp("last_login_at", { withTimezone: false }).defaultNow(),
+    roleId: uuid("role_id"),
   },
   (table) => [
     uniqueIndex("email_index").on(table.email),

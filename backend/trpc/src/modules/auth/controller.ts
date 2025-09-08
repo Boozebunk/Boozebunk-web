@@ -30,14 +30,11 @@ export const authRouter = createTRPCRouter({
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Password is Wrong" });
       }
 
-      //  if (!user.email_verified) {
-      //     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Please verify your email before logging in.' });
-      //   }
-
       // Generating JWT token
       // The payload type is inferred from fastify-jwt.d.ts
       const token = await ctx.res.jwtSign({
         id: user.id,
+        roleId: user.roleId ?? "None",
         email: user.email,
         role: user.role,
       });
@@ -84,6 +81,7 @@ export const authRouter = createTRPCRouter({
       const hashedPassword = await hashPassword(input.password);
 
       const randomUserId = uuidv4();
+
       const [newUser] = await db
         .insert(userTable)
         .values({
@@ -95,9 +93,17 @@ export const authRouter = createTRPCRouter({
         .returning();
 
       const randomAdminId = uuidv4();
-      await db
+      const [newAdmin] = await db
         .insert(adminTable)
-        .values({ id: randomAdminId, userId: newUser?.id || randomAdminId, name: input.name });
+        .values({ id: randomAdminId, userId: newUser?.id || randomAdminId, name: input.name })
+        .returning();
+
+      await db
+        .update(userTable)
+        .set({
+          roleId: newAdmin?.id,
+        })
+        .where(eq(userTable.id, newAdmin?.userId || randomUserId));
 
       return {
         success: true,

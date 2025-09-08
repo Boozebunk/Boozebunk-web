@@ -202,7 +202,7 @@ export default function Page() {
   );
 
   const { mutateAsync: updateStock, isPending: isUpdatingStock } = useMutation(
-    trpcHttp.stock.updateVendorStock.mutationOptions({
+    trpcHttp.stock.updateVendorStockAvailability.mutationOptions({
       onSuccess: () => {
         toast.success('Successfully Updated Stock(s)');
         refetchVendorStocks();

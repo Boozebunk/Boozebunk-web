@@ -9,12 +9,14 @@ declare module "@fastify/jwt" {
   interface FastifyJWT {
     payload: {
       id: UUIDTypes; // User ID (UUID)
+      roleId: UUIDTypes;
       email: string;
       role: "admin" | "vendor";
     };
     // The 'user' type is what gets attached to request.user after verification
     user: {
       id: UUIDTypes;
+      roleId: UUIDTypes;
       email: string;
       role: "admin" | "vendor";
     };

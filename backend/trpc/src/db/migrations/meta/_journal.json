@@ -15,6 +15,13 @@
       "when": 1756506399241,
       "tag": "20250829222639_fantastic_stick",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757339154478,
+      "tag": "20250908134554_spooky_mastermind",
+      "breakpoints": true
     }
   ]
 }

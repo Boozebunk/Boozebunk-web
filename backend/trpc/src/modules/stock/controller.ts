@@ -61,20 +61,9 @@ export const vendorStockRouter = createTRPCRouter({
       try {
         const { search, pageIndex, pageSize, stockFilter } = input;
 
-        const existingVendor = await db.query.vendor.findFirst({
-          where: eq(vendorTable.userId, ctx.user.id as string),
-        });
-
-        if (!existingVendor) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Vendor Account Does not exists",
-          });
-        }
-
         const whereConditions = [];
 
-        whereConditions.push(eq(vendorStockTable.vendorId, existingVendor.id));
+        whereConditions.push(eq(vendorStockTable.vendorId, ctx.user.roleId as string));
 
         if (stockFilter === "in") {
           whereConditions.push(eq(vendorStockTable.availability, true));
@@ -135,7 +124,7 @@ export const vendorStockRouter = createTRPCRouter({
       }
     }),
 
-  updateVendorStock: protectedProcedure
+  updateVendorStockAvailability: protectedProcedure
     .input(
       z.object({
         stockIds: z.array(z.string()).min(1, "At least one stock ID is required."),
@@ -144,18 +133,6 @@ export const vendorStockRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
-        const existingVendor = await db.query.vendor.findFirst({
-          where: eq(vendorTable.userId, ctx.user.id as string),
-          columns: { id: true },
-        });
-
-        if (!existingVendor) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Vendor account does not exist!",
-          });
-        }
-
         await db
           .update(vendorStockTable)
           .set({
@@ -164,7 +141,7 @@ export const vendorStockRouter = createTRPCRouter({
           })
           .where(
             and(
-              eq(vendorStockTable.vendorId, existingVendor.id),
+              eq(vendorStockTable.vendorId, ctx.user.roleId as string),
               inArray(vendorStockTable.id, input.stockIds),
             ),
           );
