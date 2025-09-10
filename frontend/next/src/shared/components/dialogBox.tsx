@@ -15,10 +15,11 @@ type DialogBoxProps = {
   title?: string;
   description?: string;
   children?: React.ReactNode;
-  actionText: string;
+  actionText?: string;
   cancelText?: string;
+  className?: string;
   open?: boolean;
-  onAction: () => void;
+  onAction?: () => void;
   onOpenChange?: (open: boolean) => void;
 };
 
@@ -31,12 +32,13 @@ export function CustomDialog({
   onAction,
   children,
   onOpenChange,
-  open
+  open,
+  className
 }: DialogBoxProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
-      <AlertDialogContent>
+      <AlertDialogContent className={className}>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
@@ -44,7 +46,9 @@ export function CustomDialog({
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction onClick={onAction}>{actionText}</AlertDialogAction>
+          {actionText == undefined ? null : (
+            <AlertDialogAction onClick={onAction}>{actionText}</AlertDialogAction>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

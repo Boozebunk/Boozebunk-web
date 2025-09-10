@@ -7,7 +7,7 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import z from "zod";
 
-import { gettingVendorStockSchema, vendorAddStockSchema } from "./dto";
+import { bulkUploadStockSchema, gettingVendorStockSchema, vendorAddStockSchema } from "./dto";
 
 export const vendorStockRouter = createTRPCRouter({
   addStock: protectedProcedure.input(vendorAddStockSchema).mutation(async ({ ctx, input }) => {
@@ -154,6 +154,56 @@ export const vendorStockRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `Error while updating Stock ${err}`,
+        });
+      }
+    }),
+
+  bulkUploadStock: protectedProcedure
+    .input(
+      z.object({
+        data: bulkUploadStockSchema,
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const existingVendor = await db.query.vendor.findFirst({
+          where: eq(vendorTable.userId, ctx.user.id as string),
+          columns: { id: true },
+        });
+
+        if (!existingVendor) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Vendor account does not exist!",
+          });
+        }
+
+        const bulkData = input.data.map((item) => {
+          const [brandName, productName, category, type, size, price] = item;
+
+          return {
+            id: uuidv4(),
+            vendorId: existingVendor.id,
+            brandName: brandName,
+            productName: productName,
+            category: category,
+            type: type === "" ? null : type,
+            size: size,
+            price: price,
+          };
+        });
+
+        await db.insert(vendorStockTable).values(bulkData);
+
+        return {
+          success: true,
+          message: "Vendors Bulk Upload Successfull",
+          data: bulkData,
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Failed to bulk uplaod ${err}`,
         });
       }
     }),

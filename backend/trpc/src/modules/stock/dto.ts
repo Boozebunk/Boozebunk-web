@@ -16,3 +16,16 @@ export const gettingVendorStockSchema = z.object({
   pageIndex: z.number().min(0).default(0),
   pageSize: z.number().min(1).default(5),
 });
+
+export const bulkUploadStockSchema = z.array(
+  z.tuple([
+    z.string().min(1, "Brand Name is required."),
+    z.string().min(1, "Product Name is required."),
+    z.string().min(1, "Category is required."),
+    z.string().optional(), // 'type' can be an empty string, so it's optional
+    z.string().min(1, "Size is required."),
+    z.string().min(1, "Price is required."),
+  ]),
+);
+
+export type BulkUploadStockType = z.infer<typeof bulkUploadStockSchema>;
