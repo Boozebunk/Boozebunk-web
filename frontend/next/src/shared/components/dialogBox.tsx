@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,8 +40,8 @@ export function CustomDialog({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
-      <AlertDialogContent className={className}>
-        <AlertDialogHeader>
+      <AlertDialogContent className={clsx('h-fit w-fit !max-w-full overflow-auto', className)}>
+        <AlertDialogHeader className="text-left">
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>

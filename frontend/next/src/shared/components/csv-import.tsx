@@ -189,28 +189,31 @@ export function CSVImport({ onImport }: CSVImportProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <Card>
         <CardContent className="space-y-4">
           {/* Download Example */}
-          <div className="bg-muted/50 flex items-center justify-between rounded-lg border p-4">
-            <div>
-              <h3 className="font-medium">Example Template</h3>
-              <p className="text-muted-foreground text-sm">
-                Download a sample CSV file with the correct format
+          {!fileName && (
+            <div className="bg-muted/50 border-border flex flex-col gap-3 rounded-lg border p-5 shadow-sm">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <h3 className="text-foreground text-lg font-semibold">Example Template</h3>
+                <Button
+                  onClick={downloadExampleCSV}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Download Example
+                </Button>
+              </div>
+              <p className="text-muted-foreground text-xs sm:text-sm sm:whitespace-nowrap">
+                Download a sample CSV file with the correct format for easier setup
               </p>
             </div>
-            <Button onClick={downloadExampleCSV} variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Download Example
-            </Button>
-          </div>
+          )}
 
           {/* File Upload */}
-          <div className="space-y-2">
-            <label htmlFor="csv-upload" className="text-sm font-medium">
-              Upload CSV File
-            </label>
+          <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
               <input
                 ref={fileInputRef}
@@ -226,7 +229,6 @@ export function CSVImport({ onImport }: CSVImportProps) {
                 </Button>
               )}
             </div>
-            {fileName && <p className="text-muted-foreground text-sm">Selected: {fileName}</p>}
           </div>
 
           {/* Error Display */}
@@ -304,16 +306,16 @@ export function CSVImport({ onImport }: CSVImportProps) {
             })()}
 
             <div className="mt-4 flex justify-end">
-              <Button onClick={handleImport} disabled={isImporting} className="min-w-24">
+              <Button onClick={handleImport} disabled={isImporting} className="w-full sm:w-fit">
                 {isImporting ? (
                   <>
                     <Upload className="mr-2 h-4 w-4 animate-spin" />
-                    Importing...
+                    Uploading...
                   </>
                 ) : (
                   <>
                     <Upload className="mr-2 h-4 w-4" />
-                    Import
+                    Upload
                   </>
                 )}
               </Button>

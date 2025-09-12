@@ -155,6 +155,7 @@ export default function VendorRegistrationPage() {
       onSuccess: (data) => {
         console.log(data.data);
         toast.success('Bulk Uploaded Successfully');
+        setOpenBulkUpload(false);
       },
       onError: (err) => {
         toast.error(err.message);
@@ -372,7 +373,7 @@ export default function VendorRegistrationPage() {
             <Button
               type="submit"
               onClick={handleSubmit}
-              className="flex w-full items-center justify-center gap-2 bg-[#6B0F1A] text-white hover:bg-[#44101b]"
+              className="flex w-full flex-1 items-center justify-center gap-2 bg-[#6B0F1A] text-white hover:bg-[#44101b]"
               disabled={isPending}>
               {isPending ? <Loader2 /> : 'Add Product'}
               <PackagePlus />

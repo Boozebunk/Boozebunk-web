@@ -6,6 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Loader2, MoreHorizontal, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { Badge } from '~/shared/shadcn/badge';
 import { Button } from '~/shared/shadcn/button';
 import { Checkbox } from '~/shared/shadcn/checkbox';
 import {
@@ -41,7 +42,7 @@ export default function Page() {
   const [search, setSearch] = React.useState('');
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 4
+    pageSize: 10
   });
   const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
   const [stockId, setStockId] = React.useState<string>();
@@ -84,9 +85,13 @@ export default function Page() {
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium sm:text-lg">{item.brand}</span>
-            <span className="text-sm font-normal sm:text-lg">{item.productName}</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-gray-700 sm:text-base dark:text-gray-200">
+              {item.brand},
+            </span>
+            <span className="text-sm text-[#6B0F1A] sm:text-lg dark:text-[#ffc82e]">
+              {item.productName}
+            </span>
           </div>
         );
       }
@@ -98,8 +103,14 @@ export default function Page() {
         const item = row.original;
         return (
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-normal sm:text-lg">{item.category}</span>
-            <span className="text-sm font-normal sm:text-lg">{item.type}</span>
+            <div className="flex items-center gap-1">
+              <Badge className="rounded-md bg-[#fff5cb] px-2 py-1 text-sm font-medium text-[#8B5E3C] sm:text-base">
+                {item.category}
+              </Badge>
+            </div>
+            <span className="text-sm font-normal text-gray-700 sm:text-base dark:text-gray-200">
+              {item.type}
+            </span>
           </div>
         );
       }
@@ -111,8 +122,12 @@ export default function Page() {
         const item = row.original;
         return (
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-normal sm:text-lg">{item.size}</span>
-            <span className="text-sm font-normal sm:text-lg">{item.price}</span>
+            <Badge className="rounded-md bg-[#DBEAFE] px-2 py-1 text-sm font-medium text-[#1E40AF] sm:text-base">
+              {item.size}
+            </Badge>
+            <span className="text-sm font-normal text-gray-700 sm:text-base dark:text-gray-200">
+              ₹{item.price}
+            </span>
           </div>
         );
       }
