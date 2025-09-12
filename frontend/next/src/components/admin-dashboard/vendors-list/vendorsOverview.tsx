@@ -1,32 +1,43 @@
-import { Activity, Ban, Store } from 'lucide-react';
+import { Activity, Ban, Loader2, Store } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '~/shared/shadcn/card';
 
-const cardData = [
-  {
-    title: 'Total Vendors',
-    icon: Store,
-    value: '1,200',
-    subtitle: 'In last 30 days',
-    growth: '5% from previous month'
-  },
-  {
-    title: 'Active Vendors',
-    icon: Activity,
-    value: '1,200',
-    subtitle: 'Avg logins per week',
-    growth: '25% from previous month'
-  },
-  {
-    title: 'Frozen Vendors',
-    icon: Ban,
-    value: '1,200',
-    subtitle: 'Avg logins per week',
-    growth: '25% from previous month'
-  }
-];
+type VendorOverviewProps = {
+  totalVendors: number;
+  activeVendors: number;
+  frozenVendors: number;
+  isLoading: boolean;
+};
 
-export function VendorsOverview() {
+export function VendorsOverview({
+  totalVendors,
+  activeVendors,
+  frozenVendors,
+  isLoading
+}: VendorOverviewProps) {
+  const cardData = [
+    {
+      title: 'Total Vendors',
+      icon: Store,
+      value: totalVendors,
+      subtitle: 'In last 30 days',
+      growth: '5% from previous month'
+    },
+    {
+      title: 'Active Vendors',
+      icon: Activity,
+      value: activeVendors,
+      subtitle: 'Avg logins per week',
+      growth: '25% from previous month'
+    },
+    {
+      title: 'Frozen Vendors',
+      icon: Ban,
+      value: frozenVendors,
+      subtitle: 'Avg logins per week',
+      growth: '25% from previous month'
+    }
+  ];
   return (
     <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
       <h1 className="text-lg font-medium md:text-2xl">
@@ -51,7 +62,7 @@ export function VendorsOverview() {
               <CardContent className="p-0">
                 <div className="flex items-center justify-between">
                   <span className="fill-foreground text-sm font-bold sm:text-2xl">
-                    {data.value}
+                    {isLoading ? <Loader2 /> : data.value}
                   </span>
                 </div>
               </CardContent>

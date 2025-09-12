@@ -192,6 +192,13 @@ export default function Page() {
     })
   );
 
+  //fetching  vendors overview
+  const {
+    data: vendorsOverview,
+    isLoading: loadingVendorOverview,
+    refetch: refetchVendorOverview
+  } = useQuery(trpcHttp.vendor.getVendorsOverview.queryOptions());
+
   //Edit activity of vendor mutation
   const { mutateAsync: EditVendorActivity } = useMutation(
     trpcHttp.vendor.editVendorActivity.mutationOptions({
@@ -199,6 +206,7 @@ export default function Page() {
         console.log('Successfully Edited');
         toast.success('successfully updated vendor activity');
         refetchVendorsList();
+        refetchVendorOverview();
       },
       onError: (err) => {
         toast.error(err.message);
@@ -214,6 +222,7 @@ export default function Page() {
         console.log('Vendor Deleted Successfully');
         toast.success('vendor deleted Successfully');
         refetchVendorsList();
+        refetchVendorOverview();
       },
       onError: (err) => {
         toast.error(err.message);
@@ -253,7 +262,15 @@ export default function Page() {
           handleDeleteVendorAccount();
         }}
       />
-      <VendorsOverview />
+
+      {/* Vendors Overview (Total Vendors, Active Vendors, Frozen Vendors) */}
+      <VendorsOverview
+        totalVendors={vendorsOverview?.totalVendors ?? 0}
+        activeVendors={vendorsOverview?.activeVendors ?? 0}
+        frozenVendors={vendorsOverview?.frozenVendors ?? 0}
+        isLoading={loadingVendorOverview}
+      />
+
       <div className="flex flex-col gap-3 p-3 lg:px-10">
         <h1 className="font-medium md:text-2xl">
           <strong>List</strong> of all the Vendors
@@ -331,7 +348,6 @@ export default function Page() {
               onPaginationChange={setPagination}
               totalRowCount={vendorsList?.totalCount ?? 0}
             />
-            ...
           </div>
         )}
       </div>

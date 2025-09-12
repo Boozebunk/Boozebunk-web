@@ -233,4 +233,31 @@ export const vendorRouter = createTRPCRouter({
         });
       }
     }),
+
+  getVendorsOverview: protectedProcedure.query(async () => {
+    try {
+      const totalCount = await db
+        .select({
+          totalVendors: sql<number>`count(*)`,
+          activeVendors: sql<number>`count(case when "vendors"."is_active" = true then 1 else null end)`,
+        })
+        .from(vendorTable);
+
+      const totalVendors = totalCount[0]?.totalVendors ?? 0;
+      const activeVendors = totalCount[0]?.activeVendors ?? 0;
+      const frozenVendors = totalVendors - activeVendors;
+
+      return {
+        success: true,
+        totalVendors,
+        activeVendors,
+        frozenVendors,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error Fetching Vendors Overview -> ${err}`,
+      });
+    }
+  }),
 });
