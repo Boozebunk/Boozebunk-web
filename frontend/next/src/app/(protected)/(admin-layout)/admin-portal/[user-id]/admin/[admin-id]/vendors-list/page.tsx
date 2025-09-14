@@ -49,7 +49,7 @@ export default function Page() {
   const [search, setSearch] = React.useState('');
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 4
+    pageSize: 10
   });
   const [isActiveToggle, setIsActiveToggle] = React.useState(true);
   const [openVendorActiveDialog, setOpenVendorActiveDialog] = React.useState(false);
@@ -161,7 +161,7 @@ export default function Page() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem
-                  className="text-red-600"
+                  variant="destructive"
                   onClick={() => {
                     setVendorId(vendor.id);
                     setOpenVendorDelete(true);

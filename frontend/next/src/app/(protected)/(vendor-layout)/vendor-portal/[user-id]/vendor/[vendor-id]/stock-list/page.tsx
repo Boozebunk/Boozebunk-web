@@ -187,7 +187,7 @@ export default function Page() {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Button
-                className="mt-1"
+                className="mt-1 w-full"
                 variant="destructive"
                 onClick={() => {
                   setOpenDeleteDialog(true);

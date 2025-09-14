@@ -35,7 +35,7 @@ export function Greeting({ name }: { name: string }) {
   const namePart = commaIndex !== -1 ? displayText.slice(commaIndex + 2) : '';
 
   return (
-    <h1 className="text-base font-medium sm:text-lg md:text-2xl">
+    <h1 className="text-center text-base font-medium sm:text-lg md:text-2xl">
       <span className="text-[#6B0F1A] dark:text-[#ffc82e]">{greetingPart}</span>
       {commaIndex !== -1 && <span className="text-[#6B0F1A] dark:text-[#ffc82e]">, </span>}
       <span className="text-foreground font-semibold">{namePart}</span>

@@ -2,48 +2,18 @@
 
 import * as React from 'react';
 
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
+import { MoreHorizontal, Trash } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
-import { Card } from '~/shared/shadcn/card';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger
 } from '~/shared/shadcn/dropdown-menu';
-import { Input } from '~/shared/shadcn/input';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '~/shared/shadcn/pagination';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/shared/shadcn/table';
+import { DataTable } from '~/shared/components/dataTable';
 
-import type {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState
-} from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
 export type Vendor = {
   id: string;
@@ -188,151 +158,64 @@ const columns: ColumnDef<Vendor>[] = [
 
       return <div className="text-right text-sm">{formatted}</div>;
     }
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    cell: ({}) => {
+      // const query = row.original;
+      return (
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem variant="destructive">Delete Query</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      );
+    }
   }
 ];
 
 export default function Page() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection
-    },
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 5
-      }
-    }
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10
   });
 
-  const pageCount = table.getPageCount();
-
   return (
-    <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
-      <h1 className="text-lg font-medium md:text-2xl">
-        <strong>Vendors</strong> Queries
-      </h1>
+    <div className="flex flex-col gap-5 p-3 lg:px-10">
+      <div className="flex items-center gap-5">
+        <h1 className="text-lg font-medium md:text-2xl">
+          <strong>Vendors</strong> Queries
+        </h1>
+        <div className="bg-foreground h-5 w-[1.5px]"></div>
+        <Button variant={'ghost'} className="text-red-500">
+          <Trash /> Delete all
+        </Button>
+      </div>
+
       <div className="gap-2 py-0">
-        <div className="mb-3 flex items-center gap-3 lg:gap-[50%]">
-          <Input
-            placeholder="Filter by vendor name or email..."
-            value={(table.getColumn('vendorName')?.getFilterValue() as string) ?? ''}
-            onChange={(event) => table.getColumn('vendorName')?.setFilterValue(event.target.value)}
-            className="max-w-[100%] text-sm md:text-lg"
+        {/* Queries Table */}
+        {/* {isLoading ? (
+          <ComponentLoader />
+        ) : ( */}
+        <div className="gap-2 py-0">
+          <DataTable
+            columns={columns}
+            data={data}
+            pagination={pagination}
+            onPaginationChange={setPagination}
+            totalRowCount={data.length}
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Columns <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}>
-                      {column.id === 'vendorDetails' ? 'Vendor Details' : column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
-        <Card className="overflow-hidden rounded-md border p-0 md:p-5">
-          <Table>
-            <TableHeader className="text-sm font-semibold md:text-xl">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell className="px-3 py-5 font-medium" key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </Card>
-
-        {/* Pagination */}
-        <div className="mt-4 flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => table.previousPage()}
-                  className={!table.getCanPreviousPage() ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: pageCount }).map((_, index) => (
-                <PaginationItem key={index}>
-                  <PaginationLink
-                    href="#"
-                    isActive={table.getState().pagination.pageIndex === index}
-                    onClick={() => table.setPageIndex(index)}>
-                    {index + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() => table.nextPage()}
-                  className={!table.getCanNextPage() ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        {/* )} */}
       </div>
     </div>
   );

@@ -1,32 +1,45 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/shadcn/card';
-import { Progress } from '~/shared/shadcn/progress';
+import { MousePointerClick, Search } from 'lucide-react';
 
-const data = [
-  { category: 'Whisky', percent: 42, color: 'var(--chart-1)' },
-  { category: 'Vodka', percent: 28, color: 'var(--chart-2)' },
-  { category: 'Wine', percent: 18, color: 'var(--chart-3)' },
-  { category: 'Beer', percent: 12, color: 'var(--chart-4)' }
-];
+import { Badge } from '~/shared/shadcn/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/shadcn/card';
 
 export function MostSearchedCategory() {
   return (
-    <Card>
+    <Card className="gap-5">
       <CardHeader>
-        <CardTitle className="text-sm md:text-xl">Search Trend By Category</CardTitle>
+        <CardTitle className="text-sm md:text-xl">Store Engagement Overview</CardTitle>
         <CardDescription className="text-xs">Based on data from the last 30 days</CardDescription>
       </CardHeader>
-      <CardContent className="flex aspect-video h-[200px] flex-col justify-between md:h-full lg:h-[300px]">
-        {data.map((item) => (
-          <div key={item.category} className="flex flex-col">
-            <div className="mb-1 flex justify-between">
-              <span className="text-muted-foreground font-medium">{item.category}</span>
-              <span className="text-muted-foreground font-medium">{item.percent}%</span>
-            </div>
-            <Progress value={item.percent} color={item.color} className="h-3" />
+      <CardContent className="grid aspect-video grid-cols-1 items-center justify-center gap-5 sm:grid-cols-2 md:h-full lg:h-[300px]">
+        {/* Store Impressions */}
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <Search className="h-8 w-8 text-blue-500" />
+            <span className="text-base font-semibold">Store Impressions</span>
+            <span className="text-muted-foreground text-xs lg:text-sm">
+              Times your store seen in search
+            </span>
           </div>
-        ))}
+          <Badge className="rounded-lg bg-blue-100 px-5 py-2 text-xl font-bold text-blue-700">
+            100
+          </Badge>
+        </div>
+
+        {/* Store Clicks */}
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <MousePointerClick className="h-8 w-8 text-green-500" />
+            <span className="text-base font-semibold">Store Clicks</span>
+            <span className="text-muted-foreground text-xs lg:text-sm">
+              Times users clicked your store
+            </span>
+          </div>
+          <Badge className="rounded-lg bg-green-100 px-5 py-2 text-xl font-bold text-green-700">
+            100
+          </Badge>
+        </div>
       </CardContent>
     </Card>
   );

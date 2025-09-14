@@ -9,6 +9,7 @@ import { CircleUserRound, Loader2, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
+import { Badge } from '~/shared/shadcn/badge';
 import { Button } from '~/shared/shadcn/button';
 import {
   DropdownMenu,
@@ -58,9 +59,22 @@ export function Navbar() {
     console.log('Logging out...');
   };
 
+  const status = 'open';
+
   return (
     <nav className="bg-sidebar border-sidebar-border sticky top-0 box-border flex items-center justify-between border-b p-3">
-      <SidebarTrigger className="p-5" />
+      <div className="flex items-center gap-3 lg:gap-5">
+        <SidebarTrigger className="p-5" />
+        <div className="flex items-center gap-1">
+          <span className="hidden sm:block">Store:</span>
+          <Badge
+            className={`uppercase ${
+              status === 'open' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`}>
+            {status}
+          </Badge>
+        </div>
+      </div>
 
       <div className="absolute left-1/2 hidden w-fit -translate-x-1/2 transform p-3 py-5 sm:p-5 md:block">
         <Greeting name="Partner" />
@@ -98,10 +112,8 @@ export function Navbar() {
           <DropdownMenuContent sideOffset={10} className="mr-2">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
-              <Button variant="ghost" onClick={handleLogout}>
-                <LogOut /> {isPending ? <Loader2 /> : 'Logout'}
-              </Button>
+            <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+              <LogOut /> {isPending ? <Loader2 /> : 'Logout'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

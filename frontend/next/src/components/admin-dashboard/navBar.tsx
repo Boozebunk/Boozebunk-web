@@ -98,10 +98,8 @@ export function Navbar() {
           <DropdownMenuContent sideOffset={10} className="mr-2">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
-              <Button variant="ghost" onClick={handleLogout}>
-                <LogOut /> {isPending ? <Loader2 /> : 'Logout'}
-              </Button>
+            <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+              <LogOut /> {isPending ? <Loader2 /> : 'Logout'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
