@@ -41,6 +41,16 @@ export const gettingVendorInputSchema = z.object({
   pageSize: z.number().min(1).default(5),
 });
 
+export const editVendorSchema = z.object({
+  vendorId: z.string(),
+  martName: z.string().optional(),
+  licenseNumber: z.string().optional(),
+  vendorName: z.string().optional(),
+  phoneNumber: z.string().optional(),
+});
+
+export type EditVendorTypes = z.infer<typeof editVendorSchema>;
+
 export type GooglePlacesResponse = z.infer<typeof googlePlacesResponseSchema>;
 
 export type VendorRegistration = z.infer<typeof vendorRegistrationSchema>;

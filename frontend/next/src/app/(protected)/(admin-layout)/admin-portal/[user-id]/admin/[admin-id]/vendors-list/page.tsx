@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { type EditVendorTypes } from '@boozebunk-trpc/modules/vendor/dto';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { CalendarIcon, MoreHorizontal } from 'lucide-react';
@@ -54,10 +55,19 @@ export default function Page() {
   const [isActiveToggle, setIsActiveToggle] = React.useState(true);
   const [openVendorActiveDialog, setOpenVendorActiveDialog] = React.useState(false);
   const [openVendorDelete, setOpenVendorDelete] = React.useState(false);
+  const [openVendorEdit, setOpenVendorEdit] = React.useState(false);
 
   const [activeFroozenContext, setActiveFroozenContext] = React.useState('Activate');
 
   const [vendorId, setVendorId] = React.useState<string>('');
+
+  const [editableVedorDetails, setEditableVedorDetails] = React.useState<EditVendorTypes>({
+    vendorId: '',
+    martName: '',
+    licenseNumber: '',
+    vendorName: '',
+    phoneNumber: ''
+  });
 
   const columns: ColumnDef<VendorsDataType>[] = [
     {
@@ -139,7 +149,13 @@ export default function Page() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>Edit vendor</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEditableVedorDetails({ vendorId: vendor.id });
+                    setOpenVendorEdit(true);
+                  }}>
+                  Edit vendor
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {vendor.isActive ? (
                   <DropdownMenuItem
@@ -215,6 +231,20 @@ export default function Page() {
     })
   );
 
+  //Edit Vendor Details
+  const { mutateAsync: EditVendorDetails } = useMutation(
+    trpcHttp.vendor.editVendor.mutationOptions({
+      onSuccess: () => {
+        toast.success('Details Edited Successfully');
+        refetchVendorsList();
+      },
+      onError: (err) => {
+        toast.error('Details Updation Failed');
+        console.log('Details updation failed ', err);
+      }
+    })
+  );
+
   //Delete Vendor mutation
   const { mutateAsync: DeleteVendor } = useMutation(
     trpcHttp.vendor.deleteVendor.mutationOptions({
@@ -237,6 +267,17 @@ export default function Page() {
 
   const handleDeleteVendorAccount = async () => {
     await DeleteVendor({ vendorId });
+  };
+
+  const handleEditVendorDetails = async () => {
+    await EditVendorDetails(editableVedorDetails);
+    setEditableVedorDetails({
+      martName: '',
+      vendorName: '',
+      vendorId: '',
+      licenseNumber: '',
+      phoneNumber: ''
+    });
   };
 
   return (
@@ -262,6 +303,78 @@ export default function Page() {
           handleDeleteVendorAccount();
         }}
       />
+      <CustomDialog
+        title="Can Edit the following details"
+        actionText="Edit"
+        onOpenChange={setOpenVendorEdit}
+        open={openVendorEdit}
+        onAction={() => {
+          handleEditVendorDetails();
+        }}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEditVendorDetails();
+          }}
+          className="flex flex-col gap-3">
+          <div>
+            <label>Mart Name</label>
+            <input
+              type="text"
+              value={editableVedorDetails.martName}
+              onChange={(e) =>
+                setEditableVedorDetails((prev: EditVendorTypes) => ({
+                  ...prev,
+                  martName: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>Vendor Name</label>
+            <input
+              type="text"
+              value={editableVedorDetails.vendorName}
+              onChange={(e) =>
+                setEditableVedorDetails((prev: EditVendorTypes) => ({
+                  ...prev,
+                  vendorName: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>Phone Number</label>
+            <input
+              type="text"
+              value={editableVedorDetails.phoneNumber}
+              onChange={(e) =>
+                setEditableVedorDetails((prev: EditVendorTypes) => ({
+                  ...prev,
+                  phoneNumber: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>License Number</label>
+            <input
+              type="text"
+              value={editableVedorDetails.licenseNumber}
+              onChange={(e) =>
+                setEditableVedorDetails((prev: EditVendorTypes) => ({
+                  ...prev,
+                  licenseNumber: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+        </form>
+      </CustomDialog>
 
       {/* Vendors Overview (Total Vendors, Active Vendors, Frozen Vendors) */}
       <VendorsOverview

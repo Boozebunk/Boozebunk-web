@@ -9,7 +9,7 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, gt, lt, or, sql } from "drizzle-orm";
 import z from "zod";
 
-import { gettingVendorInputSchema, vendorRegistrationSchema } from "./dto";
+import { editVendorSchema, gettingVendorInputSchema, vendorRegistrationSchema } from "./dto";
 
 export const vendorRouter = createTRPCRouter({
   createVendor: protectedProcedure.input(vendorRegistrationSchema).mutation(async ({ input }) => {
@@ -233,6 +233,29 @@ export const vendorRouter = createTRPCRouter({
         });
       }
     }),
+
+  editVendor: protectedProcedure.input(editVendorSchema).mutation(async ({ input }) => {
+    try {
+      const filteredInputs = Object.entries(input).filter(
+        ([key, value]) =>
+          value !== undefined && value !== "" && value !== null && key !== "vendorId",
+      );
+
+      const inputsToUpdate = Object.fromEntries(filteredInputs);
+
+      await db.update(vendorTable).set(inputsToUpdate).where(eq(vendorTable.id, input.vendorId));
+
+      return {
+        success: true,
+        message: "Successfully Edited Vendor Details",
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error Editing Vendor Details ${err}`,
+      });
+    }
+  }),
 
   getVendorsOverview: protectedProcedure.query(async () => {
     try {
