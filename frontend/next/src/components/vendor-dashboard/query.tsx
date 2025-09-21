@@ -1,6 +1,9 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '~/shared/shadcn/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/shadcn/card';
@@ -15,21 +18,32 @@ import {
 import { Input } from '~/shared/shadcn/input';
 import { Textarea } from '~/shared/shadcn/textarea';
 
-interface QueryFormValues {
-  title: string;
-  query: string;
+const queryFormSchema = z.object({
+  title: z.string(),
+  query: z.string()
+});
+
+type QueryFormValues = z.infer<typeof queryFormSchema>;
+
+interface WriteQueryProps {
+  onQuerySubmit: (title: string, query: string) => void;
+  isLoading: boolean;
 }
 
-export function WriteQuery() {
+export function WriteQuery({ onQuerySubmit, isLoading }: WriteQueryProps) {
   const form = useForm<QueryFormValues>({
+    resolver: zodResolver(queryFormSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       title: '',
       query: ''
     }
   });
 
-  const onSubmit = (values: QueryFormValues) => {
-    console.log(values);
+  const onFormSubmit = (values: QueryFormValues) => {
+    onQuerySubmit(values.title, values.query);
+    form.reset();
   };
 
   return (
@@ -43,7 +57,7 @@ export function WriteQuery() {
 
       <CardContent className="p-0 sm:px-5">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="title"
@@ -51,7 +65,7 @@ export function WriteQuery() {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Login issue" className="text-sm" />
+                    <Input {...field} placeholder="e.g. Stock Updation Issue" className="text-sm" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -77,7 +91,7 @@ export function WriteQuery() {
             />
 
             <Button type="submit" className="w-full">
-              Submit
+              {isLoading ? <Loader2 /> : 'Submit'}
             </Button>
           </form>
         </Form>

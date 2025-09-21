@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Boxes, Home, Mail, PackagePlus } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
 import {
@@ -40,10 +41,27 @@ export function SideBar() {
   const { data: session } = useQuery(trpcHttp.auth.getSession.queryOptions<SessionTypes>());
   const [openQuery, setOpenQuery] = useState<boolean>(false);
 
+  const { mutateAsync: createQuery, isPending } = useMutation(
+    trpcHttp.reshub.createVendorQuery.mutationOptions({
+      onSuccess: () => {
+        toast.success('Query Created Successfully');
+      },
+      onError: (err) => {
+        console.log('Error while creating query ', err.message);
+        toast.error('Creating Query Failed');
+      }
+    })
+  );
+
+  const handleQueryCreate = async (title: string, description: string) => {
+    await createQuery({ title, description });
+    setOpenQuery(false);
+  };
+
   return (
     <>
       <CustomDialog open={openQuery} onOpenChange={setOpenQuery}>
-        {<WriteQuery />}
+        {<WriteQuery onQuerySubmit={handleQueryCreate} isLoading={isPending} />}
       </CustomDialog>
       <Sidebar collapsible="icon">
         <SidebarHeader>
