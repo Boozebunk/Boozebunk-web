@@ -47,6 +47,7 @@ export const responseHubRouter = createTRPCRouter({
       try {
         const queries = await db
           .select({
+            id: VendorQueryTable.id,
             martName: vendorTable.martName,
             vendorName: vendorTable.vendorName,
             vendorEmail: userTable.email,
@@ -69,6 +70,7 @@ export const responseHubRouter = createTRPCRouter({
         return {
           success: true,
           queries,
+          totalLength: queries.length,
         };
       } catch (err) {
         throw new TRPCError({
@@ -77,4 +79,38 @@ export const responseHubRouter = createTRPCRouter({
         });
       }
     }),
+
+  deleteQueryById: protectedProcedure
+    .input(z.object({ queryId: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        await db.delete(VendorQueryTable).where(eq(VendorQueryTable.id, input.queryId));
+
+        return {
+          success: true,
+          message: "Query Successfully Deleted",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Error deleting query ${err}`,
+        });
+      }
+    }),
+
+  deleteAllQueries: protectedProcedure.mutation(async () => {
+    try {
+      await db.delete(VendorQueryTable);
+
+      return {
+        success: true,
+        message: "Queries Deletion Successfull",
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error deleting all queries: ${err}`,
+      });
+    }
+  }),
 });
