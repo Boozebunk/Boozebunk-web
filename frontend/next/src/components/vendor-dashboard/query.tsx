@@ -19,8 +19,8 @@ import { Input } from '~/shared/shadcn/input';
 import { Textarea } from '~/shared/shadcn/textarea';
 
 const queryFormSchema = z.object({
-  title: z.string(),
-  query: z.string()
+  title: z.string().min(1, 'title cannot be empty'),
+  query: z.string().min(1, 'description cannot be empty')
 });
 
 type QueryFormValues = z.infer<typeof queryFormSchema>;
