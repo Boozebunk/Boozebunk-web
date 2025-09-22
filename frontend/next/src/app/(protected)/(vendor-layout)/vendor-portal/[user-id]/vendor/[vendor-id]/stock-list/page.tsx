@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { type StockEditTypes } from '@boozebunk-trpc/modules/stock/dto';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Loader2, MoreHorizontal, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
@@ -47,6 +48,17 @@ export default function Page() {
   const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
   const [stockId, setStockId] = React.useState<string>();
   const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([]);
+  const [openStockEdit, setOpenStockEdit] = React.useState(false);
+
+  const [editableStock, setEditableStock] = React.useState<StockEditTypes>({
+    stockId: '',
+    brandName: '',
+    productName: '',
+    category: '',
+    type: '',
+    size: '',
+    price: ''
+  });
 
   const columns: ColumnDef<StockItem>[] = [
     {
@@ -180,7 +192,19 @@ export default function Page() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setEditableStock({
+                  stockId: row.original.id,
+                  brandName: row.original.brand,
+                  productName: row.original.productName,
+                  category: row.original.category,
+                  type: row.original.type ?? '',
+                  size: row.original.size,
+                  price: row.original.price
+                });
+                setOpenStockEdit(true);
+              }}>
               <Pencil />
               Edit Product
             </DropdownMenuItem>
@@ -213,6 +237,19 @@ export default function Page() {
       stockFilter,
       pageIndex: pagination.pageIndex,
       pageSize: pagination.pageSize
+    })
+  );
+
+  const { mutateAsync: editStock } = useMutation(
+    trpcHttp.stock.editVendorStock.mutationOptions({
+      onSuccess: () => {
+        toast.success('Stock Updated Successfully');
+        refetchVendorStocks();
+      },
+      onError: (err) => {
+        toast.error('Stock Updation Failed');
+        console.log('Stock Updation failed ', err.message);
+      }
     })
   );
 
@@ -258,6 +295,19 @@ export default function Page() {
     await updateStock({ stockIds: [stockId], availability: newStatus });
   };
 
+  const handleEditStock = async () => {
+    await editStock(editableStock);
+    setEditableStock({
+      stockId: '',
+      brandName: '',
+      productName: '',
+      category: '',
+      type: '',
+      size: '',
+      price: ''
+    });
+  };
+
   const handleDeleteStock = async () => {
     if (stockId) {
       await deleteStock({ stockId });
@@ -278,6 +328,106 @@ export default function Page() {
           handleDeleteStock();
         }}
       />
+      <CustomDialog
+        title="Edit Your Stock Here"
+        actionText="Edit"
+        open={openStockEdit}
+        onOpenChange={setOpenStockEdit}
+        onAction={() => {
+          handleEditStock();
+        }}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEditStock();
+          }}
+          className="flex flex-col gap-3">
+          <div>
+            <label>Brand Name</label>
+            <input
+              type="text"
+              value={editableStock.brandName}
+              onChange={(e) =>
+                setEditableStock((prev: StockEditTypes) => ({
+                  ...prev,
+                  brandName: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>Product Name</label>
+            <input
+              type="text"
+              value={editableStock.productName}
+              onChange={(e) =>
+                setEditableStock((prev: StockEditTypes) => ({
+                  ...prev,
+                  productName: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>Category</label>
+            <input
+              type="text"
+              value={editableStock.category}
+              onChange={(e) =>
+                setEditableStock((prev: StockEditTypes) => ({
+                  ...prev,
+                  category: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>Type</label>
+            <input
+              type="text"
+              value={editableStock.type}
+              onChange={(e) =>
+                setEditableStock((prev: StockEditTypes) => ({
+                  ...prev,
+                  type: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>Size</label>
+            <input
+              type="text"
+              value={editableStock.size}
+              onChange={(e) =>
+                setEditableStock((prev: StockEditTypes) => ({
+                  ...prev,
+                  size: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+          <div>
+            <label>Price</label>
+            <input
+              type="text"
+              value={editableStock.price}
+              onChange={(e) =>
+                setEditableStock((prev: StockEditTypes) => ({
+                  ...prev,
+                  price: e.target.value
+                }))
+              }
+              className="w-full rounded border px-2 py-1"
+            />
+          </div>
+        </form>
+      </CustomDialog>
       <div className="flex flex-col gap-3 p-3 lg:px-10">
         <h1 className="font-medium md:text-2xl">
           <strong>All the Stock</strong> Listed

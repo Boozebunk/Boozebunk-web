@@ -28,4 +28,16 @@ export const bulkUploadStockSchema = z.array(
   ]),
 );
 
+export const stockEditSchema = z.object({
+  stockId: z.string(),
+  brandName: z.string().optional(),
+  productName: z.string().optional(),
+  category: z.string().optional(),
+  type: z.string().optional(),
+  size: z.string().optional(),
+  price: z.string().optional(),
+});
+
+export type StockEditTypes = z.infer<typeof stockEditSchema>;
+
 export type BulkUploadStockType = z.infer<typeof bulkUploadStockSchema>;

@@ -7,7 +7,12 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import z from "zod";
 
-import { bulkUploadStockSchema, gettingVendorStockSchema, vendorAddStockSchema } from "./dto";
+import {
+  bulkUploadStockSchema,
+  gettingVendorStockSchema,
+  stockEditSchema,
+  vendorAddStockSchema,
+} from "./dto";
 
 export const vendorStockRouter = createTRPCRouter({
   addStock: protectedProcedure.input(vendorAddStockSchema).mutation(async ({ ctx, input }) => {
@@ -123,6 +128,27 @@ export const vendorStockRouter = createTRPCRouter({
         });
       }
     }),
+
+  editVendorStock: protectedProcedure.input(stockEditSchema).mutation(async ({ input }) => {
+    try {
+      const filteredInput = Object.entries(input).filter(
+        ([key, value]) =>
+          value !== "" && value !== undefined && value !== null && key !== "stockId",
+      );
+
+      const stockToUpdate = Object.fromEntries(filteredInput);
+
+      await db
+        .update(vendorStockTable)
+        .set(stockToUpdate)
+        .where(eq(vendorStockTable.id, input.stockId));
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Stock edit failed ${err}`,
+      });
+    }
+  }),
 
   updateVendorStockAvailability: protectedProcedure
     .input(
