@@ -151,7 +151,13 @@ export default function Page() {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
                   onClick={() => {
-                    setEditableVedorDetails({ vendorId: vendor.id });
+                    setEditableVedorDetails({
+                      vendorId: vendor.id,
+                      martName: vendor.martName,
+                      licenseNumber: vendor.licenseNumber ?? '',
+                      phoneNumber: vendor.phoneNumber ?? '',
+                      vendorName: vendor.vendorName ?? ''
+                    });
                     setOpenVendorEdit(true);
                   }}>
                   Edit vendor
