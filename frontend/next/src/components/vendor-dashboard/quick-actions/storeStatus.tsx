@@ -9,39 +9,45 @@ import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
 
 type StoreStatusType = 'open' | 'closed';
 
-export function StoreStatus() {
+interface StoreStatusProps {
+  onQuickAction?: (params: {
+    martStatus: 'OPEN' | 'CLOSED';
+    martOpenTime: string;
+    martCloseTime: string;
+  }) => void;
+}
+
+export function StoreStatus({ onQuickAction }: StoreStatusProps) {
   const [status, setStatus] = React.useState<StoreStatusType>('open');
   const [openTime, setOpenTime] = React.useState('07:00');
   const [closeTime, setCloseTime] = React.useState('23:59');
 
-  const updateBackend = async (
-    nextStatus: StoreStatusType,
-    nextOpen: string,
-    nextClose: string
-  ) => {
-    await fetch('/api/store-status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        storeStatus: nextStatus,
-        storeOpenTime: nextOpen,
-        storeCloseTime: nextClose
-      })
-    });
-  };
-
   const handleStatusChange = (next: StoreStatusType) => {
     setStatus(next);
-    updateBackend(next, openTime, closeTime);
+    if (onQuickAction) {
+      onQuickAction({
+        martStatus: next === 'open' ? 'OPEN' : 'CLOSED',
+        martOpenTime: openTime + ' AM',
+        martCloseTime: closeTime + ' PM'
+      });
+    }
   };
 
   const handleTimeChange = (type: 'open' | 'close', value: string) => {
     if (type === 'open') {
       setOpenTime(value);
-      updateBackend(status, value, closeTime);
     } else {
       setCloseTime(value);
-      updateBackend(status, openTime, value);
+    }
+  };
+
+  const handleTimeBlur = () => {
+    if (onQuickAction) {
+      onQuickAction({
+        martStatus: status === 'open' ? 'OPEN' : 'CLOSED',
+        martOpenTime: openTime + ' AM',
+        martCloseTime: closeTime + ' PM'
+      });
     }
   };
 
@@ -92,6 +98,7 @@ export function StoreStatus() {
               type="time"
               value={openTime}
               onChange={(e) => handleTimeChange('open', e.target.value)}
+              onBlur={() => handleTimeBlur()}
               className="w-fit cursor-pointer border-none bg-transparent text-sm font-medium text-black focus:outline-none"
             />
             <span className="ml-3 rounded-md text-xs font-medium text-gray-600 select-none group-hover:bg-gray-100 sm:px-2 sm:py-1">
@@ -108,6 +115,7 @@ export function StoreStatus() {
               type="time"
               value={closeTime}
               onChange={(e) => handleTimeChange('close', e.target.value)}
+              onBlur={() => handleTimeBlur()}
               className="w-fit cursor-pointer border-none bg-transparent text-sm font-medium text-black focus:outline-none"
             />
             <span className="ml-3 rounded-md text-xs font-medium text-gray-600 select-none group-hover:bg-gray-100 sm:px-2 sm:py-1">

@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "@boozebunk-trpc/server/trpc";
 
+import { analyticsRouter } from "./analytics/controller";
 import { authRouter } from "./auth/controller";
 import { responseHubRouter } from "./reshub/controller";
 import { vendorStockRouter } from "./stock/controller";
@@ -10,6 +11,7 @@ export const appRouter = createTRPCRouter({
   vendor: vendorRouter,
   stock: vendorStockRouter,
   reshub: responseHubRouter,
+  analytics: analyticsRouter,
 });
 
 export type AppRouter = typeof appRouter;
