@@ -1,92 +1,76 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 
-import clsx from 'clsx';
+import { cn } from '~/lib/utils';
+import { Input } from '~/shared/shadcn/input';
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem
-} from '~/shared/shadcn/command';
+// Liquor-related mock data
+const liquorData: Record<string, string[]> = {
+  a: ['Absolut Vodka', 'Amstel Beer', 'Apple Cider', 'Añejo Tequila', 'Aperol'],
+  b: ['Budweiser', "Ballantine's", 'Baileys Irish Cream', 'Bombay Sapphire', 'Bacardi Rum'],
+  c: ['Corona', 'Chardonnay', 'Captain Morgan', 'Cognac', 'Craft Beer'],
+  d: ['Don Julio', 'Dry Gin', 'Dark Rum', 'Dom Pérignon', 'Draft Beer'],
+  g: ['Grey Goose', 'Guinness', 'Gin Tonic', 'Glenfiddich', 'Ginger Beer'],
+  r: ['Red Wine', 'RumChata', 'Rosé Wine', 'Royal Stag', 'Russian Vodka'],
+  w: ['Whiskey', 'White Wine', 'Wild Turkey', 'Woodford Reserve', 'Wine Cooler']
+};
 
-interface SearchBarProps {
-  placeholder?: string;
-  //   value: string;
-  //   onChange: (value: string) => void;
-  results: string[];
-  className?: string;
-}
+export default function LiquorSearch() {
+  const [query, setQuery] = React.useState('');
+  const [results, setResults] = React.useState<string[]>([]);
 
-export function SearchBar({
-  placeholder = 'Search...',
-  //   value,
-  //   onChange,
-  results,
-  className
-}: SearchBarProps) {
-  const [open, setOpen] = React.useState(false);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    setQuery(value);
+
+    if (value.length === 0) {
+      setResults([]);
+      return;
+    }
+
+    // Get first letter matches
+    const firstLetter = value[0];
+    const suggestions = liquorData[firstLetter] || [];
+    setResults(suggestions.filter((item) => item.toLowerCase().includes(value)));
+  };
+
+  const handleSelect = (value: string) => {
+    setQuery(value);
+    setResults([]);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim() !== '') {
+      setResults([]);
+    }
+  };
 
   return (
-    <div className={clsx('relative w-full', className)}>
-      <Command className="border-input w-full rounded-xl border">
-        <CommandInput
-          placeholder={placeholder}
-          //   value={value}
-          //   onValueChange={(val) => {
-          //     onChange(val);
-          //     setOpen(true);
-          //   }}
-          onFocus={() => setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
-          className="sm:text-md w-full text-sm lg:text-lg"
+    <div className="mx-auto w-full max-w-md space-y-4">
+      {/* Search Bar */}
+      <form onSubmit={handleSubmit} className="relative">
+        <Input
+          placeholder="Search liquor brands, products, categories..."
+          value={query}
+          onChange={handleChange}
+          className="pr-10"
         />
-        {open && (
-          <CommandGroup className="bg-background absolute top-full left-0 z-20 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border shadow-lg sm:max-h-100">
-            {results.length === 0 ? (
-              <CommandEmpty className="p-3 text-gray-500">No results found.</CommandEmpty>
-            ) : (
-              results.map((item, idx) => (
-                <CommandItem
-                  key={idx}
-                  value={item}
-                  //   onMouseDown={(e) => {
-                  //     e.preventDefault();
-                  //     onChange(item);
-                  //     setOpen(false);
-                  //   }}
-                  className="border-border sm:text-mdl cursor-pointer border-b px-4 py-2 text-sm last:border-b-0 lg:text-lg">
-                  {item}
-                </CommandItem>
-              ))
-            )}
-          </CommandGroup>
+        {/* Dropdown */}
+        {results.length > 0 && (
+          <div className="absolute z-10 mt-1 w-full rounded-md border bg-white shadow-md">
+            {results.map((item, index) => (
+              <div
+                key={index}
+                onClick={() => handleSelect(item)}
+                className={cn('cursor-pointer px-3 py-2 text-sm hover:bg-gray-100')}>
+                {item}
+              </div>
+            ))}
+          </div>
         )}
-      </Command>
+      </form>
     </div>
   );
-}
-
-const items = [
-  'Legacy Liquor',
-  'Wine Shop',
-  'Craft Beer',
-  'Whiskey World',
-  'Vodka Vault',
-  'Legacy Liquor',
-  'Wine Shop',
-  'Craft Beer',
-  'Whiskey World',
-  'Vodka Vault',
-  'Legacy Liquor',
-  'Wine Shop',
-  'Craft Beer',
-  'Whiskey World',
-  'Vodka Vault'
-];
-
-export function MainSearchBar() {
-  return <SearchBar results={items} />;
 }

@@ -9,7 +9,7 @@ import { AlertTriangle } from 'lucide-react';
 
 import { pageview } from '~/lib/analytics';
 
-import AgeVerificationDialog from '~/components/customer/age-verification';
+// import AgeVerificationDialog from '~/components/customer/age-verification';
 import { Header } from '~/components/customer/header';
 
 export function AnalyticsListener() {
@@ -24,9 +24,10 @@ export function AnalyticsListener() {
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function CustomerLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      {/* Google Analytics Part */}
       {GA_ID && (
         <>
           <Script
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Script>
         </>
       )}
-      <AgeVerificationDialog />
+      {/* <AgeVerificationDialog /> */}
       <div className="relative flex flex-col items-center gap-8 md:gap-10">
         <Header />
         <main className="flex w-full">{children}</main>
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/privacy" className="text-[#6B0F1A] hover:underline">
               Privacy Policy
             </Link>
+            <span>Copyright © 2025 Boozebunk. All Right Reserved.</span>
           </div>
         </footer>
       </div>

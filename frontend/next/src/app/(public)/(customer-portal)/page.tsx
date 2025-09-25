@@ -111,7 +111,7 @@ type Coords = {
 };
 
 function Page() {
-  // ------------location access and lat and long-----------------
+  // ------------location access of lat and long-----------------
   const [coords, setCoords] = useState<Coords>({ lat: null, lon: null });
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
