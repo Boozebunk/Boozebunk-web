@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { Plus } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
 
@@ -37,6 +37,13 @@ const baseProducts = [
     type: 'Tennessee Whiskey',
     size: '750ml',
     price: 5500
+  },
+  {
+    name: 'old monk',
+    category: 'Whiskey',
+    type: 'Blended Scotch',
+    size: '750ml',
+    price: 4000
   },
   {
     name: 'Chivas Regal 12',
@@ -98,7 +105,53 @@ const ExampleVendors = Array.from({ length: 20 }, (_, i) => {
   };
 });
 
+type Coords = {
+  lat: number | null;
+  lon: number | null;
+};
+
 function Page() {
+  // ------------location access and lat and long-----------------
+  const [coords, setCoords] = useState<Coords>({ lat: null, lon: null });
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCoords({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          });
+          setLoading(false);
+        },
+        (err) => {
+          setLoading(false);
+          switch (err.code) {
+            case err.PERMISSION_DENIED:
+              console.log('User denied the request for Geolocation.');
+              break;
+            case err.POSITION_UNAVAILABLE:
+              console.log('Location information is unavailable.');
+              break;
+            case err.TIMEOUT:
+              console.log('The request to get user location timed out.');
+              break;
+            default:
+              console.log('An unknown error occurred.');
+          }
+        },
+        {
+          enableHighAccuracy: true, // Request the best possible results
+          timeout: 10000, // Wait up to 10 seconds (10000ms)
+          maximumAge: 0 // Don't use a cached position
+        }
+      );
+    } else {
+      console.log('Geolocation is not supported by this browser.');
+    }
+  }, []);
+  console.log(coords);
+
   return (
     <div className="flex w-full flex-col items-center gap-8 sm:gap-15">
       {/* STORES NEAR YOU */}
@@ -114,13 +167,34 @@ function Page() {
         </div>
 
         <div className="w-full overflow-x-auto scroll-smooth pb-3">
-          <div className="flex gap-5 lg:gap-8">
-            {ExampleVendors.map((info, id) => (
-              <div key={id}>
-                <VendorCard info={info} />
+          {loading ? (
+            <div className="flex h-40 w-full items-center justify-center">
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-8 w-8 animate-spin" />
+                <span className="text-lg font-medium">Loading stores...</span>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : coords.lat !== null && coords.lon !== null ? (
+            <div className="flex gap-5 lg:gap-8">
+              {ExampleVendors.map((info, id) => (
+                <div key={id}>
+                  <VendorCard info={info} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center space-y-3">
+              <p className="text-center text-sm sm:text-base">
+                Location access is denied. Please enable it in your browser or device settings and
+                refresh.
+              </p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="cursor-pointer text-sm sm:text-base">
+                Refresh if Done
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

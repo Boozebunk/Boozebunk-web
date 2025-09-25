@@ -4,7 +4,7 @@ import { Badge } from '~/shared/shadcn/badge';
 import { Card, CardContent } from '~/shared/shadcn/card';
 
 type ProductCardProps = {
-  image: string;
+  // image: string;
   category: string;
   name: string;
   size: string;
