@@ -1,10 +1,13 @@
 import db from "@boozebunk-trpc/db";
+import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import z from "zod";
+
+import { stockDisplaySchema } from "./dto";
 
 export const customerRouter = createTRPCRouter({
   getNearbyVendors: publicProcedure
@@ -27,12 +30,21 @@ export const customerRouter = createTRPCRouter({
             id: vendorTable.id,
             martName: vendorTable.martName,
             storeStatus: vendorTable.martStatus,
+            martOpenTime: vendorTable.martOpenTime,
+            martCloseTime: vendorTable.martCloseTime,
+            martArea: vendorAddressesTable.addressArea,
+            martCity: vendorAddressesTable.addressCity,
+            martState: vendorAddressesTable.addressState,
+            martPostalCode: vendorAddressesTable.addressPostalCode,
+            martLat: sql<number>`ST_Y(${vendorTable.locationCoordinates}::geometry)`.as("mart_lat"),
+            martLng: sql<number>`ST_X(${vendorTable.locationCoordinates}::geometry)`.as("mart_lng"),
             distanceMeters:
               sql<number>`ST_Distance(${vendorTable.locationCoordinates}, ${customerLocation})`.as(
                 "distance_meters",
               ),
           })
           .from(vendorTable)
+          .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
           .where(
             sql`ST_DWithin(${vendorTable.locationCoordinates}, ${customerLocation}, ${radiusMeters})`,
           )
@@ -102,4 +114,73 @@ export const customerRouter = createTRPCRouter({
         });
       }
     }),
+
+  getCities: publicProcedure.query(async () => {
+    try {
+      const cities = await db
+        .selectDistinct({
+          city: sql<string>`TRIM(${vendorAddressesTable.addressCity})`,
+        })
+        .from(vendorAddressesTable);
+
+      return {
+        success: true,
+        cities,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error fetching cities ${err}`,
+      });
+    }
+  }),
+
+  getStockDisplay: publicProcedure.input(stockDisplaySchema).query(async ({ input }) => {
+    try {
+      const { city, category, pageIndex, pageSize } = input;
+
+      const whereConditions = [];
+      whereConditions.push(eq(vendorAddressesTable.addressCity, city));
+
+      if (category) {
+        whereConditions.push(eq(vendorStockTable.category, category));
+      }
+
+      const finalWhereConditions = and(...whereConditions);
+
+      const items = await db
+        .select({
+          martName: vendorTable.martName,
+          martStatus: vendorTable.martStatus,
+          productName: vendorStockTable.productName,
+          brandName: vendorStockTable.brandName,
+          category: vendorStockTable.category,
+          type: vendorStockTable.type,
+          price: vendorStockTable.price,
+          size: vendorStockTable.size,
+          itemsCount: sql<number>`count(*) OVER()`.as("items_count"),
+          martLat: sql<number>`ST_Y(${vendorTable.locationCoordinates}::geometry)`.as("mart_lat"),
+          martLng: sql<number>`ST_X(${vendorTable.locationCoordinates}::geometry)`.as("mart_lng"),
+        })
+        .from(vendorStockTable)
+        .leftJoin(vendorTable, eq(vendorStockTable.vendorId, vendorTable.id))
+        .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
+        .where(finalWhereConditions)
+        .limit(pageSize)
+        .offset(pageIndex * pageSize);
+
+      const totalItemsCount = items[0]?.itemsCount ?? 0;
+
+      return {
+        success: true,
+        items,
+        totalItemsCount,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error getting stock-display ${err}`,
+      });
+    }
+  }),
 });

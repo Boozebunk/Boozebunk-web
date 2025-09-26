@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
+import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
@@ -10,6 +11,7 @@ import { Button } from '~/shared/shadcn/button';
 import StockDisplay from '~/components/customer/stocks-display';
 import { VendorCard } from '~/components/customer/vendor-card';
 import { useCustomerContext } from '~/providers/customer-provider';
+import { trpcHttp } from '~/utils/trpc';
 
 const go_to_categories = [
   { name: 'Beer', image: '/assets/categories/beer.jpg' },
@@ -26,7 +28,30 @@ const go_to_categories = [
 
 function Page() {
   // ------------location access of lat and long-----------------
-  const { locationStatus, nearbyVendors, nearbyVendorsLoading } = useCustomerContext();
+  const { locationStatus, nearbyVendors, nearbyVendorsLoading, selectedCity } =
+    useCustomerContext();
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    pageIndex: 0
+  });
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  //Getting Stock based on City
+  const { data: stocks, isLoading: loadingStocks } = useQuery(
+    trpcHttp.customer.getStockDisplay.queryOptions(
+      {
+        city: selectedCity,
+        category: selectedCategory,
+        pageIndex: pagination.pageIndex,
+        pageSize: pagination.pageSize
+      },
+      {
+        enabled: selectedCity !== ''
+      }
+    )
+  );
+
   return (
     <div className="flex w-full flex-col items-center gap-8 sm:gap-15">
       {/* STORES NEAR YOU */}
@@ -55,9 +80,18 @@ function Page() {
                 <div key={id}>
                   <VendorCard
                     info={{
+                      id: info.id,
                       name: info.martName,
-                      distance: info.distanceMeters.toString(),
-                      storeStatus: info.storeStatus
+                      distance: (info.distanceMeters / 1000).toFixed(1), // Convert meters to kilometers
+                      storeStatus: info.storeStatus,
+                      martLat: info.martLat,
+                      martLng: info.martLng,
+                      area: info.martArea ?? '',
+                      city: info.martCity ?? '',
+                      state: info.martState ?? '',
+                      postalCode: info.martPostalCode ?? '',
+                      openTime: info.martOpenTime,
+                      closeTime: info.martCloseTime
                     }}
                   />
                 </div>
@@ -91,6 +125,7 @@ function Page() {
             <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
               Categories
             </span>
+            Based on City
           </h1>
           <p className="text-center text-sm text-gray-500">View by category you love.</p>
         </div>
@@ -98,6 +133,9 @@ function Page() {
         <div className="grid grid-cols-4 gap-x-4 gap-y-6 sm:grid-cols-5 sm:gap-x-10 lg:gap-x-20">
           {go_to_categories.map(({ name, image }, idx) => (
             <div
+              onClick={() => {
+                setSelectedCategory(name);
+              }}
               key={idx}
               className="flex w-fit cursor-pointer flex-col items-center gap-2 md:gap-3">
               <div className="relative h-[80px] w-[80px] rounded-full bg-gradient-to-tr from-yellow-400 to-orange-400 p-[2px] transition-transform hover:scale-105 sm:h-[120px] sm:w-[120px] lg:h-[150px] lg:w-[150px]">
@@ -110,12 +148,25 @@ function Page() {
             </div>
           ))}
         </div>
+
+        <Button
+          onClick={() => {
+            setSelectedCategory('');
+          }}>
+          All Categories
+        </Button>
       </div>
 
       {/* DIVIDER */}
       <div className="h-[2px] w-[95%] bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
 
-      <StockDisplay />
+      <StockDisplay
+        liquorItems={stocks?.items ?? []}
+        isLoadingItems={loadingStocks}
+        pagination={pagination}
+        setPagination={setPagination}
+        totalPages={stocks?.totalItemsCount ?? 0}
+      />
     </div>
   );
 }

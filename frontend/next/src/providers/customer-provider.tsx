@@ -18,6 +18,8 @@ interface CustomerContextProps {
   nearbyVendors: VendorInfo;
   nearbyVendorsLoading: boolean;
   nearbyVendorsError: unknown | null;
+  selectedCity: string;
+  setSelectedCity: (city: string) => void;
 }
 
 const CustomerContext = createContext<CustomerContextProps | undefined>(undefined);
@@ -36,6 +38,7 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     lon: null
   });
   const [locationStatus, setLocationStatus] = useState<LocationStatus>('idle');
+  const [selectedCity, setSelectedCity] = useState<string>('');
 
   // 1. Get customer location
   useEffect(() => {
@@ -85,7 +88,9 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     locationStatus,
     nearbyVendors: nearbyVendors ?? [],
     nearbyVendorsLoading,
-    nearbyVendorsError: nearbyVendorsError ?? null
+    nearbyVendorsError: nearbyVendorsError ?? null,
+    selectedCity,
+    setSelectedCity
   };
 
   return <CustomerContext.Provider value={contextValue}>{children}</CustomerContext.Provider>;
