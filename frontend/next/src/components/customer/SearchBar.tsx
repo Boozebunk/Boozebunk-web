@@ -1,49 +1,45 @@
 'use client';
 
-import * as React from 'react';
+import React from 'react';
+
+import { useQuery } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 
 import { cn } from '~/lib/utils';
 import { Input } from '~/shared/shadcn/input';
 
-// Liquor-related mock data
-const liquorData: Record<string, string[]> = {
-  a: ['Absolut Vodka', 'Amstel Beer', 'Apple Cider', 'Añejo Tequila', 'Aperol'],
-  b: ['Budweiser', "Ballantine's", 'Baileys Irish Cream', 'Bombay Sapphire', 'Bacardi Rum'],
-  c: ['Corona', 'Chardonnay', 'Captain Morgan', 'Cognac', 'Craft Beer'],
-  d: ['Don Julio', 'Dry Gin', 'Dark Rum', 'Dom Pérignon', 'Draft Beer'],
-  g: ['Grey Goose', 'Guinness', 'Gin Tonic', 'Glenfiddich', 'Ginger Beer'],
-  r: ['Red Wine', 'RumChata', 'Rosé Wine', 'Royal Stag', 'Russian Vodka'],
-  w: ['Whiskey', 'White Wine', 'Wild Turkey', 'Woodford Reserve', 'Wine Cooler']
-};
+import { useCustomerContext } from '~/providers/customer-provider';
+import { trpcHttp } from '~/utils/trpc';
 
-export default function LiquorSearch() {
+interface LiquorSearchProps {
+  isSearchDisabled: boolean;
+}
+
+export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
   const [query, setQuery] = React.useState('');
-  const [results, setResults] = React.useState<string[]>([]);
+  const [searchStock, setSearchStock] = React.useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toLowerCase();
-    setQuery(value);
+  const { nearbyVendors } = useCustomerContext();
+  const nearbyVendorIds = nearbyVendors?.map((v) => v.id);
 
-    if (value.length === 0) {
-      setResults([]);
-      return;
-    }
-
-    // Get first letter matches
-    const firstLetter = value[0];
-    const suggestions = liquorData[firstLetter] || [];
-    setResults(suggestions.filter((item) => item.toLowerCase().includes(value)));
-  };
-
-  const handleSelect = (value: string) => {
-    setQuery(value);
-    setResults([]);
-  };
+  // tRPC query to search for stock in nearby vendors
+  const { data: searchResults, isLoading: isSearchLoading } = useQuery(
+    trpcHttp.customer.searchStock.queryOptions(
+      {
+        searchQuery: searchStock,
+        vendorIds: nearbyVendorIds
+      },
+      {
+        enabled: !isSearchDisabled && searchStock.length > 0
+      }
+    )
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim() !== '') {
-      setResults([]);
+      setSearchStock(query);
+      setQuery('');
     }
   };
 
@@ -54,21 +50,30 @@ export default function LiquorSearch() {
         <Input
           placeholder="Search liquor brands, products, categories..."
           value={query}
-          onChange={handleChange}
+          onChange={(e) => {
+            setQuery(e.target.value);
+          }}
           className="pr-10"
+          disabled={isSearchDisabled}
         />
         {/* Dropdown */}
-        {results.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded-md border bg-white shadow-md">
-            {results.map((item, index) => (
-              <div
-                key={index}
-                onClick={() => handleSelect(item)}
-                className={cn('cursor-pointer px-3 py-2 text-sm hover:bg-gray-100')}>
-                {item}
-              </div>
-            ))}
+        {isSearchLoading ? (
+          <div className="absolute z-10 mt-1 w-full rounded-md border bg-white p-4 text-center shadow-md">
+            <Loader2 className="inline-block h-4 w-4 animate-spin" /> Searching...
           </div>
+        ) : (
+          searchResults &&
+          searchResults.stockItems.length > 0 && (
+            <div className="absolute z-10 mt-1 w-full rounded-md border bg-white shadow-md">
+              {searchResults.stockItems.map((item, index) => (
+                <div
+                  key={index}
+                  className={cn('cursor-pointer px-3 py-2 text-sm hover:bg-gray-100')}>
+                  {item.brand} - {item.productName} ({item.price})
+                </div>
+              ))}
+            </div>
+          )
         )}
       </form>
     </div>
