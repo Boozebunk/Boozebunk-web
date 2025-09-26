@@ -96,13 +96,26 @@ export const customerRouter = createTRPCRouter({
         const stockItems = await db
           .select({
             stockId: vendorStockTable.id,
-            vendorName: vendorTable.martName,
-            brand: vendorStockTable.brandName,
+            martName: vendorTable.martName,
+            storeStatus: vendorTable.martStatus,
+            martOpenTime: vendorTable.martOpenTime,
+            martCloseTime: vendorTable.martCloseTime,
+            martArea: vendorAddressesTable.addressArea,
+            martCity: vendorAddressesTable.addressCity,
+            martState: vendorAddressesTable.addressState,
+            martPostalCode: vendorAddressesTable.addressPostalCode,
+            martLat: sql<number>`ST_Y(${vendorTable.locationCoordinates}::geometry)`.as("mart_lat"),
+            martLng: sql<number>`ST_X(${vendorTable.locationCoordinates}::geometry)`.as("mart_lng"),
+            brandName: vendorStockTable.brandName,
             productName: vendorStockTable.productName,
             price: vendorStockTable.price,
+            size: vendorStockTable.size,
+            category: vendorStockTable.category,
+            type: vendorStockTable.type,
           })
           .from(vendorStockTable)
           .leftJoin(vendorTable, eq(vendorStockTable.vendorId, vendorTable.id))
+          .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
           .where(finalWhereConditions)
           .limit(50);
 
