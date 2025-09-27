@@ -1,9 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
 
 import {
@@ -28,13 +32,47 @@ import {
 } from '~/shared/shadcn/form';
 import { Input } from '~/shared/shadcn/input';
 
+import { useCustomerContext } from '~/providers/customer-provider';
+import { trpcHttp } from '~/utils/trpc';
+
+const EMAIL_COOKIE_NAME = 'c_e';
+const EXPIRATION_DAYS = 30;
+
 export default function AgeVerificationDialog() {
   const [OpenVerification, setOpenVerification] = useState<boolean>(true);
   const [OpenEmailForm, setOpenEmailForm] = useState<boolean>(false);
+  const [hasEmailConsent, setHasEmailConsent] = useState(false);
+
+  const { setCustomerEmail } = useCustomerContext();
+
+  useEffect(() => {
+    const email = Cookies.get(EMAIL_COOKIE_NAME);
+
+    if (email) {
+      setHasEmailConsent(true);
+    }
+  }, []);
+
+  const { mutateAsync: sendCustomerEmail, isPending } = useMutation(
+    trpcHttp.customer.saveCustomerEmail.mutationOptions({
+      onSuccess: () => {
+        toast.success('Email Received Successfully');
+      },
+      onError: () => {
+        toast.error('Enter a valid email');
+      }
+    })
+  );
 
   function OnVerification() {
     setOpenVerification(false);
-    setOpenEmailForm(true);
+
+    if (!hasEmailConsent) {
+      setOpenEmailForm(true);
+    } else {
+      const currentEmail = Cookies.get(EMAIL_COOKIE_NAME);
+      setCustomerEmail(currentEmail ?? '');
+    }
   }
 
   const emailSchema = z.object({
@@ -52,8 +90,9 @@ export default function AgeVerificationDialog() {
     }
   });
 
-  function onSubmit(values: z.infer<typeof emailSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof emailSchema>) {
+    await sendCustomerEmail(values);
+    Cookies.set(EMAIL_COOKIE_NAME, values.email, { expires: EXPIRATION_DAYS });
     setOpenEmailForm(false);
   }
 
@@ -113,7 +152,7 @@ export default function AgeVerificationDialog() {
                   )}
                 />
                 <Button type="submit" className="w-full">
-                  Submit
+                  {isPending ? <Loader2 /> : 'Submit'}
                 </Button>
               </form>
             </Form>
