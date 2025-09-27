@@ -1,5 +1,6 @@
 import db from "@boozebunk-trpc/db";
 import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
+import { customerTable } from "@boozebunk-trpc/db/schema/customer";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
@@ -196,4 +197,29 @@ export const customerRouter = createTRPCRouter({
       });
     }
   }),
+
+  saveCustomerEmail: publicProcedure
+    .input(z.object({ email: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        await db
+          .insert(customerTable)
+          .values({
+            email: input.email,
+          })
+          .onConflictDoNothing({
+            target: customerTable.email,
+          })
+          .execute();
+
+        return {
+          success: "true",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Error saving customer email ${err}`,
+        });
+      }
+    }),
 });
