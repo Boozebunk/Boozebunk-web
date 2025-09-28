@@ -3,9 +3,11 @@
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Star } from 'lucide-react';
+import { Loader2, Star } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '~/shared/shadcn/button';
@@ -20,26 +22,52 @@ import {
 } from '~/shared/shadcn/form';
 import { Textarea } from '~/shared/shadcn/textarea';
 
+import { useCustomerContext } from '~/providers/customer-provider';
+import { trpcHttp } from '~/utils/trpc';
+
 const feedbackFormSchema = z.object({
+  email: z.string().min(1, 'Email is Mandatorily required'),
   description: z.string().optional(),
   rating: z.number().min(1, 'Please select a rating')
 });
 
 type feedbackFormValues = z.infer<typeof feedbackFormSchema>;
 
-export function WriteFeedback() {
+type WriteFeedbackProps = {
+  onClose: () => void; // NEW: Prop to close the parent dialog
+};
+
+export function WriteFeedback({ onClose }: WriteFeedbackProps) {
+  const { customerEmail } = useCustomerContext();
+
+  const { mutateAsync: sendFeedback, isPending } = useMutation(
+    trpcHttp.reshub.saveCustomerFeedback.mutationOptions({
+      onSuccess: () => {
+        toast.success('Feedback send Successfully');
+        form.reset({ email: customerEmail, description: '', rating: 0 });
+        onClose();
+      },
+      onError: (err) => {
+        toast.error('Feedback Failed');
+        console.log(`feedback failed: ${err.message}`);
+      }
+    })
+  );
+
   const form = useForm<feedbackFormValues>({
     resolver: zodResolver(feedbackFormSchema),
     mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
+      email: customerEmail,
       description: '',
       rating: 0
     }
   });
 
-  const onFormSubmit = () => {
-    console.log(form.getValues());
-    form.reset();
+  const onFormSubmit = async (values: feedbackFormValues) => {
+    console.log('on form submitssion');
+    await sendFeedback(values);
   };
   const [hover, setHover] = useState<number | null>(null);
 
@@ -67,6 +95,7 @@ export function WriteFeedback() {
                       {...field}
                       placeholder="e.g. Love your services"
                       className="text-sm"
+                      rows={3}
                     />
                   </FormControl>
                   <FormMessage />
@@ -107,12 +136,8 @@ export function WriteFeedback() {
                 </FormItem>
               )}
             />
-
-            {/* <Button type="submit" className="w-full">
-              {isLoading ? <Loader2 className="animate-spin" /> : 'Submit'}
-            </Button> */}
-            <Button type="submit" className="w-full">
-              Submit
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? <Loader2 /> : 'Submit'}
             </Button>
           </form>
         </Form>

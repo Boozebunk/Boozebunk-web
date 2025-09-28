@@ -205,7 +205,7 @@ export const customerRouter = createTRPCRouter({
         await db
           .insert(customerTable)
           .values({
-            email: input.email,
+            email: input.email.trim(),
           })
           .onConflictDoNothing({
             target: customerTable.email,

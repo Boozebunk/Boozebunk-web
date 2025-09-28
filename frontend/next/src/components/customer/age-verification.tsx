@@ -92,6 +92,7 @@ export default function AgeVerificationDialog() {
 
   async function onSubmit(values: z.infer<typeof emailSchema>) {
     await sendCustomerEmail(values);
+    setCustomerEmail(values.email);
     Cookies.set(EMAIL_COOKIE_NAME, values.email, { expires: EXPIRATION_DAYS });
     setOpenEmailForm(false);
   }

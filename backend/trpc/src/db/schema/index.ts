@@ -3,6 +3,7 @@ import { adminTable } from "./admin";
 import { userTable } from "./auth/user";
 import { verificationTokensTable } from "./auth/verification";
 import { customerTable } from "./customer";
+import { FeedbackTable } from "./feedback";
 import { VendorQueryTable } from "./query";
 import { vendorTable } from "./vendor";
 
@@ -17,6 +18,7 @@ const tables = {
   address: vendorAddressesTable,
   query: VendorQueryTable,
   customer: customerTable,
+  feedback: FeedbackTable,
 };
 
 export type Tables = typeof tables;

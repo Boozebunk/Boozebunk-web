@@ -42,7 +42,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           </Button>
         </div>
         <CustomDialog open={openFeedback} onOpenChange={setFeedback}>
-          {<WriteFeedback />}
+          {<WriteFeedback onClose={() => setFeedback(false)} />}
         </CustomDialog>
         <AgeVerificationDialog />
         <div className="relative flex flex-col items-center gap-8 md:gap-10">

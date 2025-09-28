@@ -1,11 +1,13 @@
 import db from "@boozebunk-trpc/db";
 import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
+import { FeedbackTable } from "@boozebunk-trpc/db/schema/feedback";
 import { VendorQueryTable } from "@boozebunk-trpc/db/schema/query";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
-import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
+// import { v4 as uuidv4 } from "uuid";
 import z from "zod";
 
 export const responseHubRouter = createTRPCRouter({
@@ -113,4 +115,32 @@ export const responseHubRouter = createTRPCRouter({
       });
     }
   }),
+
+  saveCustomerFeedback: publicProcedure
+    .input(
+      z.object({
+        email: z.string().min(1, "Email is Required"),
+        description: z.string().optional(),
+        rating: z.number().min(1, "Rating is must"),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        await db.insert(FeedbackTable).values({
+          email: input.email,
+          description: input.description,
+          rating: input.rating,
+        });
+
+        return {
+          success: true,
+          message: "Feedback saved successfully",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Feedback Failed ${err}`,
+        });
+      }
+    }),
 });
