@@ -6,7 +6,7 @@ import { VendorQueryTable } from "@boozebunk-trpc/db/schema/query";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 // import { v4 as uuidv4 } from "uuid";
 import z from "zod";
 
@@ -102,7 +102,7 @@ export const responseHubRouter = createTRPCRouter({
 
   deleteAllQueries: protectedProcedure.mutation(async () => {
     try {
-      await db.delete(VendorQueryTable);
+      await db.execute(sql`TRUNCATE TABLE ${VendorQueryTable}`);
 
       return {
         success: true,
@@ -143,4 +143,73 @@ export const responseHubRouter = createTRPCRouter({
         });
       }
     }),
+
+  getCustomerFeedback: protectedProcedure
+    .input(
+      z.object({
+        pageSize: z.number(),
+        pageIndex: z.number(),
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        const totalLength = await db
+          .select({
+            count: sql<number>`count(*)`,
+          })
+          .from(FeedbackTable)
+          .then((res) => res[0]?.count ?? 0);
+
+        const feedbacks = await db
+          .select()
+          .from(FeedbackTable)
+          .limit(input.pageSize)
+          .offset(input.pageIndex * input.pageSize)
+          .orderBy(desc(FeedbackTable.createdAt));
+        return {
+          success: true,
+          feedbacks,
+          totalLength,
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Error getting feedbacks ${err}`,
+        });
+      }
+    }),
+
+  deleteFeedbackById: protectedProcedure
+    .input(z.object({ feedbackId: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        await db.delete(FeedbackTable).where(eq(FeedbackTable.id, input.feedbackId));
+
+        return {
+          success: true,
+          message: "Feedback Successfully Deleted",
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Error deleting feedback ${err}`,
+        });
+      }
+    }),
+
+  deleteAllFeedbacks: protectedProcedure.mutation(async () => {
+    try {
+      await db.execute(sql`TRUNCATE TABLE ${FeedbackTable}`);
+
+      return {
+        success: true,
+        message: "Feedbacks Deletion Successfull",
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error deleting Feedbacks: ${err}`,
+      });
+    }
+  }),
 });
