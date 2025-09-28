@@ -33,9 +33,8 @@ export const VendorCard = ({ info }: { info: VendorCardProps }) => {
   };
   return (
     <Card className="p-5 md:p-7">
-      <CardContent className="w-fit min-w-[150px] p-0 md:min-w-[250px]">
+      <CardContent className="w-fit max-w-[300px] min-w-[150px] p-0 md:max-w-[400px] md:min-w-[250px] lg:max-w-[500px]">
         <div className="flex flex-col items-start gap-3">
-          {/* Store name section */}
           <div className="flex items-center gap-1.5">
             <Store className="!size-8 rounded-full bg-amber-100 p-1 text-amber-600" />
             <span className="truncate text-sm leading-5 font-semibold md:max-w-[350px] lg:text-lg">
@@ -43,52 +42,60 @@ export const VendorCard = ({ info }: { info: VendorCardProps }) => {
             </span>
           </div>
 
-          {/* Store status section */}
           <div className="ml-1 flex items-center gap-1">
             <Badge
               className={clsx(
                 'flex items-center justify-center rounded-full p-1 text-white',
-                info.storeStatus === 'Close' ? 'bg-red-600' : 'bg-green-600'
+                info.storeStatus === 'CLOSED' ? 'bg-red-600' : 'bg-green-600'
               )}>
-              {info.storeStatus === 'Close' ? (
+              {info.storeStatus === 'ClOSED' ? (
                 <X strokeWidth={3} className="size-4" />
               ) : (
                 <Check strokeWidth={3} className="size-4" />
               )}
             </Badge>
+
             <span
               className={clsx(
                 'text-sm md:text-base',
-                info.storeStatus === 'Close' ? 'text-red-600' : 'text-green-600'
+                info.storeStatus === 'CLOSED' ? 'text-red-600' : 'text-green-600'
               )}>
+              {' '}
               {info.storeStatus}
             </span>
           </div>
 
-          {/* Address section */}
           <div className="ml-1 flex flex-col gap-2">
-            <span className="flex items-center gap-1 text-sm text-gray-600">
-              <MapPin className="h-4 w-4" />
-              {info.area}, {info.city}, {info.state} - {info.postalCode}
-            </span>
+            <div className="flex h-[2.5rem] flex-wrap items-center text-sm">
+              <span className="flex items-center gap-1 truncate text-sm">
+                <MapPin className="h-4 w-4 shrink-0" />
+                <span className="max-w-[250px] truncate">{info.area}</span>
+                <span>,</span>
+              </span>
+              <span className="ml-1 whitespace-nowrap">
+                {' '}
+                {info.city}, {info.state} - {info.postalCode}
+              </span>
+            </div>
 
             {/* Timing section */}
-            <span className="flex items-center gap-1 text-sm text-gray-600">
+            <span className="text-muted-foreground flex items-center gap-1 text-sm">
               <Clock className="h-4 w-4" />
               {info.openTime} - {info.closeTime}
             </span>
+          </div>
 
-            {/* Distance and locate section */}
-            <div className="flex items-center gap-3">
-              <span>{info.distance} km</span>
-              <span className="bg-foreground h-[15px] w-[1px]"></span>
-              <Button
-                onClick={handleLocate}
-                className="flex items-center bg-none text-sm text-blue-600 hover:text-blue-700 lg:text-base"
-                variant="link">
-                locate <ArrowUpRight className="h-5 w-5" strokeWidth={1.75} />
-              </Button>
-            </div>
+          <div className="ml-1 flex items-center gap-3">
+            <span className="flex items-center gap-1 text-sm text-[#6B0F1A] lg:text-lg dark:text-[#ffc82e]">
+              {info.distance} km
+            </span>
+            <span className="bg-foreground h-[15] w-[1px]"></span>
+            <Button
+              onClick={handleLocate}
+              variant={'link'}
+              className="flex cursor-pointer items-center bg-none text-sm text-blue-600 hover:text-blue-700 lg:text-lg">
+              locate <ArrowUpRight className="ml-[-5] h-5 w-5" strokeWidth={1.75} />
+            </Button>
           </div>
         </div>
       </CardContent>

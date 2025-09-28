@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+import clsx from 'clsx';
+import { ArrowUpRight, Clock, Loader2, MapPin, Search } from 'lucide-react';
 
 import { Badge } from '~/shared/shadcn/badge';
 import { Button } from '~/shared/shadcn/button';
@@ -54,19 +55,44 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
     }
   };
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Open dropdown whenever searchStock has value
+  useEffect(() => {
+    setIsDropdownOpen(searchStock.length > 0);
+  }, [searchStock]);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <div className="mx-auto w-full max-w-md space-y-4">
+    <div className="w-full space-y-4">
       {/* Search Bar */}
       <form onSubmit={handleSubmit} className="relative">
-        <Input
-          placeholder="Search liquor brands, products, categories..."
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-          }}
-          className="pr-10"
-          disabled={isSearchDisabled}
-        />
+        <div className="relative w-full">
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400 lg:h-5 lg:w-5" />
+          <Input
+            placeholder={
+              isSearchDisabled
+                ? 'Turn on location to Search!'
+                : 'Search liquor brands, products, categories...'
+            }
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full rounded-2xl py-5 pr-3 pl-10 sm:!text-sm md:!text-base lg:!text-lg"
+            disabled={isSearchDisabled}
+          />
+        </div>
+
         {/* Dropdown */}
         {isSearchLoading ? (
           <div className="absolute z-10 mt-1 w-full rounded-md border bg-white p-4 text-center shadow-md">
@@ -74,52 +100,87 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
           </div>
         ) : (
           searchResults &&
+          isDropdownOpen &&
           searchResults.stockItems.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full space-y-2 rounded-md border bg-white p-2 shadow-md">
+            <div
+              ref={dropdownRef}
+              className="absolute z-10 mt-1 max-h-[55vh] w-full space-y-2 overflow-auto rounded-md border bg-white p-2 shadow-md">
               {searchResults.stockItems.map((item, index) => (
-                <Card key={index} className="overflow-hidden">
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold">{item.brandName}</h3>
-                        <Badge variant="secondary">{item.category}</Badge>
-                      </div>
-                      <p className="text-sm text-gray-600">{item.productName}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-green-600">₹{item.price}</span>
-                        <span className="text-sm text-gray-500">{item.size}</span>
-                      </div>
-                      <div className="border-t pt-2">
-                        <h4 className="text-sm font-semibold text-gray-700">{item.martName}</h4>
-                        <p className="text-xs text-gray-600">
-                          {[item.martArea, item.martCity, item.martState]
-                            .filter(Boolean)
-                            .join(', ')}
-                        </p>
-                        <div className="mt-1 flex items-center gap-2 text-xs">
-                          <Badge
-                            variant={item.storeStatus === 'OPEN' ? 'secondary' : 'destructive'}>
-                            {item.storeStatus}
+                <>
+                  <div
+                    className={clsx('bg-foreground flex h-[1px] w-full', index === 0 && 'hidden')}
+                  />
+                  <Card key={index} className="gap-2 overflow-hidden border-none p-5 shadow-none">
+                    <CardContent className="p-0">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          {/* <h3 className="font-semibold">{item.brandName}</h3> */}
+                          <div className="flex flex-col gap-0">
+                            <span className="text-xs font-medium text-[#1e69af] sm:text-sm">
+                              {item.brandName}
+                            </span>
+                            <span className="h-[2.5rem] text-sm leading-5 font-semibold sm:text-base">
+                              {item.productName}
+                            </span>
+                          </div>
+                          <Badge className="bg-[#fff5cb] text-[#8B5E3C]" variant="secondary">
+                            {item.category}
                           </Badge>
-                          <span className="text-gray-500">
-                            {item.martOpenTime} - {item.martCloseTime}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold sm:text-base">₹{item.price}</span>
+                          <span className="text-sm font-medium text-[#1E40AF] dark:text-[#DBEAFE]">
+                            {item.size}
                           </span>
                         </div>
+                        <div className="border-t pt-2">
+                          <div className="text-sm">
+                            At:
+                            <span className="ml-1 font-semibold text-amber-600">
+                              {item.martName}
+                            </span>
+                          </div>
+                          <div className="flex h-[2.5rem] flex-wrap items-center text-[13px] sm:text-sm">
+                            <span className="flex items-center gap-1 truncate">
+                              <MapPin className="h-4 w-4 shrink-0" />
+                              <span className="max-w-[250px] truncate">{item.martArea}</span>
+                              <span>,</span>
+                            </span>
+                            <span className="ml-1 whitespace-nowrap">
+                              {' '}
+                              {item.martCity}, {item.martState}
+                            </span>
+                          </div>
+                          <div className="mt-1 flex items-center gap-2 text-xs">
+                            <span
+                              className={clsx(
+                                'text-xs font-medium',
+                                item.storeStatus === 'OPEN' ? 'text-green-600' : 'text-red-600'
+                              )}>
+                              {item.storeStatus}
+                            </span>
+                            <span className="text-muted-foreground flex items-center gap-1 text-sm">
+                              <Clock className="h-4 w-4" />
+                              {item.martOpenTime} - {item.martCloseTime}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="bg-gray-50 p-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => {
-                        handleLocate(item.martLat, item.martLng);
-                      }}>
-                      Locate Store
-                    </Button>
-                  </CardFooter>
-                </Card>
+                    </CardContent>
+                    <CardFooter className="p-0">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="w-full cursor-pointer"
+                        onClick={() => {
+                          handleLocate(item.martLat, item.martLng);
+                        }}>
+                        Locate Store
+                        <ArrowUpRight className="ml-[-5] h-5 w-5" strokeWidth={1.75} />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </>
               ))}
             </div>
           )

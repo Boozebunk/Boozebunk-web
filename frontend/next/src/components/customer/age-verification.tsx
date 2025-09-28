@@ -103,7 +103,7 @@ export default function AgeVerificationDialog() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center text-xl">
-              Are you of legal drinking age (21+)?
+              Are you of legal drinking age in your region?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
               Please confirm your age.
