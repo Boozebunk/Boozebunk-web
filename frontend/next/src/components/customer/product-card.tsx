@@ -1,7 +1,4 @@
-import { ArrowUpRight } from 'lucide-react';
-
 import { Badge } from '~/shared/shadcn/badge';
-import { Button } from '~/shared/shadcn/button';
 import { Card, CardContent } from '~/shared/shadcn/card';
 
 type ProductCardProps = {
@@ -29,16 +26,15 @@ export const ProductCard = ({ info }: { info: ProductCardProps }) => {
     }
   };
   return (
-    <Card>
+    <Card className="md:max-w-[500px]">
       <CardContent>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 sm:flex-col md:flex-row">
           {/* <img
             src="https://www.livcheers.com/static/content/images/liquor/LCIN03591.webp"
             width={120}
             height={100}
           /> */}
-          {/* <ProductImage productName={info.name} /> */}
-          <div className="flex flex-col gap-2">
+          <div className="flex w-full flex-col gap-2">
             <Badge className="rounded-md bg-[#fff5cb] px-2 py-1 text-sm font-medium text-[#8B5E3C] sm:text-base">
               {info.category}
             </Badge>
@@ -52,7 +48,7 @@ export const ProductCard = ({ info }: { info: ProductCardProps }) => {
                 </span>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 sm:gap-2 md:gap-4">
                 <span className="text-sm font-semibold sm:text-base">₹{info.price}</span>
                 <span className="bg-foreground h-4 w-[1.5px]"></span>
                 <span className="text-sm font-medium text-[#1E40AF] sm:text-base dark:text-[#DBEAFE]">
@@ -63,18 +59,15 @@ export const ProductCard = ({ info }: { info: ProductCardProps }) => {
             <span className="text-sm text-[#6B0F1A] sm:text-base dark:text-[#ffc82e]">
               {info.type}
             </span>
-
             {info.martName && (
-              <div className="flex w-full items-center gap-1.5 text-sm sm:text-base">
-                <span>At:</span>
+              <div className="flex flex-wrap items-center gap-0 text-sm sm:text-base">
+                <span className="mr-1.5 font-medium">At:</span>
 
-                <Button
+                <span
                   onClick={handleLocate}
-                  variant="link"
-                  className="flex items-center gap-1 !p-0 text-sm text-amber-600 hover:text-blue-700 sm:text-base">
-                  {info.martName}
-                  <ArrowUpRight className="h-5 w-5 flex-shrink-0" strokeWidth={1.75} />
-                </Button>
+                  className="flex cursor-pointer items-center font-semibold text-amber-600 transition-colors duration-200 hover:text-blue-700 hover:underline">
+                  {info.martName} ↗
+                </span>
               </div>
             )}
           </div>

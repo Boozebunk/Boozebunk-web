@@ -54,7 +54,7 @@ export function VendorsActivity({
 
               <CardContent className="p-0">
                 <div className="flex items-start gap-2 sm:gap-5">
-                  <Icon className="size-10 rounded-full bg-amber-100 p-2 text-amber-600 sm:size-12" />
+                  <Icon className="size-10 shrink-0 rounded-full bg-amber-100 p-2 text-amber-600 sm:size-12" />
                   <div className="flex flex-col items-start">
                     <span className="fill-foreground text-sm font-bold sm:text-2xl">
                       {isLoading ? <Loader2 /> : data.value}

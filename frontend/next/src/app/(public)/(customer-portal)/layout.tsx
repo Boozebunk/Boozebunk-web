@@ -10,6 +10,7 @@ import { Button } from '~/shared/shadcn/button';
 import { CustomDialog } from '~/shared/components/dialogBox';
 
 import AgeVerificationDialog from '~/components/customer/age-verification';
+import { AnalyticScripts } from '~/components/customer/analytics-scripts';
 import { WriteFeedback } from '~/components/customer/feedback';
 import CustomerFooter from '~/components/customer/footer';
 import { Header } from '~/components/customer/header';
@@ -33,6 +34,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
   return (
     <CustomerProvider>
       <>
+        <AnalyticScripts GA_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         <div className="fixed top-1/2 left-0 z-50 -translate-y-1/2">
           <Button
             onClick={() => setFeedback(true)}

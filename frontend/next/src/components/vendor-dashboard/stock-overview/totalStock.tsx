@@ -23,7 +23,7 @@ export function TotalStock({
 
       <CardContent className="p-0">
         <div className="flex items-start gap-2 sm:gap-5">
-          <BottleWine className="size-10 rounded-full bg-amber-100 p-2 text-amber-600 sm:size-12" />
+          <BottleWine className="size-10 shrink-0 rounded-full bg-amber-100 p-2 text-amber-600 sm:size-12" />
           <div className="flex flex-col items-start">
             <span className="fill-foreground text-sm font-bold sm:text-2xl">
               {isLoadingCount ? <Loader2 /> : totalStockListed}

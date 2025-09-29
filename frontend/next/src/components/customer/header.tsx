@@ -39,7 +39,7 @@ export function Header({ cities, isLoadingCities }: headerProps) {
   const isSearchDisabled = locationStatus !== 'granted' || nearbyVendorsLoading;
   return (
     <div className="sticky top-0 z-20 flex w-full transform-gpu flex-col gap-5 bg-[#fff5cb] px-5 py-4 shadow-md lg:px-25 lg:py-5">
-      <div className="flex w-full items-center justify-between gap-5">
+      <div className="flex w-full items-center justify-between gap-2 sm:gap-5">
         {/* LOGO */}
         <Button asChild className="w-fit bg-transparent p-0 shadow-none hover:bg-transparent">
           <Link href="#" className="flex items-center justify-baseline p-0">
@@ -52,7 +52,7 @@ export function Header({ cities, isLoadingCities }: headerProps) {
           <LiquorSearch isSearchDisabled={isSearchDisabled} />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-5">
           <Button
             onClick={() => setSearchBarOpen(!isSearchBarOpen)}
             variant={'ghost'}
@@ -79,7 +79,7 @@ export function Header({ cities, isLoadingCities }: headerProps) {
                       </>
                     )}
                   </div>
-                  <ChevronsUpDown className="ml-3 h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 sm:ml-3" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[200px] p-0">

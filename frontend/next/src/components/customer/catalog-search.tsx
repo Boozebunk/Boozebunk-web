@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ArrowUpRight, Clock, Loader2, MapPin, Search } from 'lucide-react';
+import { ArrowUpRight, Loader2, Search } from 'lucide-react';
 
 import { Badge } from '~/shared/shadcn/badge';
 import { Button } from '~/shared/shadcn/button';
@@ -14,11 +14,7 @@ import { Input } from '~/shared/shadcn/input';
 import { useCustomerContext } from '~/providers/customer-provider';
 import { trpcHttp } from '~/utils/trpc';
 
-interface LiquorSearchProps {
-  isSearchDisabled: boolean;
-}
-
-export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
+export default function CatalogSearch() {
   const [query, setQuery] = React.useState('');
   const [searchStock, setSearchStock] = React.useState('');
 
@@ -27,15 +23,10 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
 
   // tRPC query to search for stock in nearby vendors
   const { data: searchResults, isLoading: isSearchLoading } = useQuery(
-    trpcHttp.customer.searchStock.queryOptions(
-      {
-        searchQuery: searchStock,
-        vendorIds: nearbyVendorIds
-      },
-      {
-        enabled: !isSearchDisabled && searchStock.length > 0
-      }
-    )
+    trpcHttp.customer.searchStock.queryOptions({
+      searchQuery: searchStock,
+      vendorIds: nearbyVendorIds
+    })
   );
 
   const handleLocate = (lat: number, lng: number) => {
@@ -75,21 +66,16 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
   }, []);
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full max-w-[600px] space-y-4">
       {/* Search Bar */}
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative w-full">
           <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400 lg:h-5 lg:w-5" />
           <Input
-            placeholder={
-              isSearchDisabled
-                ? 'Turn on location to Search!'
-                : 'Search liquor brands, products, categories...'
-            }
+            placeholder="Search liquor brands, products, categories..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full rounded-2xl py-5 pr-3 pl-10 sm:!text-sm md:!text-base lg:!text-lg"
-            disabled={isSearchDisabled}
+            className="w-full rounded-3xl py-4 pr-4 pl-10 text-sm shadow-md transition duration-300 ease-in-out hover:shadow-lg sm:text-base lg:text-lg"
           />
         </div>
 
@@ -114,6 +100,7 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                     <CardContent className="p-0">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
+                          {/* <h3 className="font-semibold">{item.brandName}</h3> */}
                           <div className="flex flex-col gap-0">
                             <span className="text-xs font-medium text-[#1e69af] sm:text-sm">
                               {item.brandName}
@@ -132,38 +119,6 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                             {item.size}
                           </span>
                         </div>
-                        <div className="border-t pt-2">
-                          <div className="text-sm">
-                            At:
-                            <span className="ml-1 font-semibold text-amber-600">
-                              {item.martName}
-                            </span>
-                          </div>
-                          <div className="flex h-[2.5rem] flex-wrap items-center text-[13px] sm:text-sm">
-                            <span className="flex items-center gap-1 truncate">
-                              <MapPin className="h-4 w-4 shrink-0" />
-                              <span className="max-w-[250px] truncate">{item.martArea}</span>
-                              <span>,</span>
-                            </span>
-                            <span className="ml-1 whitespace-nowrap">
-                              {' '}
-                              {item.martCity}, {item.martState}
-                            </span>
-                          </div>
-                          <div className="mt-1 flex items-center gap-2 text-xs">
-                            <span
-                              className={clsx(
-                                'text-xs font-medium',
-                                item.storeStatus === 'OPEN' ? 'text-green-600' : 'text-red-600'
-                              )}>
-                              {item.storeStatus}
-                            </span>
-                            <span className="text-muted-foreground flex items-center gap-1 text-sm">
-                              <Clock className="h-4 w-4" />
-                              {item.martOpenTime} - {item.martCloseTime}
-                            </span>
-                          </div>
-                        </div>
                       </div>
                     </CardContent>
                     <CardFooter className="p-0">
@@ -174,7 +129,7 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                         onClick={() => {
                           handleLocate(item.martLat, item.martLng);
                         }}>
-                        Locate Store
+                        View
                         <ArrowUpRight className="ml-[-5] h-5 w-5" strokeWidth={1.75} />
                       </Button>
                     </CardFooter>
