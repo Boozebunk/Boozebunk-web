@@ -35,7 +35,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
     <CustomerProvider>
       <>
         <AnalyticScripts GA_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-        <div className="fixed top-1/2 left-0 z-0 -translate-y-1/2">
+        <div className="fixed top-1/2 left-0 z-1 -translate-y-1/2">
           <Button
             onClick={() => setFeedback(true)}
             className="animate-slide-in-left sm:text-md origin-bottom-left rotate-90 cursor-pointer rounded-none text-sm font-medium shadow-lg transition-colors lg:text-lg"
