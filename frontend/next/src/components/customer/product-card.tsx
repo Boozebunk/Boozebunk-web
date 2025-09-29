@@ -2,16 +2,16 @@ import { Badge } from '~/shared/shadcn/badge';
 import { Card, CardContent } from '~/shared/shadcn/card';
 
 type ProductCardProps = {
-  martName: string | null;
-  martStatus: string | null;
+  martName?: string | null;
   productName: string;
   brandName: string;
   category: string;
   type: string | null;
   price: string;
   size: string;
-  martLat: number;
-  martLng: number;
+  martLat?: number;
+  martLng?: number;
+  showLocate?: boolean;
 };
 
 export const ProductCard = ({ info }: { info: ProductCardProps }) => {

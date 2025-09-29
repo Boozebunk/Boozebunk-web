@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation';
+
 import clsx from 'clsx';
 import { Check, Clock, MapPin, Store, X } from 'lucide-react';
 
@@ -20,6 +22,8 @@ type VendorCardProps = {
 };
 
 export const VendorCard = ({ info }: { info: VendorCardProps }) => {
+  const router = useRouter();
+
   const handleLocate = () => {
     const lat = info.martLat;
     const lng = info.martLng;
@@ -31,7 +35,11 @@ export const VendorCard = ({ info }: { info: VendorCardProps }) => {
     }
   };
   return (
-    <Card className="p-5 md:p-7">
+    <Card
+      className="p-5 md:p-7"
+      onClick={() => {
+        router.push(`/${info.id}/mart`);
+      }}>
       <CardContent className="w-fit max-w-[300px] min-w-[150px] p-0 md:max-w-[400px] md:min-w-[250px] lg:max-w-[500px]">
         <div className="flex flex-col items-start gap-3">
           <div className="flex items-center gap-1.5">

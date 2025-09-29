@@ -222,4 +222,111 @@ export const customerRouter = createTRPCRouter({
         });
       }
     }),
+
+  getMartDetailsById: publicProcedure
+    .input(z.object({ vendorId: z.string(), customerLon: z.number(), customerLat: z.number() }))
+    .query(async ({ input }) => {
+      try {
+        const { vendorId, customerLat, customerLon } = input;
+
+        const customerLocation = sql`ST_SetSRID(ST_MakePoint(${customerLon}, ${customerLat}), 4326)::geography`;
+
+        const [martDetails] = await db
+          .select({
+            martName: vendorTable.martName,
+            martStatus: vendorTable.martStatus,
+            martOpenTime: vendorTable.martOpenTime,
+            martCloseTime: vendorTable.martCloseTime,
+            martAddress: vendorAddressesTable.addressFormatted,
+            distanceMeters:
+              sql<number>`ST_Distance(${vendorTable.locationCoordinates}, ${customerLocation})`.as(
+                "distance_meters",
+              ),
+            martLat: sql<number>`ST_Y(${vendorTable.locationCoordinates}::geometry)`.as("mart_lat"),
+            martLng: sql<number>`ST_X(${vendorTable.locationCoordinates}::geometry)`.as("mart_lng"),
+          })
+          .from(vendorTable)
+          .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
+          .where(eq(vendorTable.id, vendorId));
+
+        return {
+          success: true,
+          martDetails,
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Error getting mart details ${err}`,
+        });
+      }
+    }),
+
+  getMartStockById: publicProcedure
+    .input(
+      z.object({
+        vendorId: z.string(),
+        search: z.string(),
+        pageIndex: z.number(),
+        pageSize: z.number(),
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        const { vendorId, search, pageIndex, pageSize } = input;
+
+        const whereConditions = [];
+        whereConditions.push(
+          and(eq(vendorStockTable.vendorId, vendorId), eq(vendorStockTable.availability, true)),
+        );
+
+        if (search && search.trim() !== "") {
+          const searchTerms = search.trim().split(/\s+/).filter(Boolean);
+          const tsQueryString = searchTerms.map((term) => `${term}:*`).join(" & ");
+          const tsQuery = sql`to_tsquery('english', ${tsQueryString})`;
+
+          whereConditions.push(
+            sql`setweight(to_tsvector('english', coalesce(${vendorStockTable.brandName}, '')), 'A') ||
+                setweight(to_tsvector('english', coalesce(${vendorStockTable.productName}, '')), 'B') ||
+                setweight(to_tsvector('english', coalesce(${vendorStockTable.category}, '')), 'C') ||
+                setweight(to_tsvector('english', coalesce(${vendorStockTable.type}, '')), 'D') ||
+                setweight(to_tsvector('english', coalesce(${vendorStockTable.size}, '')), 'D') @@ ${tsQuery}`,
+          );
+        }
+        const finalWhereConditions = and(...whereConditions);
+
+        const totalCountResult = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(vendorStockTable)
+          .where(finalWhereConditions);
+
+        const martStocks = await db
+          .select({
+            id: vendorStockTable.id,
+            brandName: vendorStockTable.brandName,
+            productName: vendorStockTable.productName,
+            category: vendorStockTable.category,
+            type: vendorStockTable.type,
+            size: vendorStockTable.size,
+            price: vendorStockTable.price,
+          })
+          .from(vendorStockTable)
+          .where(finalWhereConditions)
+          .orderBy(vendorStockTable.createdAt)
+          .limit(pageSize)
+          .offset(pageIndex * pageSize);
+
+        const totalCount = totalCountResult[0]?.count || 0;
+
+        return {
+          success: true,
+          totalCount,
+          martStocks,
+        };
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Error getting mart stock ${err}`,
+        });
+      }
+    }),
 });

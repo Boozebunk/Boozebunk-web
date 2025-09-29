@@ -11,23 +11,18 @@ import {
   PaginationPrevious
 } from '~/shared/shadcn/pagination';
 
-import CatalogSearch from './catalog-search';
 import { ProductCard } from './product-card';
 
 type CatalogDisplayProps = {
   liquorItems: {
-    martName: string | null;
-    martStatus: string | null;
-    productName: string;
+    id: string;
     brandName: string;
+    productName: string;
     category: string;
     type: string | null;
-    price: string;
     size: string;
-    martLat: number;
-    martLng: number;
+    price: string;
   }[];
-  isLoadingItems: boolean;
   pagination: {
     pageSize: number;
     pageIndex: number;
@@ -42,18 +37,6 @@ const CatalogDisplay = forwardRef<HTMLDivElement, CatalogDisplayProps>(function 
 ) {
   return (
     <div ref={ref} className="flex w-full flex-col gap-8 px-5 md:gap-10 lg:px-25">
-      <div className="flex flex-col items-center gap-3">
-        <h1 className="text-center text-xl font-semibold sm:text-2xl">
-          Explore Our
-          <span className="ml-2 bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
-            Stock
-          </span>
-        </h1>
-        <div className="w-full max-w-xl">
-          <CatalogSearch />
-        </div>
-      </div>
-
       {liquorItems.length === 0 && (
         <div className="flex flex-col items-center justify-center py-5 text-center text-gray-500 dark:text-gray-400">
           <WineOff className="mb-4 h-14 w-14 text-gray-300 sm:h-16 sm:w-16 dark:text-gray-600" />
