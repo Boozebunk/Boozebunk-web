@@ -5,10 +5,9 @@ import { useParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Check, Clock, Loader2, MapPin, Store, X } from 'lucide-react';
+import { Check, Clock, Loader2, MapPin, Search, Store, X } from 'lucide-react';
 
 import { Badge } from '~/shared/shadcn/badge';
-import { Button } from '~/shared/shadcn/button';
 import { Input } from '~/shared/shadcn/input';
 import { ComponentLoader } from '~/shared/components/componentLoader';
 
@@ -128,9 +127,11 @@ function Page() {
                 </span>
                 <span className="h-5 w-[1px] bg-gray-300" />
                 <span className="flex cursor-pointer items-center text-[15px] font-medium text-blue-600 hover:text-blue-700 hover:underline sm:text-base lg:text-lg">
-                  <Button variant="link" onClick={handleLocate}>
+                  <span
+                    onClick={handleLocate}
+                    className="flex cursor-pointer items-center bg-none text-sm text-blue-600 hover:text-blue-700 hover:underline lg:text-lg">
                     locate ↗
-                  </Button>
+                  </span>
                 </span>
               </div>
             </div>
@@ -138,18 +139,19 @@ function Page() {
         )}
       </div>
 
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-3 px-5">
         <h1 className="text-center text-xl font-semibold sm:text-2xl">
           Explore Our
           <span className="ml-2 bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
             Stock
           </span>
         </h1>
-        <div className="w-full max-w-xl">
-          {/* <CatalogSearch /> */}
+        <div className="relative w-full max-w-[600px]">
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400 lg:h-5 lg:w-5" />
           <Input
+            className="w-full rounded-2xl border py-4 pr-3 pl-10 text-sm shadow-sm transition-all duration-200 sm:text-base lg:text-lg"
             type="text"
-            placeholder="Search product/stock"
+            placeholder="Search stock"
             value={searchStock}
             onChange={(e) => {
               setSearchStock(e.target.value);

@@ -78,7 +78,7 @@ function Page() {
           <p className="text-center text-sm text-gray-500">Discover stores around your area.</p>
         </div>
 
-        <div className="w-full overflow-x-auto scroll-smooth pb-3">
+        <div className="w-full overflow-x-auto scroll-smooth pb-3 [&::-webkit-scrollbar]:hidden">
           {locationStatus === 'loading' || nearbyVendorsLoading ? (
             <div className="flex h-40 w-full items-center justify-center">
               <div className="flex items-center gap-2">
