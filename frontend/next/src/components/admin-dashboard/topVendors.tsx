@@ -31,18 +31,20 @@ export function TopVendors({
       </h1>
 
       <Card className="p-5">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-sm font-semibold md:text-xl">Mart Name</TableHead>
-              <TableHead className="text-sm font-semibold md:text-xl">Location</TableHead>
-              <TableHead className="text-sm font-semibold md:text-xl">Views</TableHead>
-              <TableHead className="text-right text-sm font-semibold md:text-xl">clicks</TableHead>
-            </TableRow>
-          </TableHeader>
-          {isLoading ? (
-            <ComponentLoader />
-          ) : (
+        {isLoading ? (
+          <ComponentLoader />
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-sm font-semibold md:text-xl">Mart Name</TableHead>
+                <TableHead className="text-sm font-semibold md:text-xl">Location</TableHead>
+                <TableHead className="text-sm font-semibold md:text-xl">Views</TableHead>
+                <TableHead className="text-right text-sm font-semibold md:text-xl">
+                  clicks
+                </TableHead>
+              </TableRow>
+            </TableHeader>
             <TableBody>
               {popMarts.map((mart, idx) => (
                 <TableRow key={idx}>
@@ -59,8 +61,8 @@ export function TopVendors({
                 </TableRow>
               ))}
             </TableBody>
-          )}
-        </Table>
+          </Table>
+        )}
       </Card>
     </div>
   );
