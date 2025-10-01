@@ -1,5 +1,14 @@
 import { relations, sql } from "drizzle-orm";
-import { boolean, geometry, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  geometry,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 import { vendorAddressesTable } from "./address";
 import { userTable } from "./auth/user";
@@ -23,6 +32,8 @@ export const vendorTable = pgTable(
     martOpenTime: text("mart_open_time").notNull().default("10:00 AM"),
     martCloseTime: text("mart_close_time").notNull().default("08:00 PM"),
     locationCoordinates: geometry("location_coordinates", { type: "Point", srid: 4326 }).notNull(),
+    viewCount: integer("view_count").notNull().default(0),
+    clickCount: integer("click_count").notNull().default(0),
 
     createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: false })

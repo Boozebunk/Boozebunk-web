@@ -51,6 +51,17 @@ export const customerRouter = createTRPCRouter({
           )
           .orderBy(sql`distance_meters`);
 
+        const vendorIds = vendors.map((v) => v.id);
+        db.update(vendorTable)
+          .set({
+            viewCount: sql`${vendorTable.viewCount} + 1`,
+            updatedAt: new Date(),
+          })
+          .where(inArray(vendorTable.id, vendorIds))
+          .catch((err) => {
+            console.error("ASYNC DB ERROR: Failed to increment vendor view count:", err);
+          });
+
         return vendors;
       } catch (err) {
         throw new TRPCError({
@@ -248,6 +259,16 @@ export const customerRouter = createTRPCRouter({
           .from(vendorTable)
           .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
           .where(eq(vendorTable.id, vendorId));
+
+        db.update(vendorTable)
+          .set({
+            clickCount: sql`${vendorTable.clickCount} + 1`,
+            updatedAt: new Date(),
+          })
+          .where(eq(vendorTable.id, vendorId))
+          .catch((err) => {
+            console.error("ASYNC DB ERROR: Failed to increment vendor view count:", err);
+          });
 
         return {
           success: true,

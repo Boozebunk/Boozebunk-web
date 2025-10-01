@@ -168,4 +168,27 @@ export const analyticsRouter = createTRPCRouter({
       });
     }
   }),
+
+  getUserOverview: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const [martValues] = await db
+        .select({
+          viewCount: vendorTable.viewCount,
+          clickCount: vendorTable.clickCount,
+        })
+        .from(vendorTable)
+        .where(eq(vendorTable.id, ctx.user.roleId as string));
+
+      return {
+        success: true,
+        viewCount: martValues?.viewCount ?? 0,
+        clickCount: martValues?.clickCount ?? 0,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `getting UserOverview Failed ${err}`,
+      });
+    }
+  }),
 });
