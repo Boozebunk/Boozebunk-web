@@ -1,10 +1,11 @@
 import db from "@boozebunk-trpc/db";
+import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
-import { and, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import z from "zod";
 
 export const analyticsRouter = createTRPCRouter({
@@ -165,6 +166,33 @@ export const analyticsRouter = createTRPCRouter({
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: `getting VendorActivity Failed ${err}`,
+      });
+    }
+  }),
+
+  getPopularMarts: protectedProcedure.query(async () => {
+    try {
+      const popularMarts = await db
+        .select({
+          martName: vendorTable.martName,
+          martCity: vendorAddressesTable.addressCity,
+          martState: vendorAddressesTable.addressState,
+          viewCount: vendorTable.viewCount,
+          clickCount: vendorTable.clickCount,
+        })
+        .from(vendorTable)
+        .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
+        .orderBy(desc(sql`(${vendorTable.viewCount} + ${vendorTable.clickCount})`))
+        .limit(5);
+
+      return {
+        success: true,
+        popularMarts,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `getting PopularMarts Failed ${err}`,
       });
     }
   }),

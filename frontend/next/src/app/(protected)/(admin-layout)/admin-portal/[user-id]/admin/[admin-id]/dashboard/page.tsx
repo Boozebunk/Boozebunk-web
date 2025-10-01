@@ -12,6 +12,10 @@ export default function Page() {
     trpcHttp.analytics.getVendorActivity.queryOptions()
   );
 
+  const { data: popMarts, isLoading: loadingPopMarts } = useQuery(
+    trpcHttp.analytics.getPopularMarts.queryOptions()
+  );
+
   return (
     <div>
       <Analytics />
@@ -22,7 +26,7 @@ export default function Page() {
         newVendorsCount={data?.newVendors.count ?? 0}
         isLoading={isLoadingVendorAnalytics}
       />
-      <TopVendors />
+      <TopVendors popMarts={popMarts?.popularMarts ?? []} isLoading={loadingPopMarts} />
     </div>
   );
 }
