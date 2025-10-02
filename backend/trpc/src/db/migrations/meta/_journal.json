@@ -57,6 +57,13 @@
       "when": 1759322308402,
       "tag": "20251001123828_solid_sleepwalker",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1759408722091,
+      "tag": "20251002123842_wide_skin",
+      "breakpoints": true
     }
   ]
 }

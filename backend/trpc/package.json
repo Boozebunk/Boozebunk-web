@@ -15,7 +15,8 @@
     "migration:custom": "bun drizzle-kit generate --custom",
     "migration:run": "bun --bun run src/db/migrate.ts",
     "migration:push": "drizzle-kit push",
-    "db:seed": "bun --bun run src/db/seed"
+    "db:seed": "bun --bun run src/db/seed",
+    "db:brandSeed": "bun --bun run src/db/brandSeed.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
