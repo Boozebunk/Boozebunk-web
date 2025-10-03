@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import Cookies from 'js-cookie';
 import { Check, ChevronsUpDown, Loader2, MapPin, Search, X } from 'lucide-react';
 
 import { cn } from '~/lib/utils';
@@ -29,11 +30,21 @@ type headerProps = {
   isLoadingCities: boolean;
 };
 
+const SELECTED_CITY_COOKIE = 's_c';
+
 export function Header({ cities, isLoadingCities }: headerProps) {
   const { locationStatus, nearbyVendorsLoading, selectedCity, setSelectedCity } =
     useCustomerContext();
   const [open, setOpen] = React.useState(false);
   const [isSearchBarOpen, setSearchBarOpen] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    const selected_city = Cookies.get(SELECTED_CITY_COOKIE);
+
+    if (selected_city) {
+      setSelectedCity(selected_city);
+    }
+  });
 
   // The search bar should be disabled if location is denied, unsupported, or if nearby vendors are still loading
   const isSearchDisabled = locationStatus !== 'granted' || nearbyVendorsLoading;
@@ -93,6 +104,7 @@ export function Header({ cities, isLoadingCities }: headerProps) {
                         value={city.city}
                         onSelect={(currentValue) => {
                           setSelectedCity(currentValue);
+                          Cookies.set(SELECTED_CITY_COOKIE, currentValue, { expires: 10 });
                           setOpen(false);
                         }}>
                         <Check
