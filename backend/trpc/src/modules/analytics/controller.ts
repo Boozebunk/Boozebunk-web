@@ -1,6 +1,7 @@
 import db from "@boozebunk-trpc/db";
 import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
+import { popularSearchTable } from "@boozebunk-trpc/db/schema/popsearch";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
@@ -93,6 +94,28 @@ export const analyticsRouter = createTRPCRouter({
         });
       }
     }),
+
+  getPopularBrands: protectedProcedure.query(async () => {
+    try {
+      const result = await db
+        .select({
+          brandName: popularSearchTable.brandName,
+          searchCount: popularSearchTable.searchCount,
+        })
+        .from(popularSearchTable)
+        .orderBy(desc(popularSearchTable.searchCount))
+        .limit(5);
+
+      return {
+        result,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `getting PopularBrands Failed ${err}`,
+      });
+    }
+  }),
 
   getVendorActivity: protectedProcedure.query(async () => {
     try {

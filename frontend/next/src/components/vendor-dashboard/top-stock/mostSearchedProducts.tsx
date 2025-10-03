@@ -1,5 +1,6 @@
 'use client';
 
+import { Loader2 } from 'lucide-react';
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/shadcn/card';
@@ -9,26 +10,6 @@ import type { ChartConfig } from '~/shared/shadcn/chart';
 
 export const description = 'Top liquor brands by search volume';
 
-const chartData = [
-  {
-    brand: 'Jack Daniels',
-    searches: 320,
-    fill: 'color-mix(in srgb, var(--chart-1) 100%, transparent)'
-  },
-  {
-    brand: 'Johnnie Walker',
-    searches: 280,
-    fill: 'color-mix(in srgb, var(--chart-1) 90%, transparent)'
-  },
-  { brand: 'Absolut', searches: 240, fill: 'color-mix(in srgb, var(--chart-1) 70%, transparent)' },
-  {
-    brand: 'Chivas Regal',
-    searches: 200,
-    fill: 'color-mix(in srgb, var(--chart-1) 60%, transparent)'
-  },
-  { brand: 'Bacardi', searches: 150, fill: 'color-mix(in srgb, var(--chart-1) 40%, transparent)' }
-];
-
 const chartConfig = {
   searches: {
     label: 'Searches',
@@ -36,7 +17,21 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-export function MostSearchedProducts() {
+type productsProps = {
+  popularBrands?: {
+    brandName: string;
+    searchCount: number;
+  }[];
+  isLoading?: boolean;
+};
+
+export function MostSearchedProducts({ popularBrands = [], isLoading }: productsProps) {
+  const chartData = popularBrands.map((brand, index) => ({
+    brand: brand.brandName,
+    searches: brand.searchCount,
+    fill: `color-mix(in srgb, var(--chart-1) ${100 - index * 20}%, transparent)`
+  }));
+
   return (
     <Card className="h-fit">
       <CardHeader>
@@ -46,28 +41,32 @@ export function MostSearchedProducts() {
         <CardDescription className="text-xs">Based on data from the last 30 days</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer
-          config={chartConfig}
-          className="h-[200px] w-full md:h-auto lg:aspect-[auto] lg:h-[300px]">
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout="vertical"
-            margin={{ left: 0 }}
-            barCategoryGap="50%"
-            className="gap-0">
-            <YAxis
-              dataKey="brand"
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
-            <XAxis dataKey="searches" type="number" hide />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Bar dataKey="searches" layout="vertical" radius={5} barSize={40} />
-          </BarChart>
-        </ChartContainer>
+        {isLoading ? (
+          <Loader2 />
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="h-[200px] w-full md:h-auto lg:aspect-[auto] lg:h-[300px]">
+            <BarChart
+              accessibilityLayer
+              data={chartData}
+              layout="vertical"
+              margin={{ left: 0 }}
+              barCategoryGap="50%"
+              className="gap-0">
+              <YAxis
+                dataKey="brand"
+                type="category"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+              />
+              <XAxis dataKey="searches" type="number" hide />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+              <Bar dataKey="searches" layout="vertical" radius={5} barSize={40} />
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

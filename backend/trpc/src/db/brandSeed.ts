@@ -83,6 +83,7 @@ export const seedData = [
   { brandName: "Grant's", category: "Whiskey" },
   { brandName: "100 Pipers", category: "Whiskey" },
   { brandName: "Black Dog", category: "Whiskey" },
+  { brandName: "Bro Code", category: "Whiskey" },
   { brandName: "Legacy", category: "Whiskey" },
   { brandName: "Antiquity", category: "Whiskey" },
   { brandName: "Black & White", category: "Whiskey" },

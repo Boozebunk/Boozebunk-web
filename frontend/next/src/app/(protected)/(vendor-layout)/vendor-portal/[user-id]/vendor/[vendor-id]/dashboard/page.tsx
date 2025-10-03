@@ -15,8 +15,10 @@ export default function Page() {
   const userId = params['user-id'] as string;
   const vendorId = params['vendor-id'] as string;
 
+  // fetching vendor stock overviews
   const { data, isLoading } = useQuery(trpcHttp.analytics.getStockOverview.queryOptions());
 
+  // fetching the specfic mart view and clicks by the customers
   const { data: martPop, isLoading: loadingMartPop } = useQuery(
     trpcHttp.analytics.getUserOverview.queryOptions()
   );
@@ -33,6 +35,11 @@ export default function Page() {
     })
   );
 
+  // fetching the top 5 popular brands searched
+  const { data: popularBrands, isLoading: loadingPopBrands } = useQuery(
+    trpcHttp.analytics.getPopularBrands.queryOptions()
+  );
+
   return (
     <div>
       <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
@@ -40,7 +47,10 @@ export default function Page() {
           <strong>Users</strong> Search Overview
         </h1>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-5">
-          <MostSearchedProducts />
+          <MostSearchedProducts
+            popularBrands={popularBrands?.result}
+            isLoading={loadingPopBrands}
+          />
           <StoreEngagement
             viewCount={martPop?.viewCount ?? 0}
             clickCount={martPop?.clickCount ?? 0}

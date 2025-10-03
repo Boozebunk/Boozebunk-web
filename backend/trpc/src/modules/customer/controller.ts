@@ -1,11 +1,12 @@
 import db from "@boozebunk-trpc/db";
 import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { customerTable } from "@boozebunk-trpc/db/schema/customer";
+import { popularSearchTable } from "@boozebunk-trpc/db/schema/popsearch";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, or, sql } from "drizzle-orm";
 import z from "zod";
 
 import { stockDisplaySchema } from "./dto";
@@ -130,6 +131,55 @@ export const customerRouter = createTRPCRouter({
           .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
           .where(finalWhereConditions)
           .limit(50);
+
+        // Updating the popular brand search
+        if (searchQuery && stockItems.length > 0) {
+          const logSearchActivity = async () => {
+            const foundBrandNames = [...new Set(stockItems.map((item) => item.brandName))];
+
+            if (foundBrandNames.length > 0) {
+              try {
+                console.log("Found brand names:", foundBrandNames);
+                const ilikeConditions = foundBrandNames.map(
+                  (brand) => sql`${popularSearchTable.brandName} ILIKE ${"%" + brand + "%"}`,
+                );
+
+                const combinedIlikeWhere = or(...ilikeConditions);
+
+                // Find all existing popular_searches rows that contain the found brand names
+                const matchingPopularBrands = await db
+                  .select({ id: popularSearchTable.id })
+                  .from(popularSearchTable)
+                  .where(combinedIlikeWhere);
+
+                const matchingIds = matchingPopularBrands.map((b) => b.id);
+
+                console.log(matchingIds);
+
+                // --- END: Dynamic ILIKE Check ---
+
+                if (matchingIds.length > 0) {
+                  console.log("----------------------Doing the duty----------------------");
+                  // Update the search count for all matching IDs
+                  await db
+                    .update(popularSearchTable)
+                    .set({
+                      searchCount: sql`${popularSearchTable.searchCount} + 1`,
+                    })
+                    .where(inArray(popularSearchTable.id, matchingIds));
+                }
+              } catch (err) {
+                console.error(
+                  "ASYNC LOGGING FAILED: Could not increment popular search count:",
+                  err,
+                );
+              }
+            }
+          };
+
+          // CRITICAL: Call the async function without 'await' to decouple the process
+          logSearchActivity();
+        }
 
         return { stockItems };
       } catch (err) {
