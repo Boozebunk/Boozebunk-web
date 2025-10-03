@@ -17,6 +17,11 @@ type StockOverviewProps = {
   userId: string;
   vendorId: string;
   outOfStockCount: number;
+  initialQuickActions?: {
+    martStatus: string;
+    martOpenTime: string;
+    martCloseTime: string;
+  };
   onQuickAction?: (params: {
     martStatus: 'OPEN' | 'CLOSED';
     martOpenTime: string;
@@ -31,6 +36,7 @@ export function StockOverview({
   userId,
   vendorId,
   outOfStockCount,
+  initialQuickActions,
   onQuickAction
 }: StockOverviewProps) {
   const router = useRouter();
@@ -61,7 +67,12 @@ export function StockOverview({
           </CardHeader>
 
           <CardContent className="flex w-full flex-col gap-5 p-0">
-            <StoreStatus onQuickAction={onQuickAction} />
+            <StoreStatus
+              initialStatus={initialQuickActions?.martStatus}
+              initialOpenTime={initialQuickActions?.martOpenTime}
+              initialCloseTime={initialQuickActions?.martCloseTime}
+              onQuickAction={onQuickAction}
+            />
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <Button
                 onClick={() => {

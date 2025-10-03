@@ -242,4 +242,31 @@ export const analyticsRouter = createTRPCRouter({
       });
     }
   }),
+
+  getVendorQuickActions: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const vendorSettings = await db
+        .select({
+          martStatus: vendorTable.martStatus,
+          martOpenTime: vendorTable.martOpenTime,
+          martCloseTime: vendorTable.martCloseTime,
+        })
+        .from(vendorTable)
+        .where(eq(vendorTable.id, ctx.user.roleId as string));
+
+      return {
+        success: true,
+        settings: vendorSettings[0] ?? {
+          martStatus: "CLOSED",
+          martOpenTime: "07:00 AM",
+          martCloseTime: "23:59 PM",
+        },
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error getting vendor quick actions ${err}`,
+      });
+    }
+  }),
 });

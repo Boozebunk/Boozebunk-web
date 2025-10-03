@@ -40,6 +40,9 @@ export default function Page() {
     trpcHttp.analytics.getPopularBrands.queryOptions()
   );
 
+  // Fetch vendor quick actions
+  const { data: quickActions } = useQuery(trpcHttp.analytics.getVendorQuickActions.queryOptions());
+
   return (
     <div>
       <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
@@ -65,6 +68,7 @@ export default function Page() {
         outOfStockCount={data?.outOfStockCount ?? 0}
         userId={userId}
         vendorId={vendorId}
+        initialQuickActions={quickActions?.settings}
         onQuickAction={async ({ martStatus, martOpenTime, martCloseTime }) => {
           await QuickAction({ martStatus, martOpenTime, martCloseTime });
         }}

@@ -10,6 +10,9 @@ import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
 type StoreStatusType = 'open' | 'closed';
 
 interface StoreStatusProps {
+  initialStatus?: string;
+  initialOpenTime?: string;
+  initialCloseTime?: string;
   onQuickAction?: (params: {
     martStatus: 'OPEN' | 'CLOSED';
     martOpenTime: string;
@@ -17,10 +20,24 @@ interface StoreStatusProps {
   }) => void;
 }
 
-export function StoreStatus({ onQuickAction }: StoreStatusProps) {
-  const [status, setStatus] = React.useState<StoreStatusType>('open');
-  const [openTime, setOpenTime] = React.useState('07:00');
-  const [closeTime, setCloseTime] = React.useState('23:59');
+export function StoreStatus({
+  initialStatus = 'CLOSED',
+  initialOpenTime = '07:00 AM',
+  initialCloseTime = '23:59 PM',
+  onQuickAction
+}: StoreStatusProps) {
+  const [status, setStatus] = React.useState<StoreStatusType>(
+    initialStatus.toLowerCase() as StoreStatusType
+  );
+  const [openTime, setOpenTime] = React.useState(initialOpenTime.split(' ')[0]);
+  const [closeTime, setCloseTime] = React.useState(initialCloseTime.split(' ')[0]);
+
+  // Update state when initial values change
+  React.useEffect(() => {
+    setStatus(initialStatus.toLowerCase() as StoreStatusType);
+    setOpenTime(initialOpenTime.split(' ')[0]);
+    setCloseTime(initialCloseTime.split(' ')[0]);
+  }, [initialStatus, initialOpenTime, initialCloseTime]);
 
   const handleStatusChange = (next: StoreStatusType) => {
     setStatus(next);

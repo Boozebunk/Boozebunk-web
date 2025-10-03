@@ -9,7 +9,6 @@ import { CircleUserRound, Loader2, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
-import { Badge } from '~/shared/shadcn/badge';
 import { Button } from '~/shared/shadcn/button';
 import {
   DropdownMenu,
@@ -59,13 +58,11 @@ export function Navbar() {
     console.log('Logging out...');
   };
 
-  const status = 'open';
-
   return (
     <nav className="bg-sidebar border-sidebar-border sticky top-0 box-border flex items-center justify-between border-b p-3">
       <div className="flex items-center gap-3 lg:gap-5">
         <SidebarTrigger className="p-5" />
-        <div className="flex items-center gap-1">
+        {/* <div className="flex items-center gap-1">
           <span className="hidden sm:block">Store:</span>
           <Badge
             className={`uppercase ${
@@ -73,7 +70,7 @@ export function Navbar() {
             }`}>
             {status}
           </Badge>
-        </div>
+        </div> */}
       </div>
 
       <div className="absolute left-1/2 hidden w-fit -translate-x-1/2 transform p-3 py-5 sm:p-5 md:block">
