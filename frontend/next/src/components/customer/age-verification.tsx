@@ -36,7 +36,8 @@ import { useCustomerContext } from '~/providers/customer-provider';
 import { trpcHttp } from '~/utils/trpc';
 
 const EMAIL_COOKIE_NAME = 'c_e';
-const EXPIRATION_DAYS = 30;
+const AGE_COOKIE_NAME = 'a_v';
+const EMAIL_EXPIRATION_DAYS = 30;
 
 export default function AgeVerificationDialog() {
   const [OpenVerification, setOpenVerification] = useState<boolean>(true);
@@ -47,9 +48,18 @@ export default function AgeVerificationDialog() {
 
   useEffect(() => {
     const email = Cookies.get(EMAIL_COOKIE_NAME);
+    const ageVerified = Cookies.get(AGE_COOKIE_NAME);
 
+    if (ageVerified) {
+      setOpenVerification(false);
+    }
     if (email) {
+      setOpenEmailForm(false);
       setHasEmailConsent(true);
+    }
+    if (ageVerified && !email) {
+      console.log('should hit');
+      setOpenEmailForm(true);
     }
   }, []);
 
@@ -66,6 +76,7 @@ export default function AgeVerificationDialog() {
 
   function OnVerification() {
     setOpenVerification(false);
+    Cookies.set(AGE_COOKIE_NAME, 'Verified', { expires: 3 });
 
     if (!hasEmailConsent) {
       setOpenEmailForm(true);
@@ -93,7 +104,7 @@ export default function AgeVerificationDialog() {
   async function onSubmit(values: z.infer<typeof emailSchema>) {
     await sendCustomerEmail(values);
     setCustomerEmail(values.email);
-    Cookies.set(EMAIL_COOKIE_NAME, values.email, { expires: EXPIRATION_DAYS });
+    Cookies.set(EMAIL_COOKIE_NAME, values.email, { expires: EMAIL_EXPIRATION_DAYS });
     setOpenEmailForm(false);
   }
 
