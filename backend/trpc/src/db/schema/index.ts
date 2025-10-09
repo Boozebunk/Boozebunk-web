@@ -4,6 +4,7 @@ import { userTable } from "./auth/user";
 import { verificationTokensTable } from "./auth/verification";
 import { customerTable } from "./customer";
 import { FeedbackTable } from "./feedback";
+import { productImagesTable } from "./images";
 import { VendorQueryTable } from "./query";
 import { vendorTable } from "./vendor";
 
@@ -19,6 +20,7 @@ const tables = {
   query: VendorQueryTable,
   customer: customerTable,
   feedback: FeedbackTable,
+  images: productImagesTable,
 };
 
 export type Tables = typeof tables;
