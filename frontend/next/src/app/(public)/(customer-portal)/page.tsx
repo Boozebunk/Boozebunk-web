@@ -8,6 +8,8 @@ import { Loader2 } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
 
+import { Blog } from '~/components/customer/blog';
+import { Promotions } from '~/components/customer/promotions';
 import StockDisplay from '~/components/customer/stocks-display';
 import { VendorCard } from '~/components/customer/vendor-card';
 import { useCustomerContext } from '~/providers/customer-provider';
@@ -66,6 +68,8 @@ function Page() {
 
   return (
     <div className="flex w-full flex-col items-center gap-8 sm:gap-15">
+      <Promotions />
+
       {/* STORES NEAR YOU */}
       <div className="mb-[-3] flex w-full flex-col gap-5 overflow-hidden px-5 md:gap-8 lg:px-25">
         <div className="flex flex-col items-center gap-0 md:gap-1">
@@ -170,6 +174,11 @@ function Page() {
           All Categories
         </Button>
       </div>
+
+      {/* DIVIDER */}
+      <div className="h-[2px] w-[95%] bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+
+      <Blog />
 
       {/* DIVIDER */}
       <div className="h-[2px] w-[95%] bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>

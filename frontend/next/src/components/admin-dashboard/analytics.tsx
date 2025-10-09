@@ -14,7 +14,6 @@ import {
   CardHeader,
   CardTitle
 } from '~/shared/shadcn/card';
-import { Carousel, CarouselContent, CarouselItem } from '~/shared/shadcn/carousel';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/shared/shadcn/chart';
 
 import type { ChartConfig } from '~/shared/shadcn/chart';
@@ -217,7 +216,7 @@ export function Analytics() {
       <h1 className="text-lg font-medium md:text-2xl">
         <strong>Website</strong> Traffic Overview
       </h1>
-      <div className="hidden w-full flex-row justify-between gap-5 lg:flex">
+      <div className="flex w-full flex-row justify-between gap-5 overflow-x-auto overflow-y-hidden">
         {visitorStats.map((stat, idx) => (
           <TrafficCard
             key={idx}
@@ -231,22 +230,6 @@ export function Analytics() {
             data={analytics[stat.key as keyof typeof analytics]}
           />
         ))}
-      </div>
-
-      <div className="block lg:hidden">
-        <Carousel className="w-full">
-          <CarouselContent className="gap-3">
-            {visitorStats.map((stat, idx) => (
-              <CarouselItem key={idx}>
-                <TrafficCard
-                  key={idx}
-                  stat={stat}
-                  data={analytics[stat.key as keyof typeof analytics]}
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
       </div>
     </div>
   );
