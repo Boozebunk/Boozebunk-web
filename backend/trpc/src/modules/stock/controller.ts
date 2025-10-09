@@ -223,29 +223,65 @@ export const vendorStockRouter = createTRPCRouter({
           });
         }
 
-        const bulkData = input.data.map((item) => {
+        // Prepare data and track original indices for image update
+        const itemsToInsert = input.data.map((item) => {
           const [brandName, productName, category, type, size, price] = item;
+          const stockId = uuidv4();
 
           return {
-            id: uuidv4(),
+            // These properties are required for the DB insert
+            id: stockId,
             vendorId: existingVendor.id,
-            brandName: brandName,
             productName: productName,
+            brandName: brandName,
             category: category,
             type: type === "" ? null : type,
             size: size,
             price: price,
+
+            // Temporary, non-DB fields to help with image fetching later:
+            _brand: brandName,
+            _product: productName,
           };
         });
 
-        await db.insert(vendorStockTable).values(bulkData);
+        // 1. Perform the BULK INSERT (Awaited - must be done first)
+        await db.insert(vendorStockTable).values(itemsToInsert);
 
+        // 2. Initiate ASYNCHRONOUS IMAGE FETCH AND UPDATE (Fire-and-Forget)
+        // We use Promise.allSettled to handle all image lookups concurrently.
+
+        const imageUpdateJob = async () => {
+          const updatePromises = itemsToInsert.map(async (item) => {
+            const externalImageUrl = await getImageUrlAndCache(item._brand, item._product);
+
+            if (externalImageUrl) {
+              // Perform a quick update to the specific stock item
+              await db
+                .update(vendorStockTable)
+                .set({ productImageUrl: externalImageUrl })
+                .where(eq(vendorStockTable.id, item.id));
+            }
+          });
+
+          // Use allSettled to ensure all promises run to completion (success or failure)
+          // We DO NOT await Promise.allSettled here because we want the response to be instant.
+          await Promise.allSettled(updatePromises);
+          console.log(`[BULK IMAGE JOB] Completed updates for ${itemsToInsert.length} items.`);
+        };
+
+        // CRITICAL: Call the entire job without 'await'
+        imageUpdateJob().catch((err) => {
+          console.error("BULK IMAGE JOB FAILED UNEXPECTEDLY:", err);
+        });
+
+        // 3. IMMEDIATE RETURN to the vendor
         return {
           success: true,
-          message: "Vendors Bulk Upload Successfull",
-          data: bulkData,
+          message: `Successfully uploaded ${itemsToInsert.length} stock item(s). Images are loading in the background.`,
         };
       } catch (err) {
+        // ... (Error handling)
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `Failed to bulk uplaod ${err}`,

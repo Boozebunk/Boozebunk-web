@@ -111,6 +111,18 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                     className={clsx('bg-foreground flex h-[1px] w-full', index === 0 && 'hidden')}
                   />
                   <Card key={index} className="gap-2 overflow-hidden border-none p-5 shadow-none">
+                    {item.productImageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.productImageUrl}
+                        alt={item.productName}
+                        className="h-[100px] w-[100px] rounded-md object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-[60px] w-[60px] items-center justify-center rounded-md bg-gray-100">
+                        No image
+                      </div>
+                    )}
                     <CardContent className="p-0">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
