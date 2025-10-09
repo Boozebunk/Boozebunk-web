@@ -2,6 +2,7 @@ import db from "@boozebunk-trpc/db";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
+import { getImageUrlAndCache } from "@boozebunk-trpc/utils/imageService";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
@@ -29,9 +30,15 @@ export const vendorStockRouter = createTRPCRouter({
       }
 
       const randomUUID = uuidv4();
-      console.log("about to add new stock");
-      // adding the stock into the stock table
-      const newStock = await db
+
+      const imagePromise = getImageUrlAndCache(input.brand, input.productName);
+
+      const finalImageUrl = (await Promise.race([
+        imagePromise,
+        new Promise((resolve) => setTimeout(() => resolve(undefined), 100)),
+      ])) as string | undefined;
+
+      await db
         .insert(vendorStockTable)
         .values({
           id: randomUUID,
@@ -43,10 +50,21 @@ export const vendorStockRouter = createTRPCRouter({
           size: input.size,
           price: input.price,
           availability: input.availability,
+          productImageUrl: finalImageUrl,
         })
         .returning();
 
-      console.log(newStock);
+      if (!finalImageUrl) {
+        // If the image wasn't ready immediately, run the full promise asynchronously
+        imagePromise.then((url) => {
+          if (url) {
+            db.update(vendorStockTable)
+              .set({ productImageUrl: url })
+              .where(eq(vendorStockTable.id, randomUUID))
+              .catch((e) => console.error("ASYNC IMAGE UPDATE FAILED:", e));
+          }
+        });
+      }
 
       return {
         success: true,
@@ -109,6 +127,7 @@ export const vendorStockRouter = createTRPCRouter({
             size: vendorStockTable.size,
             price: vendorStockTable.price,
             availability: vendorStockTable.availability,
+            productImageUrl: vendorStockTable.productImageUrl,
           })
           .from(vendorStockTable)
           .where(finalWhereConditions)

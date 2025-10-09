@@ -36,6 +36,7 @@ type StockItem = {
   size: string;
   price: string;
   availability: boolean;
+  productImageUrl: string | null;
 };
 
 export default function Page() {
@@ -90,6 +91,29 @@ export default function Page() {
       },
       enableSorting: false,
       enableHiding: false
+    },
+    {
+      id: 'image',
+      header: 'Image',
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <div className="flex items-center justify-center">
+            {item.productImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={item.productImageUrl}
+                alt={item.productName}
+                className="h-[100px] w-[100px] rounded-md object-cover"
+              />
+            ) : (
+              <div className="flex h-[60px] w-[60px] items-center justify-center rounded-md bg-gray-100">
+                No image
+              </div>
+            )}
+          </div>
+        );
+      }
     },
     {
       id: 'Brand-Product',

@@ -25,6 +25,7 @@ type StockDisplayProps = {
     type: string | null;
     price: string;
     size: string;
+    productImageUrl: string | null;
     martLat: number;
     martLng: number;
   }[];

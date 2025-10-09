@@ -4,7 +4,7 @@ import { userTable } from "./auth/user";
 import { verificationTokensTable } from "./auth/verification";
 import { customerTable } from "./customer";
 import { FeedbackTable } from "./feedback";
-import { productImagesTable } from "./images";
+import { productImagesTable } from "./productImages";
 import { VendorQueryTable } from "./query";
 import { vendorTable } from "./vendor";
 

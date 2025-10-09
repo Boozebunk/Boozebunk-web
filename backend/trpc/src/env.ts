@@ -14,6 +14,7 @@ export const env = createEnv({
     AWS_ACCESS_KEY_ID: z.string(),
     AWS_REGION: z.string().default("ap-south-1"),
     AWS_SES_FROM_EMAIL: z.email(),
+    SERPAPI_KEY: z.string(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

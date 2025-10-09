@@ -125,6 +125,7 @@ export const customerRouter = createTRPCRouter({
             size: vendorStockTable.size,
             category: vendorStockTable.category,
             type: vendorStockTable.type,
+            productImageUrl: vendorStockTable.productImageUrl,
           })
           .from(vendorStockTable)
           .leftJoin(vendorTable, eq(vendorStockTable.vendorId, vendorTable.id))
@@ -233,6 +234,7 @@ export const customerRouter = createTRPCRouter({
           type: vendorStockTable.type,
           price: vendorStockTable.price,
           size: vendorStockTable.size,
+          productImageUrl: vendorStockTable.productImageUrl,
           itemsCount: sql<number>`count(*) OVER()`.as("items_count"),
           martLat: sql<number>`ST_Y(${vendorTable.locationCoordinates}::geometry)`.as("mart_lat"),
           martLng: sql<number>`ST_X(${vendorTable.locationCoordinates}::geometry)`.as("mart_lng"),
@@ -379,6 +381,7 @@ export const customerRouter = createTRPCRouter({
             type: vendorStockTable.type,
             size: vendorStockTable.size,
             price: vendorStockTable.price,
+            productImageUrl: vendorStockTable.productImageUrl,
           })
           .from(vendorStockTable)
           .where(finalWhereConditions)

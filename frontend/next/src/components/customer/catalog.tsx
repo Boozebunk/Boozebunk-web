@@ -22,6 +22,7 @@ type CatalogDisplayProps = {
     type: string | null;
     size: string;
     price: string;
+    productImageUrl: string | null;
   }[];
   pagination: {
     pageSize: number;
