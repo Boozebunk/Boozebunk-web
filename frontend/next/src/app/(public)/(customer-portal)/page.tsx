@@ -8,6 +8,7 @@ import { Loader2 } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
 
+import { PromotionalBanners } from '~/components/customer/promotional-banners';
 import StockDisplay from '~/components/customer/stocks-display';
 import { VendorCard } from '~/components/customer/vendor-card';
 import { useCustomerContext } from '~/providers/customer-provider';
@@ -52,6 +53,19 @@ function Page() {
     )
   );
 
+  // getting promotional banners
+  const { data: bannerData, isLoading: isLoadingBanners } = useQuery(
+    trpcHttp.banner.getAllBanners.queryOptions()
+  );
+
+  const banners =
+    bannerData?.banners.map((b) => ({
+      image_url: b.imageUrl,
+      website_link: b.websiteUrl || '#',
+      id: b.id,
+      alt: `Banner for ${b.websiteUrl || 'Promotion'}`
+    })) || [];
+
   const myDivRef = useRef<HTMLDivElement>(null);
 
   function handleCategoryClick(name: React.SetStateAction<string>) {
@@ -66,6 +80,19 @@ function Page() {
 
   return (
     <div className="flex w-full flex-col items-center gap-8 sm:gap-15">
+      {/* PROMOTIONAL BANNERS */}
+      {isLoadingBanners ? (
+        <span>{<Loader2 />} Banners Loading...</span>
+      ) : (
+        <PromotionalBanners
+          banners={banners}
+          intervalMs={4000}
+          aspectRatio="16/9"
+          showControls
+          pauseOnHover
+        />
+      )}
+
       {/* STORES NEAR YOU */}
       <div className="mb-[-3] flex w-full flex-col gap-5 overflow-hidden px-5 md:gap-8 lg:px-25">
         <div className="flex flex-col items-center gap-0 md:gap-1">
