@@ -52,14 +52,14 @@ export function MostSearchedProducts({ popularBrands = [], isLoading }: products
               data={chartData}
               layout="vertical"
               margin={{ left: 0 }}
-              barCategoryGap="50%"
-              className="gap-0">
+              barCategoryGap="50%">
               <YAxis
                 dataKey="brand"
                 type="category"
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
+                width={100}
               />
               <XAxis dataKey="searches" type="number" hide />
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />

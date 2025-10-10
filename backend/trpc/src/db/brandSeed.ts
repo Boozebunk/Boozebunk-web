@@ -3,7 +3,7 @@ import db from ".";
 import { popularSearchTable } from "./schema/popsearch";
 
 export const seedData = [
-  // Beer
+  // 🍺 Beer
   { brandName: "Kingfisher", category: "Beer" },
   { brandName: "Haywards 5000", category: "Beer" },
   { brandName: "Knock Out", category: "Beer" },
@@ -29,19 +29,21 @@ export const seedData = [
   { brandName: "Tsingtao", category: "Beer" },
   { brandName: "Heineken", category: "Beer" },
   { brandName: "Carlsberg", category: "Beer" },
+  { brandName: "King’s", category: "Beer" },
+  { brandName: "Kati Patang", category: "Beer" },
 
-  // Wine
+  // 🍷 Wine
   { brandName: "Sula Vineyards", category: "Wine" },
   { brandName: "Grover Zampa", category: "Wine" },
   { brandName: "Fratelli Wines", category: "Wine" },
   { brandName: "Big Banyan", category: "Wine" },
   { brandName: "York Winery", category: "Wine" },
-  { brandName: "KRSMA", category: "Wine" },
-  { brandName: "Vallonne", category: "Wine" },
+  { brandName: "KRSMA Estates", category: "Wine" },
+  { brandName: "Vallonne Vineyards", category: "Wine" },
   { brandName: "Rhythm Wines", category: "Wine" },
   { brandName: "Four Seasons", category: "Wine" },
   { brandName: "Myra Vineyards", category: "Wine" },
-  { brandName: "Chateau d'Ori", category: "Wine" },
+  { brandName: "Chateau d’Ori", category: "Wine" },
   { brandName: "Nine Hills", category: "Wine" },
   { brandName: "Chandon India", category: "Wine" },
   { brandName: "Jacob's Creek", category: "Wine" },
@@ -53,8 +55,11 @@ export const seedData = [
   { brandName: "Concha y Toro", category: "Wine" },
   { brandName: "Santa Rita", category: "Wine" },
   { brandName: "Blossom Hill", category: "Wine" },
+  { brandName: "Torres", category: "Wine" },
+  { brandName: "Lindeman’s", category: "Wine" },
+  { brandName: "Robert Mondavi", category: "Wine" },
 
-  // Whiskey
+  // 🥃 Whiskey
   { brandName: "McDowell's No.1", category: "Whiskey" },
   { brandName: "Royal Stag", category: "Whiskey" },
   { brandName: "Imperial Blue", category: "Whiskey" },
@@ -62,10 +67,7 @@ export const seedData = [
   { brandName: "Blenders Pride", category: "Whiskey" },
   { brandName: "8PM Whisky", category: "Whiskey" },
   { brandName: "Royal Challenge", category: "Whiskey" },
-  { brandName: "Old Admiral", category: "Whiskey" },
   { brandName: "Peter Scot", category: "Whiskey" },
-  { brandName: "Red Knight", category: "Whiskey" },
-  { brandName: "Rowson's Reserve", category: "Whiskey" },
   { brandName: "Signature", category: "Whiskey" },
   { brandName: "Amrut", category: "Whiskey" },
   { brandName: "Paul John", category: "Whiskey" },
@@ -83,30 +85,30 @@ export const seedData = [
   { brandName: "Grant's", category: "Whiskey" },
   { brandName: "100 Pipers", category: "Whiskey" },
   { brandName: "Black Dog", category: "Whiskey" },
-  { brandName: "Bro Code", category: "Whiskey" },
-  { brandName: "Legacy", category: "Whiskey" },
   { brandName: "Antiquity", category: "Whiskey" },
   { brandName: "Black & White", category: "Whiskey" },
   { brandName: "Royal Salute", category: "Whiskey" },
+  { brandName: "Legacy", category: "Whiskey" },
+  { brandName: "Bagpiper", category: "Whiskey" },
 
-  // Vodka
+  // 🍸 Vodka
   { brandName: "Magic Moments", category: "Vodka" },
   { brandName: "Romanov", category: "Vodka" },
   { brandName: "White Mischief", category: "Vodka" },
-  { brandName: "8PM Vodka", category: "Vodka" },
   { brandName: "9XO Vodka", category: "Vodka" },
   { brandName: "Smirnoff", category: "Vodka" },
   { brandName: "Absolut", category: "Vodka" },
   { brandName: "Belvedere", category: "Vodka" },
   { brandName: "Grey Goose", category: "Vodka" },
-  { brandName: "Russian Standard", category: "Vodka" },
-  { brandName: "Stolichnaya", category: "Vodka" },
-  { brandName: "Svedka", category: "Vodka" },
   { brandName: "Ketel One", category: "Vodka" },
   { brandName: "Tito's", category: "Vodka" },
+  { brandName: "Stolichnaya", category: "Vodka" },
+  { brandName: "Svedka", category: "Vodka" },
   { brandName: "SKYY Vodka", category: "Vodka" },
+  { brandName: "Ciroc", category: "Vodka" },
+  { brandName: "Beluga", category: "Vodka" },
 
-  // Rum
+  // 🍹 Rum
   { brandName: "Old Monk", category: "Rum" },
   { brandName: "McDowell's No.1 Celebration Rum", category: "Rum" },
   { brandName: "Bacardi", category: "Rum" },
@@ -116,13 +118,13 @@ export const seedData = [
   { brandName: "Makazai", category: "Rum" },
   { brandName: "Ron Diplomático", category: "Rum" },
   { brandName: "Havana Club", category: "Rum" },
-  { brandName: "Camino Real", category: "Rum" },
   { brandName: "Plantation Rum", category: "Rum" },
-  { brandName: "Holika", category: "Rum" },
   { brandName: "Mount Gay", category: "Rum" },
   { brandName: "Myers's Rum", category: "Rum" },
+  { brandName: "Old Port", category: "Rum" },
+  { brandName: "Black Fort", category: "Rum" },
 
-  // Gin
+  // 🍸 Gin
   { brandName: "Bombay Sapphire", category: "Gin" },
   { brandName: "Tanqueray", category: "Gin" },
   { brandName: "Beefeater", category: "Gin" },
@@ -135,8 +137,10 @@ export const seedData = [
   { brandName: "Metta Gin", category: "Gin" },
   { brandName: "Kamala Gin", category: "Gin" },
   { brandName: "Riversmith Gin", category: "Gin" },
+  { brandName: "Satiwa Gin", category: "Gin" },
+  { brandName: "Naarangi Gin", category: "Gin" },
 
-  // Tequila
+  // 🥂 Tequila
   { brandName: "Jose Cuervo", category: "Tequila" },
   { brandName: "Don Julio", category: "Tequila" },
   { brandName: "Patrón", category: "Tequila" },
@@ -149,7 +153,7 @@ export const seedData = [
   { brandName: "Don Pilar", category: "Tequila" },
   { brandName: "Dos Lunas", category: "Tequila" },
 
-  // Brandy
+  // 🥃 Brandy
   { brandName: "Old Admiral", category: "Brandy" },
   { brandName: "Honey Bee", category: "Brandy" },
   { brandName: "Mansion House", category: "Brandy" },
@@ -162,8 +166,9 @@ export const seedData = [
   { brandName: "Camus", category: "Brandy" },
   { brandName: "McDowell's VSOP", category: "Brandy" },
   { brandName: "Emperador", category: "Brandy" },
+  { brandName: "Torres", category: "Brandy" },
 
-  // Cocktails (RTD / pre-mixed)
+  // 🍸 Cocktails / RTD
   { brandName: "Bacardi Breezer", category: "Cocktails" },
   { brandName: "Smirnoff Ice", category: "Cocktails" },
   { brandName: "Magic Moments Vodka Spritz", category: "Cocktails" },
@@ -173,8 +178,9 @@ export const seedData = [
   { brandName: "Wai Wai Frozen Daiquiris", category: "Cocktails" },
   { brandName: "Cobra Beer Drinks", category: "Cocktails" },
   { brandName: "Bira 91 Ready To Drink", category: "Cocktails" },
+  { brandName: "Coolberg (Non-Alcoholic)", category: "Cocktails" },
 
-  // Champagne / Sparkling
+  // 🍾 Champagne / Sparkling Wine
   { brandName: "Moet & Chandon", category: "Champagne" },
   { brandName: "Veuve Clicquot", category: "Champagne" },
   { brandName: "Dom Perignon", category: "Champagne" },

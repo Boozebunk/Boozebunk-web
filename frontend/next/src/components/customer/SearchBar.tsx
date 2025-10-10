@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ArrowUpRight, Clock, Loader2, MapPin, Search } from 'lucide-react';
+import Fuse from 'fuse.js';
+import { ArrowUpRight, Clock, Loader2, MapPin, Search, WineOff } from 'lucide-react';
 
 import { Badge } from '~/shared/shadcn/badge';
 import { Button } from '~/shared/shadcn/button';
@@ -14,18 +15,21 @@ import { Input } from '~/shared/shadcn/input';
 import { useCustomerContext } from '~/providers/customer-provider';
 import { trpcHttp } from '~/utils/trpc';
 
+import SuggestionsJson from '../../utils/search-suggestions.json';
+
 interface LiquorSearchProps {
   isSearchDisabled: boolean;
 }
 
 export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
-  const [query, setQuery] = React.useState('');
-  const [searchStock, setSearchStock] = React.useState('');
+  const [query, setQuery] = useState('');
+  const [searchStock, setSearchStock] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const { nearbyVendors } = useCustomerContext();
   const nearbyVendorIds = nearbyVendors?.map((v) => v.id);
 
-  // tRPC query to search for stock in nearby vendors
+  // --- Fetch Stock Results ---
   const { data: searchResults, isLoading: isSearchLoading } = useQuery(
     trpcHttp.customer.searchStock.queryOptions(
       {
@@ -38,41 +42,63 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
     )
   );
 
+  // --- Open Google Maps ---
   const handleLocate = (lat: number, lng: number) => {
     if (lat && lng) {
       const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
       window.open(googleMapsUrl, '_blank');
     } else {
-      console.warn('Coordinates missing for mart:');
+      console.warn('Coordinates missing for mart');
     }
   };
 
+  // --- Form Submit ---
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim() !== '') {
       setSearchStock(query);
       setQuery('');
+      setShowSuggestions(false);
     }
   };
 
+  // --- Dropdown Control ---
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Open dropdown whenever searchStock has value
   useEffect(() => {
     setIsDropdownOpen(searchStock.length > 0);
   }, [searchStock]);
 
-  // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
         setIsDropdownOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // --- Suggestions Setup ---
+  const Brands = SuggestionsJson.seedData.map((b) => b.brandName.toLowerCase().trim());
+  const fuse = React.useMemo(() => {
+    return new Fuse(Brands, {
+      threshold: 0.3,
+      includeMatches: true
+    });
+  }, [Brands]);
+
+  const results = React.useMemo(() => {
+    if (!query.trim()) return [];
+    return fuse.search(query).slice(0, 8);
+  }, [query, fuse]);
+
+  const handleSelect = (name: string) => {
+    setQuery(name);
+    setShowSuggestions(false);
+  };
 
   return (
     <div className="w-full space-y-4">
@@ -87,13 +113,66 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                 : 'Search liquor brands, products, categories...'
             }
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setShowSuggestions(true);
+            }}
             className="w-full rounded-2xl py-5 pr-3 pl-10 sm:!text-sm md:!text-base lg:!text-lg"
             disabled={isSearchDisabled}
           />
         </div>
 
-        {/* Dropdown */}
+        {/* Suggestions Dropdown */}
+        {showSuggestions && results.length > 0 && (
+          <div
+            ref={dropdownRef}
+            className="absolute z-20 mt-2 max-h-[55vh] w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-md dark:border-neutral-700 dark:bg-neutral-900">
+            <ul>
+              {results.map((res) => {
+                const brand = res.item;
+                const matches = res.matches?.[0]?.indices || [];
+                const highlighted: React.ReactNode[] = [];
+
+                let lastIndex = 0;
+                matches.forEach(([start, end]: [number, number]) => {
+                  highlighted.push(brand.slice(lastIndex, start));
+                  highlighted.push(
+                    <span key={start} className="text-accent font-semibold">
+                      {brand.slice(start, end + 1)}
+                    </span>
+                  );
+                  lastIndex = end + 1;
+                });
+                highlighted.push(brand.slice(lastIndex));
+
+                return (
+                  <li
+                    key={brand}
+                    onClick={(e) => {
+                      handleSelect(brand);
+                      handleSubmit(e);
+                    }}
+                    className="hover:bg-muted sm:text-md cursor-pointer px-4 py-2 text-sm transition-colors">
+                    {highlighted}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        {searchResults && isDropdownOpen && searchResults.stockItems.length === 0 && (
+          <div
+            ref={dropdownRef}
+            className="absolute z-10 mt-1 max-h-[55vh] w-full overflow-auto rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-neutral-900">
+            <div className="flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400">
+              <WineOff className="mb-3 h-8 w-8 shrink-0 text-gray-300 sm:h-10 sm:w-10 dark:text-gray-600" />
+              <p className="text-xs font-medium sm:text-sm">No results found</p>
+            </div>
+          </div>
+        )}
+
+        {/* Search Results Dropdown */}
         {isSearchLoading ? (
           <div className="absolute z-10 mt-1 w-full rounded-md border bg-white p-4 text-center shadow-md">
             <Loader2 className="inline-block h-4 w-4 animate-spin" /> Searching...
@@ -154,11 +233,9 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                           <div className="flex h-[2.5rem] flex-wrap items-center text-[13px] sm:text-sm">
                             <span className="flex items-center gap-1 truncate">
                               <MapPin className="h-4 w-4 shrink-0" />
-                              <span className="max-w-[250px] truncate">{item.martArea}</span>
-                              <span>,</span>
+                              <span className="max-w-[250px] truncate">{item.martArea}</span>,
                             </span>
                             <span className="ml-1 whitespace-nowrap">
-                              {' '}
                               {item.martCity}, {item.martState}
                             </span>
                           </div>
@@ -183,11 +260,9 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                         variant="secondary"
                         size="sm"
                         className="w-full cursor-pointer"
-                        onClick={() => {
-                          handleLocate(item.martLat, item.martLng);
-                        }}>
+                        onClick={() => handleLocate(item.martLat, item.martLng)}>
                         Locate Store
-                        <ArrowUpRight className="ml-[-5] h-5 w-5" strokeWidth={1.75} />
+                        <ArrowUpRight className="ml-1 h-5 w-5" strokeWidth={1.75} />
                       </Button>
                     </CardFooter>
                   </Card>

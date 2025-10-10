@@ -123,7 +123,11 @@ export function Header({ cities, isLoadingCities }: headerProps) {
           )}
         </div>
       </div>
-      {isSearchBarOpen && <LiquorSearch isSearchDisabled={isSearchDisabled} />}
+      {isSearchBarOpen && (
+        <div className="relative block w-full md:hidden">
+          <LiquorSearch isSearchDisabled={isSearchDisabled} />
+        </div>
+      )}
     </div>
   );
 }
