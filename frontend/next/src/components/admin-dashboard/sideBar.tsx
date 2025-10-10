@@ -4,7 +4,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useQuery } from '@tanstack/react-query';
-import { ClipboardList, Home, MessageSquareText, PackagePlus, Store } from 'lucide-react';
+import {
+  CircleUserRound,
+  ClipboardList,
+  Home,
+  Images,
+  MessageSquareText,
+  PackagePlus,
+  ScrollText,
+  Store
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -116,6 +125,43 @@ export function SideBar() {
                         href={`/admin-portal/${session?.id}/admin/${session?.roleId}/vendor-queries`}>
                         <ClipboardList className="mr-2 !size-5" />
                         <span className="text-[15px] font-medium">Vendor Queries</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <div className="bg-sidebar-border h-[1px] w-[80%] self-center" />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className="mb-2 p-5 py-6">
+                  <Link href={`#`}>
+                    <CircleUserRound className="mr-2 !size-6" />
+                    <span className="text-[17px] font-medium">Customers</span>
+                  </Link>
+                </SidebarMenuButton>
+
+                <SidebarMenuSub className="ml-7 gap-2">
+                  <SidebarMenuSubItem>
+                    <SidebarMenuButton asChild className="py-5">
+                      <Link href={`/admin-portal/${session?.id}/admin/${session?.roleId}/banners`}>
+                        <Images className="mr-2 !size-5" />
+                        <span className="text-[15px] font-medium">Banners</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <SidebarMenuButton asChild className="py-5">
+                      <Link href={`/admin-portal/${session?.id}/admin/${session?.roleId}/blogs`}>
+                        <ScrollText className="mr-2 !size-5" />
+                        <span className="text-[15px] font-medium">Blogs</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuSubItem>
