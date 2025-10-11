@@ -8,6 +8,7 @@ import { Loader2 } from 'lucide-react';
 
 import { Button } from '~/shared/shadcn/button';
 
+import { Blog } from '~/components/customer/blogs';
 import { PromotionalBanners } from '~/components/customer/promotional-banners';
 import StockDisplay from '~/components/customer/stocks-display';
 import { VendorCard } from '~/components/customer/vendor-card';
@@ -197,6 +198,11 @@ function Page() {
           All Categories
         </Button>
       </div>
+
+      {/* DIVIDER */}
+      <div className="h-[2px] w-[95%] bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+
+      <Blog />
 
       {/* DIVIDER */}
       <div className="h-[2px] w-[95%] bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>

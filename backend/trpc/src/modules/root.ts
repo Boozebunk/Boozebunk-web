@@ -3,6 +3,7 @@ import { createTRPCRouter } from "@boozebunk-trpc/server/trpc";
 import { analyticsRouter } from "./analytics/controller";
 import { authRouter } from "./auth/controller";
 import { bannerRouter } from "./banner/controller";
+import { blogRouter } from "./blog/controller";
 import { customerRouter } from "./customer/controller";
 import { responseHubRouter } from "./reshub/controller";
 import { vendorStockRouter } from "./stock/controller";
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   analytics: analyticsRouter,
   customer: customerRouter,
   banner: bannerRouter,
+  blog: blogRouter,
 });
 
 export type AppRouter = typeof appRouter;
