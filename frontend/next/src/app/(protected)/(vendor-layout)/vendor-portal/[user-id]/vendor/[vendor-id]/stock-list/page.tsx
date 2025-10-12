@@ -98,18 +98,18 @@ export default function Page() {
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <div className="flex items-center justify-center">
-            {item.productImageUrl ? (
+          <div className="relative h-25 w-25 shrink-0 sm:h-35 sm:w-30">
+            {!item.productImageUrl ? (
+              <div className="flex h-full w-full items-center justify-center rounded-md bg-gray-100">
+                No image
+              </div>
+            ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={item.productImageUrl}
                 alt={item.productName}
-                className="h-[100px] w-[100px] rounded-md object-cover"
+                className="h-full w-full object-contain"
               />
-            ) : (
-              <div className="flex h-[60px] w-[60px] items-center justify-center rounded-md bg-gray-100">
-                No image
-              </div>
             )}
           </div>
         );

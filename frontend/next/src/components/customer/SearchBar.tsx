@@ -190,39 +190,49 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                     className={clsx('bg-foreground flex h-[1px] w-full', index === 0 && 'hidden')}
                   />
                   <Card key={index} className="gap-2 overflow-hidden border-none p-5 shadow-none">
-                    {item.productImageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.productImageUrl}
-                        alt={item.productName}
-                        className="h-[100px] w-[100px] rounded-md object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-[60px] w-[60px] items-center justify-center rounded-md bg-gray-100">
-                        No image
-                      </div>
-                    )}
                     <CardContent className="p-0">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <div className="flex flex-col gap-0">
-                            <span className="text-xs font-medium text-[#1e69af] sm:text-sm">
-                              {item.brandName}
-                            </span>
-                            <span className="h-[2.5rem] text-sm leading-5 font-semibold sm:text-base">
-                              {item.productName}
-                            </span>
+                          <div className="relative h-30 w-25 shrink-0 sm:h-35 sm:w-30">
+                            {!item.productImageUrl ? (
+                              <div className="flex h-full w-full items-center justify-center rounded-md bg-gray-100">
+                                No image
+                              </div>
+                            ) : (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={item.productImageUrl}
+                                alt={item.productName}
+                                className="h-full w-full object-contain"
+                              />
+                            )}
                           </div>
-                          <Badge className="bg-[#fff5cb] text-[#8B5E3C]" variant="secondary">
-                            {item.category}
-                          </Badge>
+
+                          <div className="flex flex-1 flex-col">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <span className="text-xs font-medium text-[#1e69af] sm:text-sm">
+                                  {item.brandName}
+                                </span>
+                                <span className="h-[2.5rem] text-sm leading-5 font-semibold sm:text-base">
+                                  {item.productName}
+                                </span>
+                              </div>
+                              <Badge className="bg-[#fff5cb] text-[#8B5E3C]" variant="secondary">
+                                {item.category}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-semibold sm:text-base">
+                                ₹{item.price}
+                              </span>
+                              <span className="text-sm font-medium text-[#1E40AF] dark:text-[#DBEAFE]">
+                                {item.size}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold sm:text-base">₹{item.price}</span>
-                          <span className="text-sm font-medium text-[#1E40AF] dark:text-[#DBEAFE]">
-                            {item.size}
-                          </span>
-                        </div>
+
                         <div className="border-t pt-2">
                           <div className="text-sm">
                             At:

@@ -30,18 +30,20 @@ export const ProductCard = ({ info }: { info: ProductCardProps }) => {
     <Card className="md:max-w-[500px]">
       <CardContent>
         <div className="flex items-center gap-3 sm:flex-col md:flex-row">
-          {info.productImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={info.productImageUrl}
-              alt={info.productName}
-              className="h-[100px] w-[100px] rounded-md object-cover"
-            />
-          ) : (
-            <div className="flex h-[60px] w-[60px] items-center justify-center rounded-md bg-gray-100">
-              No image
-            </div>
-          )}
+          <div className="relative h-40 w-30 shrink-0 sm:h-50 sm:w-35">
+            {!info.productImageUrl ? (
+              <div className="flex h-full w-full items-center justify-center rounded-md bg-gray-100">
+                No image
+              </div>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={info.productImageUrl}
+                alt={info.productName}
+                className="h-full w-full object-contain"
+              />
+            )}
+          </div>
           <div className="flex w-full flex-col gap-2">
             <Badge className="rounded-md bg-[#fff5cb] px-2 py-1 text-sm font-medium text-[#8B5E3C] sm:text-base">
               {info.category}
