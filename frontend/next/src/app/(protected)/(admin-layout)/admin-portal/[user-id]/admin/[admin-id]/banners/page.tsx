@@ -7,6 +7,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { Button } from '~/shared/shadcn/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/shadcn/card';
+import { Input } from '~/shared/shadcn/input';
+
 import { BannerCarousel } from '~/components/admin-dashboard/banner-carousal';
 import { queryClient, trpcHttp } from '~/utils/trpc';
 
@@ -134,8 +138,7 @@ function BannersPage() {
   }, [previewUrl]);
   console.log(newImageFile);
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-semibold text-balance">Banner Carousel</h1>
+    <main className="w-full space-y-5 px-3 py-3 md:space-y-8 lg:px-7">
       <BannerCarousel
         banners={banners}
         isLoading={isLoadingBanners}
@@ -143,14 +146,12 @@ function BannersPage() {
           deleteBanner({ id });
         }}
       />
-
-      <div className="border-input bg-card w-72 shrink-0 snap-start rounded-lg border border-dashed p-4">
-        <div className="mb-3 text-sm font-medium">Add new banner</div>
-
-        <div className="mb-3">
-          <label htmlFor="imageFile" className="sr-only">
-            Image file
-          </label>
+      <Card className="m-auto w-full rounded-2xl border p-4 lg:w-[600px]">
+        <CardHeader className="text-center">
+          <CardTitle className="text-lg md:text-2xl">Add new banner</CardTitle>
+          <CardDescription>Upload an image and link it to a website</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3 px-3 sm:space-y-5 sm:px-6">
           <input
             id="imageFile"
             type="file"
@@ -161,7 +162,7 @@ function BannersPage() {
               if (previewUrl) URL.revokeObjectURL(previewUrl);
               setPreviewUrl(file ? URL.createObjectURL(file) : null);
             }}
-            className="border-input bg-background file:bg-accent file:text-accent-foreground w-full rounded-md border px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:px-3 file:py-2 file:text-sm"
+            className="border-input bg-background file:bg-accent file:text-accent-foreground w-full rounded-md border border-dashed px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:px-3 file:py-2 file:text-sm"
           />
           {previewUrl ? (
             <Image
@@ -169,40 +170,31 @@ function BannersPage() {
               alt="Selected preview"
               width={96} // 24px * 4 (h-24)
               height={96}
-              className="mt-2 w-full rounded-md object-cover"
+              className="w-full rounded-md object-cover shadow-sm"
               unoptimized // Since we're using object URL for preview
             />
           ) : null}
-        </div>
 
-        <div className="mb-4">
-          <label htmlFor="websiteLink" className="sr-only">
-            Website Link
-          </label>
-          <input
+          <Input
             id="websiteLink"
             type="url"
             placeholder="https://some-website-url"
             value={newWebsiteLink}
             onChange={(e) => setNewWebsiteLink(e.target.value)}
-            className="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
+            className="w-full text-sm"
           />
-        </div>
 
-        <button
-          type="button"
-          onClick={handleUploadAndSave}
-          className="bg-primary text-primary-foreground w-full rounded-md px-3 py-2 text-sm hover:opacity-90"
-          disabled={isSaving || !newImageFile} // Disable button if saving or if no file is selected
-        >
-          {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          {isSaving ? 'Saving Banner...' : 'Upload & Save'}
-        </button>
-
-        <p className="text-muted-foreground mt-2 text-xs">
-          This button is a placeholder. Wire it to your backend when ready.
-        </p>
-      </div>
+          <Button
+            type="button"
+            onClick={handleUploadAndSave}
+            className="mt-2 w-full cursor-pointer px-3 py-2 text-sm"
+            disabled={isSaving || !newImageFile} // Disable button if saving or if no file is selected
+          >
+            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            {isSaving ? 'Saving Banner...' : 'Upload & Save'}
+          </Button>
+        </CardContent>
+      </Card>{' '}
     </main>
   );
 }

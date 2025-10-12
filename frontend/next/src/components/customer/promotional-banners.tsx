@@ -4,7 +4,9 @@ import * as React from 'react';
 import Image from 'next/image';
 
 import { cn } from '~/lib/utils';
-import { Button } from '~/shared/shadcn/button';
+import { Carousel, CarouselContent, CarouselItem } from '~/shared/shadcn/carousel';
+
+import type { CarouselApi } from '~/shared/shadcn/carousel';
 
 export type Banner = {
   id: string | number;
@@ -13,224 +15,166 @@ export type Banner = {
   alt?: string;
 };
 
-type Aspect = '16/9' | '4/3' | '1/1';
-
 export type BannerCarouselProps = {
   banners: Banner[];
   intervalMs?: number;
-  className?: string;
-  aspectRatio?: Aspect;
-  showControls?: boolean;
   pauseOnHover?: boolean;
-};
-
-const aspectToClass: Record<Aspect, string> = {
-  '16/9': 'aspect-[16/9]',
-  '4/3': 'aspect-[4/3]',
-  '1/1': 'aspect-square'
 };
 
 export function PromotionalBanners({
   banners,
   intervalMs = 4000,
-  className,
-  aspectRatio = '16/9',
-  showControls = true,
   pauseOnHover = true
 }: BannerCarouselProps) {
+  const [api, setApi] = React.useState<CarouselApi | undefined>(undefined);
   const [index, setIndex] = React.useState(0);
-  const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerRef = React.useRef<number | null>(null);
   const isHoveringRef = React.useRef(false);
-  const reducedMotion = React.useRef(false);
+  const total = banners.length;
 
-  const total = banners?.length ?? 0;
-
-  const next = React.useCallback(() => {
-    setIndex((prev) => (total > 0 ? (prev + 1) % total : 0));
-  }, [total]);
-
-  const prev = React.useCallback(() => {
-    setIndex((prev) => (total > 0 ? (prev - 1 + total) % total : 0));
-  }, [total]);
-
-  const goTo = React.useCallback(
-    (i: number) => {
-      setIndex(() => (total > 0 ? ((i % total) + total) % total : 0));
-    },
-    [total]
-  );
-
-  const clearTimer = React.useCallback(() => {
+  // start autoplay interval (uses api.scrollNext())
+  const startAutoplay = React.useCallback(() => {
+    if (!api || total < 2) return;
+    // clear existing
     if (timerRef.current) {
-      clearInterval(timerRef.current);
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    timerRef.current = window.setInterval(() => {
+      if (pauseOnHover && isHoveringRef.current) return;
+      // prefer API method if available
+      if (typeof api.scrollNext === 'function') {
+        api.scrollNext();
+      } else if (typeof api.scrollTo === 'function') {
+        // fallback: compute next index and scrollTo
+        const next = (index + 1) % total;
+        api.scrollTo(next);
+      }
+    }, intervalMs);
+  }, [api, intervalMs, pauseOnHover, total, index]);
+
+  const stopAutoplay = React.useCallback(() => {
+    if (timerRef.current) {
+      window.clearInterval(timerRef.current);
       timerRef.current = null;
     }
   }, []);
 
-  const startTimer = React.useCallback(() => {
-    if (reducedMotion.current || total < 2) return;
-    clearTimer();
-    timerRef.current = setInterval(() => {
-      if (pauseOnHover && isHoveringRef.current) return;
-      next();
-    }, intervalMs);
-  }, [clearTimer, intervalMs, next, pauseOnHover, total]);
-
+  // sync selected index from API
   React.useEffect(() => {
-    // Respect user preference for reduced motion
-    if (typeof window !== 'undefined') {
-      reducedMotion.current =
-        window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+    if (!api) return;
+    // initial set
+    try {
+      setIndex(api.selectedScrollSnap());
+    } catch {
+      // ignore if method missing
     }
-    startTimer();
-    return () => clearTimer();
-  }, [startTimer, clearTimer]);
 
-  // Restart timer when index changes (keeps cadence consistent after manual navigation)
+    const onSelect = () => {
+      try {
+        setIndex(api.selectedScrollSnap());
+      } catch {
+        // ignore
+      }
+    };
+
+    api.on?.('select', onSelect);
+    // start autoplay once api is ready
+    startAutoplay();
+
+    return () => {
+      api.off?.('select', onSelect);
+      stopAutoplay();
+    };
+  }, [api, startAutoplay, stopAutoplay]);
+
+  // restart autoplay if interval changes
   React.useEffect(() => {
-    startTimer();
-  }, [index, startTimer]);
+    startAutoplay();
+    return () => {
+      stopAutoplay();
+    };
+  }, [intervalMs, startAutoplay, stopAutoplay]);
 
   const onMouseEnter = () => {
     if (!pauseOnHover) return;
     isHoveringRef.current = true;
-    clearTimer();
+    stopAutoplay();
   };
 
   const onMouseLeave = () => {
     if (!pauseOnHover) return;
     isHoveringRef.current = false;
-    startTimer();
+    startAutoplay();
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'ArrowRight') {
       e.preventDefault();
-      next();
+      api?.scrollNext();
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      prev();
+      api?.scrollPrev?.();
     }
   };
 
-  if (!banners || banners.length === 0) {
-    return (
-      <div
-        className={cn('bg-card text-card-foreground w-full rounded-lg border p-6', className)}
-        role="status"
-        aria-live="polite">
-        <p className="text-sm opacity-80">No banners available.</p>
-      </div>
-    );
-  }
+  const goTo = (i: number) => api?.scrollTo?.(i);
 
   return (
     <div
-      className={cn('mx-auto w-full max-w-5xl', className)}
-      role="region"
-      aria-roledescription="carousel"
-      aria-label="Promotional banners"
-      onKeyDown={onKeyDown}>
-      <div
-        className={cn(
-          'bg-card relative max-h-[800px] overflow-hidden rounded-lg border',
-          aspectToClass[aspectRatio]
-        )}
-        tabIndex={0}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}>
-        {/* Slides */}
-        <div
-          className="flex h-full w-full transition-transform duration-500 ease-out"
-          style={{ transform: `translateX(-${index * 100}%)` }}
-          aria-live="polite">
+      className="relative mt-[-30px] flex w-full flex-col items-center justify-center sm:mt-[-35px]"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onKeyDown={onKeyDown}
+      tabIndex={0}>
+      <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
+        <CarouselContent>
           {banners.map((banner, i) => (
-            <div
-              key={banner.id}
-              className="h-full w-full shrink-0 grow-0 basis-full"
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`Slide ${i + 1} of ${total}`}>
-              <a
-                href={banner.website_link || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block h-full w-full"
-                aria-label={banner.alt || `Open link for banner ${i + 1}`}>
-                <Image
-                  src={
-                    banner.image_url ||
-                    '/placeholder.svg?height=640&width=1200&query=missing%20banner%20image'
-                  }
-                  alt={banner.alt || 'Promotional banner'}
-                  className="h-full w-full object-cover"
-                  width={100}
-                  height={100}
-                  quality={100}
-                  priority={i === 0}
-                />
-              </a>
-            </div>
+            <CarouselItem key={banner.id} className="w-full">
+              <div className="relative aspect-video w-full cursor-pointer sm:aspect-[9/4] lg:aspect-[9/2.5]">
+                <a
+                  href={banner.website_link || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute inset-0 block h-full w-full"
+                  aria-label={banner.alt || `Open link for banner ${i + 1}`}>
+                  <Image
+                    src={
+                      banner.image_url ||
+                      '/placeholder.svg?height=640&width=1200&query=missing%20banner%20image'
+                    }
+                    alt={banner.alt || 'Promotional banner'}
+                    fill
+                    quality={100}
+                    priority={i === 0}
+                  />
+                </a>
+              </div>
+            </CarouselItem>
           ))}
+        </CarouselContent>
+      </Carousel>
+
+      {/* Indicators */}
+      <div className="bg-background/60 supports-[backdrop-filter]:bg-background/40 absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-2 py-1 backdrop-blur">
+        <div className="flex items-center gap-1.5">
+          {banners.map((_, i) => {
+            const isActive = i === index;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                aria-current={isActive ? 'true' : 'false'}
+                className={cn(
+                  'h-2.5 w-2.5 rounded-full transition-all',
+                  isActive ? 'bg-foreground/90 w-5' : 'bg-foreground/40 hover:bg-foreground/60'
+                )}
+              />
+            );
+          })}
         </div>
-
-        {/* Controls */}
-        {showControls && total > 1 ? (
-          <>
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-between p-2">
-              <div className="pointer-events-auto">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="icon"
-                  onClick={prev}
-                  aria-label="Previous slide"
-                  className="shadow-sm">
-                  <span aria-hidden="true" className="text-lg leading-none">
-                    {'‹'}
-                  </span>
-                </Button>
-              </div>
-              <div className="pointer-events-auto">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="icon"
-                  onClick={next}
-                  aria-label="Next slide"
-                  className="shadow-sm">
-                  <span aria-hidden="true" className="text-lg leading-none">
-                    {'›'}
-                  </span>
-                </Button>
-              </div>
-            </div>
-
-            {/* Indicators */}
-            <div className="bg-background/60 supports-[backdrop-filter]:bg-background/40 absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-2 py-1 backdrop-blur">
-              <div className="flex items-center gap-1.5">
-                {banners.map((_, i) => {
-                  const isActive = i === index;
-                  return (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => goTo(i)}
-                      aria-label={`Go to slide ${i + 1}`}
-                      aria-current={isActive ? 'true' : 'false'}
-                      className={cn(
-                        'h-2.5 w-2.5 rounded-full transition-all',
-                        isActive
-                          ? 'bg-foreground/90 w-5'
-                          : 'bg-foreground/40 hover:bg-foreground/60'
-                      )}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </>
-        ) : null}
       </div>
     </div>
   );

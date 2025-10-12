@@ -85,15 +85,14 @@ function Page() {
     <div className="flex w-full flex-col items-center gap-8 sm:gap-15">
       {/* PROMOTIONAL BANNERS */}
       {isLoadingBanners ? (
-        <span>{<Loader2 />} Banners Loading...</span>
+        <div className="flex h-40 w-full items-center justify-center">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="text-lg font-medium">Loading...</span>
+          </div>
+        </div>
       ) : (
-        <PromotionalBanners
-          banners={banners}
-          intervalMs={4000}
-          aspectRatio="16/9"
-          showControls
-          pauseOnHover
-        />
+        <PromotionalBanners banners={banners} intervalMs={4000} pauseOnHover />
       )}
 
       {/* STORES NEAR YOU */}
@@ -189,6 +188,7 @@ function Page() {
         </div>
 
         <Button
+          className="cursor-pointer"
           onClick={() => {
             setSelectedCategory('');
             if (myDivRef.current) {

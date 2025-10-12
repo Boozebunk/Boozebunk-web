@@ -20,9 +20,11 @@ type DialogBoxProps = {
   actionText?: string;
   cancelText?: string;
   className?: string;
+  cancelTextClassName?: string;
   open?: boolean;
   onAction?: () => void;
   onOpenChange?: (open: boolean) => void;
+  header?: boolean;
 };
 
 export function CustomDialog({
@@ -35,16 +37,19 @@ export function CustomDialog({
   children,
   onOpenChange,
   open,
-  className
+  className,
+  header = true
 }: DialogBoxProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
       <AlertDialogContent className={clsx('h-fit w-fit !max-w-full overflow-auto', className)}>
-        <AlertDialogHeader className="text-left">
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
+        {header && (
+          <AlertDialogHeader className="text-left">
+            <AlertDialogTitle>{title}</AlertDialogTitle>
+            <AlertDialogDescription>{description}</AlertDialogDescription>
+          </AlertDialogHeader>
+        )}
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelText}</AlertDialogCancel>

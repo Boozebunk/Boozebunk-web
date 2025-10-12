@@ -10,7 +10,14 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '~/shared/shadcn/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/shared/shadcn/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '~/shared/shadcn/card';
 import { Input } from '~/shared/shadcn/input';
 import { Textarea } from '~/shared/shadcn/textarea';
 import { ComponentLoader } from '~/shared/components/componentLoader';
@@ -108,15 +115,18 @@ function BlogsPage() {
   };
 
   return (
-    <>
-      <div className="mx-auto mt-10 max-w-md rounded-xl border p-6 shadow-sm">
-        <h2 className="mb-6 text-2xl font-semibold">Create Blog</h2>
+    <div className="flex w-full flex-col items-center gap-5 px-3 py-3 md:gap-8 lg:px-7">
+      <Card className="mt-5 !w-full rounded-xl p-6 sm:!max-w-[800px]">
+        <CardHeader className="flex w-full flex-col items-center gap-1 p-0 text-center sm:px-5">
+          <CardTitle className="text-2xl font-bold">Create Blog</CardTitle>
+          <CardDescription className="max-w-lg text-sm">Write a eye catching blog!</CardDescription>
+        </CardHeader>
 
         {/* Blog Uplaod Form */}
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium">Title</label>
-            <Input {...form.register('title')} placeholder="Enter blog title" />
+            <Input {...form.register('title')} placeholder="Enter blog title" className="text-sm" />
             {form.formState.errors.title && (
               <p className="mt-1 text-sm text-red-500">{form.formState.errors.title.message}</p>
             )}
@@ -127,6 +137,7 @@ function BlogsPage() {
               {...form.register('description')}
               placeholder="Enter blog description"
               rows={4}
+              className="text-sm"
             />
             {form.formState.errors.description && (
               <p className="mt-1 text-sm text-red-500">
@@ -136,89 +147,101 @@ function BlogsPage() {
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">Tag</label>
-            <Input {...form.register('tag')} placeholder="Enter tag" />
+            <Input {...form.register('tag')} placeholder="Enter tag" className="text-sm" />
             {form.formState.errors.tag && (
               <p className="mt-1 text-sm text-red-500">{form.formState.errors.tag.message}</p>
             )}
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full cursor-pointer">
             {creationLoader ? <Loader2 /> : 'Submit'}
           </Button>
         </form>
-      </div>
+      </Card>
 
       {/* Blog List */}
-      <div className="mt-10">
-        <h2 className="mb-4 text-2xl font-semibold">Blog List</h2>
-      </div>
-
-      {blogsLoader ? (
-        <ComponentLoader />
-      ) : (
-        blogsData?.blogs.map((post) => (
-          <Card
-            key={post.id}
-            className="group relative flex w-[330px] shrink-0 flex-col gap-2 overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 shadow-sm transition-all duration-300 hover:shadow-xl md:w-[400px] lg:w-[500px] dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-800">
-            <CardHeader>
-              {editingBlog?.id === post.id ? (
-                <Input
-                  value={editingBlog.title}
-                  onChange={(e) => setEditingBlog({ ...editingBlog, title: e.target.value })}
-                />
-              ) : (
-                <CardTitle className="text-md text-foreground line-clamp-2 max-w-[330px] font-semibold sm:max-w-[450px] sm:text-lg lg:max-w-[500px] lg:text-xl">
-                  ✨ {post.title}
-                </CardTitle>
-              )}
-            </CardHeader>
-
-            <CardContent className="flex-1 text-gray-600 dark:text-gray-300">
-              {editingBlog?.id === post.id ? (
-                <Textarea
-                  value={editingBlog.description}
-                  onChange={(e) => setEditingBlog({ ...editingBlog, description: e.target.value })}
-                />
-              ) : (
-                <p className="sm:text-md line-clamp-4 max-w-[330px] text-sm sm:max-w-[450px] lg:max-w-[500px] lg:text-lg">
-                  {post.description}
-                </p>
-              )}
-            </CardContent>
-
-            <CardFooter>
-              <div className="mt-4 flex w-full items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                {editingBlog?.id === post.id ? (
-                  <Input
-                    value={editingBlog.tag}
-                    onChange={(e) => setEditingBlog({ ...editingBlog, tag: e.target.value })}
-                    className="w-32"
-                  />
-                ) : (
-                  <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                    🍂 {post.tag}
-                  </span>
-                )}
-                <div className="flex flex-row gap-1">
+      <div className="flex w-full flex-col gap-2 sm:gap-3">
+        <h1 className="text-lg font-medium md:text-2xl">
+          <strong>Blogs</strong> Posted
+        </h1>
+        <div className="grid grid-cols-1 justify-center gap-3 md:grid-cols-2 md:gap-10">
+          {blogsLoader ? (
+            <ComponentLoader />
+          ) : (
+            blogsData?.blogs.map((post) => (
+              <Card
+                key={post.id}
+                className="group relative flex shrink-0 flex-col gap-2 overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 shadow-sm transition-all duration-300 hover:shadow-xl dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-800">
+                <CardHeader>
                   {editingBlog?.id === post.id ? (
-                    <Button onClick={handleUpdate}>{updateLoader ? <Loader2 /> : 'Update'}</Button>
+                    <Input
+                      value={editingBlog.title}
+                      onChange={(e) => setEditingBlog({ ...editingBlog, title: e.target.value })}
+                    />
                   ) : (
-                    <Button onClick={() => handleEdit(post)}>Edit</Button>
+                    <CardTitle className="text-md text-foreground font-semibold sm:text-lg lg:text-xl">
+                      ✨ {post.title}
+                    </CardTitle>
                   )}
-                  <Button
-                    onClick={async () => {
-                      await deleteBlog({ id: post.id });
-                    }}>
-                    {deleteLoader ? <Loader2 /> : 'Delete'}
-                  </Button>
-                </div>
-              </div>
-            </CardFooter>
+                </CardHeader>
 
-            <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-amber-500 to-rose-500 opacity-70" />
-          </Card>
-        ))
-      )}
-    </>
+                <CardContent className="flex-1 text-gray-600 dark:text-gray-300">
+                  {editingBlog?.id === post.id ? (
+                    <Textarea
+                      value={editingBlog.description}
+                      onChange={(e) =>
+                        setEditingBlog({ ...editingBlog, description: e.target.value })
+                      }
+                    />
+                  ) : (
+                    <p className="sm:text-md text-sm lg:text-lg">{post.description}</p>
+                  )}
+                </CardContent>
+
+                <CardFooter>
+                  <div className="mt-4 flex w-full items-center justify-between gap-3 text-sm">
+                    {editingBlog?.id === post.id ? (
+                      <Input
+                        value={editingBlog.tag}
+                        onChange={(e) => setEditingBlog({ ...editingBlog, tag: e.target.value })}
+                        className="w-full max-w-sm bg-amber-100 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+                      />
+                    ) : (
+                      <span className="max-w-[300px] truncate rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                        🍂 {post.tag}
+                      </span>
+                    )}
+                    <div className="flex flex-row gap-2">
+                      {editingBlog?.id === post.id ? (
+                        <Button onClick={handleUpdate}>
+                          {updateLoader ? <Loader2 /> : 'Update'}
+                        </Button>
+                      ) : (
+                        <Button
+                          variant={'outline'}
+                          className="cursor-pointer shadow-sm"
+                          onClick={() => handleEdit(post)}>
+                          Edit
+                        </Button>
+                      )}
+                      <Button
+                        variant={'destructive'}
+                        className="cursor-pointer"
+                        onClick={async () => {
+                          await deleteBlog({ id: post.id });
+                        }}>
+                        {deleteLoader ? <Loader2 /> : 'Delete'}
+                      </Button>
+                    </div>
+                  </div>
+                </CardFooter>
+
+                <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-amber-500 to-rose-500 opacity-70" />
+              </Card>
+            ))
+          )}{' '}
+        </div>{' '}
+      </div>
+    </div>
   );
 }
 
