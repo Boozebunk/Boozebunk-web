@@ -67,6 +67,8 @@ function Page() {
       alt: `Banner for ${b.websiteUrl || 'Promotion'}`
     })) || [];
 
+  console.log('banners data ', banners);
+
   const myDivRef = useRef<HTMLDivElement>(null);
 
   function handleCategoryClick(name: React.SetStateAction<string>) {

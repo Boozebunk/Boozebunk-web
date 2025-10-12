@@ -23,14 +23,14 @@ export function VendorsActivity({
       icon: PackagePlus,
       value: newVendorsCount,
       subtitle: 'In last 30 days',
-      growth: `${newVendorsChange}% from previous month`
+      growth: `${newVendorsChange.toFixed(0)}% from previous month`
     },
     {
       title: 'Vendor Login Frequency',
       icon: LogIn,
-      value: loginFrequencyChange,
-      subtitle: 'Avg logins per week',
-      growth: `${loginFrequencyCount}% from previous month`
+      value: loginFrequencyCount,
+      subtitle: 'logins per week',
+      growth: `${loginFrequencyChange.toFixed(0)}% from previous week`
     }
   ];
 

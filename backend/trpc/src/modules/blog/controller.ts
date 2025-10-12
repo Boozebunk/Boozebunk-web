@@ -1,6 +1,6 @@
 import db from "@boozebunk-trpc/db";
 import { BlogsTable } from "@boozebunk-trpc/db/schema/blogs";
-import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { desc, eq } from "drizzle-orm";
 import z from "zod";
@@ -33,11 +33,7 @@ export const blogRouter = createTRPCRouter({
       }
     }),
 
-  getAllBlogs: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user.role !== "admin") {
-      throw new TRPCError({ code: "FORBIDDEN", message: "Access denied." });
-    }
-
+  getAllBlogs: publicProcedure.query(async () => {
     try {
       const blogs = await db.select().from(BlogsTable).orderBy(desc(BlogsTable.createdAt));
 

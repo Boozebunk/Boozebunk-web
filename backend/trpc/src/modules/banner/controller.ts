@@ -1,6 +1,6 @@
 import db from "@boozebunk-trpc/db";
 import { bannersTable } from "@boozebunk-trpc/db/schema/banners";
-import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { deleteS3Object, generatePresignedUploadUrl } from "@boozebunk-trpc/utils/s3-sender";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -62,12 +62,7 @@ export const bannerRouter = createTRPCRouter({
     }
   }),
 
-  getAllBanners: protectedProcedure.query(async ({ ctx }) => {
-    // SECURITY CHECK: Ensure only Admins can view this list
-    if (ctx.user.role !== "admin") {
-      throw new TRPCError({ code: "FORBIDDEN", message: "Access denied." });
-    }
-
+  getAllBanners: publicProcedure.query(async () => {
     try {
       const banners = await db.select().from(bannersTable);
 
