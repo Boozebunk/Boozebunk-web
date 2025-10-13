@@ -192,7 +192,7 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                   <Card key={index} className="gap-2 overflow-hidden border-none p-5 shadow-none">
                     <CardContent className="p-0">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-2">
                           <div className="relative h-30 w-25 shrink-0 sm:h-35 sm:w-30">
                             {!item.productImageUrl ? (
                               <div className="flex h-full w-full items-center justify-center rounded-md bg-gray-100">

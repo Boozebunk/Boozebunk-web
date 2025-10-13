@@ -1,3 +1,5 @@
+import { ImageOff } from 'lucide-react';
+
 import { Badge } from '~/shared/shadcn/badge';
 import { Card, CardContent } from '~/shared/shadcn/card';
 
@@ -33,7 +35,7 @@ export const ProductCard = ({ info }: { info: ProductCardProps }) => {
           <div className="relative h-40 w-30 shrink-0 sm:h-50 sm:w-35">
             {!info.productImageUrl ? (
               <div className="flex h-full w-full items-center justify-center rounded-md bg-gray-100">
-                No image
+                <ImageOff />
               </div>
             ) : (
               // eslint-disable-next-line @next/next/no-img-element

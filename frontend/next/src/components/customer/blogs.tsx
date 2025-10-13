@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ScrollText } from 'lucide-react';
 
 import {
   AlertDialog,
@@ -120,7 +120,7 @@ export function Blog() {
                 <span className="text-lg font-medium">Loading Blogs...</span>
               </div>
             </div>
-          ) : (
+          ) : blogsData?.blogs && blogsData.blogs.length > 0 ? (
             blogsData?.blogs.map((post) => (
               <Card
                 key={post.id}
@@ -156,6 +156,10 @@ export function Blog() {
                 <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-amber-500 to-rose-500 opacity-70" />
               </Card>
             ))
+          ) : (
+            <div className="sm:text-md flex w-full items-center justify-center text-sm text-gray-500 md:text-lg">
+              <ScrollText className="text-accent mr-2 !size-5" /> No blogs available.
+            </div>
           )}
         </div>
       </div>

@@ -115,8 +115,8 @@ function BlogsPage() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-5 px-3 py-3 md:gap-8 lg:px-7">
-      <Card className="mt-5 !w-full rounded-xl p-6 sm:!max-w-[800px]">
+    <div className="flex w-full flex-col gap-5 px-3 py-5 md:gap-8 lg:px-7">
+      <Card className="!w-full rounded-xl p-6 sm:!max-w-[800px]">
         <CardHeader className="flex w-full flex-col items-center gap-1 p-0 text-center sm:px-5">
           <CardTitle className="text-2xl font-bold">Create Blog</CardTitle>
           <CardDescription className="max-w-lg text-sm">Write a eye catching blog!</CardDescription>

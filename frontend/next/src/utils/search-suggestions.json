@@ -176,6 +176,27 @@
     { "brandName": "Canard-Duchene" },
     { "brandName": "Alfred Gratien" },
     { "brandName": "Gosset" },
-    { "brandName": "Pol Roger" }
+    { "brandName": "Pol Roger" },
+
+    { "brandName": "Whiskey" },
+    { "brandName": "Scotch" },
+    { "brandName": "Bourbon" },
+    { "brandName": "Irish Whiskey" },
+    { "brandName": "Tennessee Whiskey" },
+    { "brandName": "Rye Whiskey" },
+    { "brandName": "Rum" },
+    { "brandName": "Vodka" },
+    { "brandName": "Gin" },
+    { "brandName": "Tequila" },
+    { "brandName": "Brandy" },
+    { "brandName": "Cognac" },
+    { "brandName": "Armagnac" },
+    { "brandName": "Wine" },
+    { "brandName": "Red Wine" },
+    { "brandName": "White Wine" },
+    { "brandName": "Rosé Wine" },
+    { "brandName": "Sparkling Wine" },
+    { "brandName": "Champagne" },
+    { "brandName": "Beer" }
   ]
 }

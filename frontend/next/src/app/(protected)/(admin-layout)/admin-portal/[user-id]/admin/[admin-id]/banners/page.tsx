@@ -138,15 +138,8 @@ function BannersPage() {
   }, [previewUrl]);
   console.log(newImageFile);
   return (
-    <main className="w-full space-y-5 px-3 py-3 md:space-y-8 lg:px-7">
-      <BannerCarousel
-        banners={banners}
-        isLoading={isLoadingBanners}
-        onDeleteBanner={async (id: string) => {
-          deleteBanner({ id });
-        }}
-      />
-      <Card className="m-auto w-full rounded-2xl border p-4 lg:w-[600px]">
+    <main className="w-full space-y-5 px-3 py-5 md:space-y-8 lg:px-7">
+      <Card className="w-full rounded-2xl border p-4 lg:w-[600px]">
         <CardHeader className="text-center">
           <CardTitle className="text-lg md:text-2xl">Add new banner</CardTitle>
           <CardDescription>Upload an image and link it to a website</CardDescription>
@@ -195,6 +188,13 @@ function BannersPage() {
           </Button>
         </CardContent>
       </Card>{' '}
+      <BannerCarousel
+        banners={banners}
+        isLoading={isLoadingBanners}
+        onDeleteBanner={async (id: string) => {
+          deleteBanner({ id });
+        }}
+      />
     </main>
   );
 }
