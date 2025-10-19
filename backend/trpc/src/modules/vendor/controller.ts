@@ -283,4 +283,22 @@ export const vendorRouter = createTRPCRouter({
       });
     }
   }),
+
+  isVendorDeleted: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const vendor = await db.query.vendor.findFirst({
+        where: eq(vendorTable.userId, ctx.user.id as string),
+      });
+
+      return {
+        success: true,
+        isDeleted: vendor ? false : true,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error checking vendor deletion status -> ${err}`,
+      });
+    }
+  }),
 });
