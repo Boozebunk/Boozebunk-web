@@ -60,6 +60,7 @@ export default function Page() {
   const [activeFroozenContext, setActiveFroozenContext] = React.useState('Activate');
 
   const [vendorId, setVendorId] = React.useState<string>('');
+  const [vendorEmail, setVendorEmail] = React.useState<string>('');
 
   const [editableVedorDetails, setEditableVedorDetails] = React.useState<EditVendorTypes>({
     vendorId: '',
@@ -186,6 +187,7 @@ export default function Page() {
                   variant="destructive"
                   onClick={() => {
                     setVendorId(vendor.id);
+                    setVendorEmail(vendor.vendorEmail!);
                     setOpenVendorDelete(true);
                   }}>
                   Delete vendor
@@ -272,7 +274,7 @@ export default function Page() {
   };
 
   const handleDeleteVendorAccount = async () => {
-    await DeleteVendor({ vendorId });
+    await DeleteVendor({ vendorId, vendorEmail });
   };
 
   const handleEditVendorDetails = async () => {

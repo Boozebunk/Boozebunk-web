@@ -201,7 +201,7 @@ export const vendorRouter = createTRPCRouter({
     }),
 
   deleteVendor: protectedProcedure
-    .input(z.object({ vendorId: z.string() }))
+    .input(z.object({ vendorId: z.string(), vendorEmail: z.string() }))
     .mutation(async ({ input }) => {
       try {
         const vendor = await db.query.vendor.findFirst({
@@ -215,12 +215,9 @@ export const vendorRouter = createTRPCRouter({
           });
         }
 
-        // Vendor and Address data automatically get deletes as set delete on cascade
         await db.delete(userTable).where(eq(userTable.id, vendor.userId));
-        // await db.delete(vendorTable).where(eq(vendorTable.id, input.vendorId));
-        // await db
-        //   .delete(vendorAddressesTable)
-        //   .where(eq(vendorAddressesTable.vendorId, input.vendorId));
+
+        await sendEmail(input.vendorEmail, `Regarding Account Deletion`, "account-deleted", {});
 
         return {
           success: true,
