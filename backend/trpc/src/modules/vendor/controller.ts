@@ -301,4 +301,22 @@ export const vendorRouter = createTRPCRouter({
       });
     }
   }),
+
+  isVendorFrozen: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const vendor = await db.query.vendor.findFirst({
+        where: eq(vendorTable.userId, ctx.user.id as string),
+        columns: { isActive: true },
+      });
+
+      return {
+        isFrozen: vendor?.isActive ? false : true,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Error checking vendor froozen or not ${err}`,
+      });
+    }
+  }),
 });

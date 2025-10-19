@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
+import FrozenBanner from '~/components/vendor-dashboard/frozenBanner';
 import { StockOverview } from '~/components/vendor-dashboard/stock-overview/StockOverview';
 import { MostSearchedProducts } from '~/components/vendor-dashboard/top-stock/mostSearchedProducts';
 import { StoreEngagement } from '~/components/vendor-dashboard/top-stock/storeEngagement';
@@ -14,6 +15,10 @@ export default function Page() {
   const params = useParams();
   const userId = params['user-id'] as string;
   const vendorId = params['vendor-id'] as string;
+
+  // fetching if vendor is frozen
+  const { data: vendorActiveFroozen } = useQuery(trpcHttp.vendor.isVendorFrozen.queryOptions());
+  console.log('Is account frozen ', vendorActiveFroozen?.isFrozen);
 
   // fetching vendor stock overviews
   const { data, isLoading } = useQuery(trpcHttp.analytics.getStockOverview.queryOptions());
@@ -45,6 +50,7 @@ export default function Page() {
 
   return (
     <div>
+      <div>{vendorActiveFroozen?.isFrozen && <FrozenBanner />}</div>
       <div className="flex flex-col gap-2 p-3 sm:gap-3 lg:px-10">
         <h1 className="text-lg font-medium md:text-2xl">
           <strong>Users</strong> Search Overview

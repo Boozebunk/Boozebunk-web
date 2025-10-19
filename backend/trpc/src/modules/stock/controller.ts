@@ -20,12 +20,23 @@ export const vendorStockRouter = createTRPCRouter({
     try {
       const vendor = await db.query.vendor.findFirst({
         where: eq(vendorTable.userId, ctx.user.id as string),
+        columns: {
+          id: true,
+          isActive: true,
+        },
       });
 
       if (!vendor) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Vendor Account Does not exists",
+        });
+      }
+
+      if (!vendor?.isActive) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Account is froozen.",
         });
       }
 
@@ -148,8 +159,22 @@ export const vendorStockRouter = createTRPCRouter({
       }
     }),
 
-  editVendorStock: protectedProcedure.input(stockEditSchema).mutation(async ({ input }) => {
+  editVendorStock: protectedProcedure.input(stockEditSchema).mutation(async ({ ctx, input }) => {
     try {
+      const vendor = await db.query.vendor.findFirst({
+        where: eq(vendorTable.id, ctx.user.roleId as string),
+        columns: {
+          isActive: true,
+        },
+      });
+
+      if (!vendor?.isActive) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Account is froozen.",
+        });
+      }
+
       const filteredInput = Object.entries(input).filter(
         ([key, value]) =>
           value !== "" && value !== undefined && value !== null && key !== "stockId",
@@ -178,6 +203,20 @@ export const vendorStockRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
+        const vendor = await db.query.vendor.findFirst({
+          where: eq(vendorTable.id, ctx.user.roleId as string),
+          columns: {
+            isActive: true,
+          },
+        });
+
+        if (!vendor?.isActive) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Account is froozen.",
+          });
+        }
+
         await db
           .update(vendorStockTable)
           .set({
@@ -213,13 +252,20 @@ export const vendorStockRouter = createTRPCRouter({
       try {
         const existingVendor = await db.query.vendor.findFirst({
           where: eq(vendorTable.userId, ctx.user.id as string),
-          columns: { id: true },
+          columns: { id: true, isActive: true },
         });
 
         if (!existingVendor) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "Vendor account does not exist!",
+          });
+        }
+
+        if (!existingVendor?.isActive) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Account is froozen.",
           });
         }
 
@@ -299,13 +345,20 @@ export const vendorStockRouter = createTRPCRouter({
       try {
         const existingVendor = await db.query.vendor.findFirst({
           where: eq(vendorTable.userId, ctx.user.id as string),
-          columns: { id: true },
+          columns: { id: true, isActive: true },
         });
 
         if (!existingVendor) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "Vendor account does not exist!",
+          });
+        }
+
+        if (!existingVendor?.isActive) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Account is froozen.",
           });
         }
 

@@ -152,8 +152,7 @@ export default function VendorRegistrationPage() {
 
   const { mutateAsync: BulkUploadStock, isPending: isBulkUploadPending } = useMutation(
     trpcHttp.stock.bulkUploadStock.mutationOptions({
-      onSuccess: (data) => {
-        console.log(data.data);
+      onSuccess: () => {
         toast.success('Bulk Uploaded Successfully');
         setOpenBulkUpload(false);
       },

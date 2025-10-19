@@ -81,7 +81,9 @@ export const analyticsRouter = createTRPCRouter({
         await db
           .update(vendorTable)
           .set(updateSet)
-          .where(eq(vendorTable.id, ctx.user.roleId as string));
+          .where(
+            and(eq(vendorTable.id, ctx.user.roleId as string), eq(vendorTable.isActive, true)),
+          );
 
         return {
           code: "success",
