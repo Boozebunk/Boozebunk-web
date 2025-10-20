@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Snowflake } from 'lucide-react';
 
-import { Button } from '~/shared/shadcn/button';
-
 function FrozenBanner() {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-blue-50 via-white to-blue-100 p-6 text-center">
@@ -15,12 +13,6 @@ function FrozenBanner() {
         Your vendor account has been temporarily frozen. Please contact the admin to unfreeze your
         access. Meanwhile, you can still send a query to the admin.
       </p>
-
-      <Button
-        variant="outline"
-        className="cursor-pointer border-blue-400 text-blue-700 hover:bg-blue-700">
-        Write us
-      </Button>
 
       <div className="mt-8 text-sm text-blue-700/70 italic">
         — Team <strong>BoozeBunk</strong>
