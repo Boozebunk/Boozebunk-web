@@ -6,7 +6,7 @@ import Script from 'next/script';
 
 import { vendorRegistrationSchema } from '@boozebunk-trpc/modules/vendor/dto';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Store } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -52,6 +52,7 @@ interface GMPSelectEvent extends Event {
 export default function VendorRegistrationPage() {
   const [googleReady, setGoogleReady] = useState(false);
   const [place, setPlace] = useState<GooglePlacesResponse | null>(null);
+  const queryClient = useQueryClient();
 
   const { mutateAsync: registerVendor, isPending } = useMutation(
     trpcHttp.vendor.createVendor.mutationOptions({
@@ -59,6 +60,13 @@ export default function VendorRegistrationPage() {
         console.log('Vendor Registration Successful');
         toast.success('Vendor created successfully');
         form.reset();
+
+        queryClient.removeQueries({
+          queryKey: [['vendor', 'getVendorsList']]
+        });
+        queryClient.removeQueries({
+          queryKey: [['vendor', 'getVendorsOverview']]
+        });
       },
       onError: (error) => {
         toast.error(error.message);
