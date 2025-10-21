@@ -146,8 +146,8 @@ export default function VendorRegistrationPage() {
 
   useEffect(() => {
     if (place?.formattedAddress) {
-      form.setValue('martName', place?.displayName || '');
-      form.setValue('addressFormatted', place?.formattedAddress || '');
+      form.setValue('martName', place?.displayName.trim() || '');
+      form.setValue('addressFormatted', place?.formattedAddress.trim() || '');
       form.setValue('locationCoordinates.lat', place?.location?.latitude || 0);
       form.setValue('locationCoordinates.lng', place?.location?.longitude || 0);
 
@@ -155,12 +155,12 @@ export default function VendorRegistrationPage() {
       console.log(addressArray);
       const CityCodeArr = addressArray[1].split(' ');
       console.log(CityCodeArr);
-      const area = addressArray.slice(4).reverse().join(',');
+      const area = addressArray.slice(3).reverse().join(',');
 
-      form.setValue('addressPostalCode', CityCodeArr[2]);
-      form.setValue('addressState', CityCodeArr[1]);
-      form.setValue('addressCity', addressArray[2]);
-      form.setValue('addressArea', area);
+      form.setValue('addressPostalCode', CityCodeArr[2].trim());
+      form.setValue('addressState', CityCodeArr[1].trim());
+      form.setValue('addressCity', addressArray[2].trim());
+      form.setValue('addressArea', area.trim());
     }
   }, [place, form]);
 

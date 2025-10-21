@@ -24,6 +24,7 @@ type BannerCarouselProps = {
   onDeleteBanner: (id: string) => void;
   intervalMs?: number;
   pauseOnHover?: boolean;
+  deleteLoader?: boolean;
 };
 
 export function BannerCarousel({
@@ -31,7 +32,8 @@ export function BannerCarousel({
   intervalMs = 4000,
   pauseOnHover = true,
   isLoading,
-  onDeleteBanner
+  onDeleteBanner,
+  deleteLoader
 }: BannerCarouselProps) {
   const [api, setApi] = React.useState<CarouselApi | undefined>(undefined);
   const [index, setIndex] = React.useState(0);
@@ -179,8 +181,9 @@ export function BannerCarousel({
                         onClick={() => {
                           onDeleteBanner(String(banner.id));
                         }}
+                        disabled={deleteLoader}
                         className="h-6 w-fit cursor-pointer p-2 px-3 text-xs sm:h-auto sm:text-sm">
-                        Delete
+                        {deleteLoader ? <Loader2 /> : 'Delete'}
                       </Button>
                     </div>
                   </div>

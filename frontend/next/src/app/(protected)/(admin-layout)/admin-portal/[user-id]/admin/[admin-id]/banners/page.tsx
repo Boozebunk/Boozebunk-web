@@ -62,7 +62,7 @@ function BannersPage() {
   );
 
   // calling backend to delete a banner
-  const { mutateAsync: deleteBanner } = useMutation(
+  const { mutateAsync: deleteBanner, isPending: deleteBannerLoader } = useMutation(
     trpcHttp.banner.deleteBanner.mutationOptions({
       onSuccess: () => {
         toast.success('Banner deleted successfully!');
@@ -183,14 +183,14 @@ function BannersPage() {
             className="mt-2 w-full cursor-pointer px-3 py-2 text-sm"
             disabled={isSaving || !newImageFile} // Disable button if saving or if no file is selected
           >
-            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {isSaving ? 'Saving Banner...' : 'Upload & Save'}
+            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Upload & Save'}
           </Button>
         </CardContent>
       </Card>{' '}
       <BannerCarousel
         banners={banners}
         isLoading={isLoadingBanners}
+        deleteLoader={deleteBannerLoader}
         onDeleteBanner={async (id: string) => {
           deleteBanner({ id });
         }}

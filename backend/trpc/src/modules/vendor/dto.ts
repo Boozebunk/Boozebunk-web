@@ -1,16 +1,18 @@
 import { z } from "zod";
 
 export const vendorRegistrationSchema = z.object({
-  martName: z.string(),
+  martName: z.string().min(1, "Mart Name is Mandatory"),
   licenseNumber: z.string(),
-  vendorName: z.string(),
-  email: z.email(),
-  phoneNumber: z.string(),
-  addressFormatted: z.string(),
-  addressArea: z.string(),
+  vendorName: z.string().min(1, "Name is Mandatory"),
+  email: z.email({ message: "Please enter a valid email-id" }),
+  phoneNumber: z.string().refine((num) => num.length === 10, {
+    message: "Phone-Number should be 10 digit",
+  }),
+  addressFormatted: z.string().min(1, "Address is mandatory"),
+  addressArea: z.string().min(1, "Area is mandatory"),
   addressPostalCode: z.string().optional(),
-  addressCity: z.string(),
-  addressState: z.string(),
+  addressCity: z.string().min(1, "City is mandatory"),
+  addressState: z.string().min(1, "State is mandatory"),
   locationCoordinates: z
     .object({
       lat: z.number(),
