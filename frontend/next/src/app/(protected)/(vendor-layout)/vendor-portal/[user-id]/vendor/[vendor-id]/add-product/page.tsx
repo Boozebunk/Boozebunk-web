@@ -30,7 +30,7 @@ import { ComponentLoader } from '~/shared/components/componentLoader';
 import { CSVImport } from '~/shared/components/csv-import';
 import { CustomDialog } from '~/shared/components/dialogBox';
 
-import { trpcHttp } from '~/utils/trpc';
+import { queryClient, trpcHttp } from '~/utils/trpc';
 
 import liquorDataJson from './StockInfo.json';
 
@@ -142,6 +142,12 @@ export default function VendorRegistrationPage() {
     trpcHttp.stock.addStock.mutationOptions({
       onSuccess: () => {
         toast.success('Stock Added Successfully');
+        queryClient.removeQueries({
+          queryKey: [['stock', 'getVendorStock']]
+        });
+        queryClient.removeQueries({
+          queryKey: [['analytics', 'getStockOverview']]
+        });
       },
       onError: (err) => {
         toast.error('Error Occurred');
@@ -154,6 +160,7 @@ export default function VendorRegistrationPage() {
     trpcHttp.stock.bulkUploadStock.mutationOptions({
       onSuccess: () => {
         toast.success('Bulk Uploaded Successfully');
+        queryClient.removeQueries({ queryKey: [['stock', 'getVendorStock']] });
         setOpenBulkUpload(false);
       },
       onError: (err) => {

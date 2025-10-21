@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { type StockEditTypes } from '@boozebunk-trpc/modules/stock/dto';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, MoreHorizontal, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -50,6 +50,7 @@ export default function Page() {
   const [stockId, setStockId] = React.useState<string>();
   const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([]);
   const [openStockEdit, setOpenStockEdit] = React.useState(false);
+  const queryClient = useQueryClient();
 
   const [editableStock, setEditableStock] = React.useState<StockEditTypes>({
     stockId: '',
@@ -282,6 +283,9 @@ export default function Page() {
       onSuccess: () => {
         toast.success('Successfully Updated Stock(s)');
         refetchVendorStocks();
+        queryClient.removeQueries({
+          queryKey: [['analytics', 'getStockOverview']]
+        });
         setSelectedRowIds([]);
       },
       onError: (err) => {
@@ -298,6 +302,9 @@ export default function Page() {
         toast.success('Stock Deleted Successfully');
         setStockId('');
         refetchVendorStocks();
+        queryClient.removeQueries({
+          queryKey: [['analytics', 'getStockOverview']]
+        });
       },
       onError: (err) => {
         toast.error('Stock Deletion Failed');
