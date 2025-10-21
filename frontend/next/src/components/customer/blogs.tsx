@@ -9,7 +9,8 @@ import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogFooter
+  AlertDialogFooter,
+  AlertDialogTitle
 } from '~/shared/shadcn/alert-dialog';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/shared/shadcn/card';
 
@@ -82,9 +83,11 @@ export function Blog() {
                 <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
                   🍂 {currentPost.tag}
                 </span>
-                <h1 className="text-md font-semibold sm:text-lg lg:text-xl">
-                  ✨ {currentPost.title}
-                </h1>
+                <AlertDialogTitle asChild>
+                  <h1 className="text-md font-semibold sm:text-lg lg:text-xl">
+                    ✨ {currentPost.title}
+                  </h1>
+                </AlertDialogTitle>
               </div>
               <p className="sm:text-md text-sm text-gray-700 lg:text-lg dark:text-gray-300">
                 {currentPost.description}
