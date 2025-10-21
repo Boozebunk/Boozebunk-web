@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { type BulkUploadStockType } from '@boozebunk-trpc/modules/stock/dto';
 import { useMutation } from '@tanstack/react-query';
-import { ImagePlus, Loader2, PackagePlus } from 'lucide-react';
+import { Loader2, PackagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '~/shared/shadcn/button';
@@ -25,7 +25,6 @@ import {
 } from '~/shared/shadcn/command';
 import { Input } from '~/shared/shadcn/input';
 import { Label } from '~/shared/shadcn/label';
-import { ToggleGroup, ToggleGroupItem } from '~/shared/shadcn/toggle-group';
 import { ComponentLoader } from '~/shared/components/componentLoader';
 import { CSVImport } from '~/shared/components/csv-import';
 import { CustomDialog } from '~/shared/components/dialogBox';
@@ -105,15 +104,12 @@ function ComboboxInput({ label, placeholder, value, onChange, options }: Combobo
 }
 
 export default function VendorRegistrationPage() {
-  const [preview, setPreview] = React.useState<string | null>(null);
-
   const [brand, setBrand] = React.useState('');
   const [category, setCategory] = React.useState('');
   const [type, setType] = React.useState('');
   const [size, setSize] = React.useState('');
   const [productName, setProductName] = React.useState('');
-  const [availability, setAvailability] = React.useState(true);
-  const [price, setPrice] = React.useState(0);
+  const [price, setPrice] = React.useState<string>(''); // Change to string state
   const [openBulkUpload, setOpenBulkUpload] = React.useState(false);
 
   const brandOptions = liquorData.brands;
@@ -123,25 +119,17 @@ export default function VendorRegistrationPage() {
   const typeOptions = selectedCategory ? selectedCategory.types : [];
   const sizeOptions = selectedCategory ? selectedCategory.sizes : [];
 
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setPreview(url);
-    }
-  }
-
-  // revoke object URL on unmount/preview change
-  React.useEffect(() => {
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
-  }, [preview]);
-
   const { mutateAsync: AddStock, isPending } = useMutation(
     trpcHttp.stock.addStock.mutationOptions({
       onSuccess: () => {
         toast.success('Stock Added Successfully');
+        // Reset all form fields
+        setBrand('');
+        setCategory('');
+        setType('');
+        setSize('');
+        setProductName('');
+        setPrice('0');
         queryClient.removeQueries({
           queryKey: [['stock', 'getVendorStock']]
         });
@@ -161,6 +149,9 @@ export default function VendorRegistrationPage() {
       onSuccess: () => {
         toast.success('Bulk Uploaded Successfully');
         queryClient.removeQueries({ queryKey: [['stock', 'getVendorStock']] });
+        queryClient.removeQueries({
+          queryKey: [['analytics', 'getStockOverview']]
+        });
         setOpenBulkUpload(false);
       },
       onError: (err) => {
@@ -179,8 +170,8 @@ export default function VendorRegistrationPage() {
       category,
       type,
       size,
-      price: price.toString(),
-      availability
+      price: price || '0', // Use price string directly, fallback to '0' if empty
+      availability: true
     };
     console.log(payload);
     await AddStock(payload);
@@ -213,85 +204,6 @@ export default function VendorRegistrationPage() {
 
           <CardContent className="w-full">
             <section className="grid grid-cols-1 sm:grid-cols-[1fr_2fr_1fr] sm:gap-10">
-              {/* Left column */}
-              <div className="flex flex-row items-center justify-center gap-3 sm:flex-col sm:justify-normal sm:gap-10">
-                {/* Image upload */}
-                <div className="flex flex-col items-center gap-2">
-                  <Label className="text-lg font-semibold" htmlFor="productImage">
-                    Product Image
-                  </Label>
-                  <div className="flex w-full">
-                    <label
-                      htmlFor="productImage"
-                      className="hover:bg-muted relative flex aspect-square h-60 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition-colors">
-                      {preview ? (
-                        <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={preview}
-                            alt="Selected product"
-                            className="z-0 h-full w-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setPreview(null);
-                            }}
-                            className="absolute inset-0 z-10 m-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/60 p-2 text-white hover:bg-black/80">
-                            ✕
-                          </button>
-                        </>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center gap-1">
-                          <ImagePlus />
-                          <p className="text-muted-foreground text-sm">
-                            Click to upload or drag & drop
-                          </p>
-                          <p className="text-muted-foreground text-xs">PNG, JPG up to 5MB</p>
-                        </div>
-                      )}
-                      <input
-                        id="productImage"
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                      />
-                    </label>
-                  </div>
-                </div>
-
-                {/* Availability toggle */}
-                <div className="flex flex-col gap-1">
-                  <Label className="text-lg font-semibold">Availability</Label>
-                  <ToggleGroup
-                    type="single"
-                    value={availability ? 'in' : 'out'}
-                    onValueChange={(value) => {
-                      if (value === 'in') {
-                        setAvailability(false);
-                      } else {
-                        setAvailability(true);
-                      }
-                    }}
-                    className="bg-muted grid w-max grid-cols-2 rounded-xl p-1">
-                    <ToggleGroupItem
-                      value="in"
-                      aria-label="In Stock"
-                      className="flex items-center gap-2 rounded-lg px-2 py-1 text-sm data-[state=on]:bg-green-600">
-                      In
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      value="out"
-                      aria-label="Out of Stock"
-                      className="flex items-center gap-2 rounded-lg px-2 py-1 text-sm data-[state=on]:bg-red-500">
-                      Out
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-              </div>
-
               {/* Right column: product details */}
               <div className="col-span-2 mt-8 flex flex-col gap-5 sm:mt-0">
                 <div className="flex flex-col gap-2">
@@ -360,7 +272,7 @@ export default function VendorRegistrationPage() {
                     placeholder="e.g. 2000"
                     value={price}
                     onChange={(e) => {
-                      setPrice(parseFloat(e.target.value));
+                      setPrice(e.target.value); // Store as string
                     }}
                     required
                   />
