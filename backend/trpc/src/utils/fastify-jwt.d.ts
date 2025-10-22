@@ -1,10 +1,9 @@
-// backend/trpc/fastify-jwt.d.ts
 import "@fastify/jwt";
 import "@fastify/cookie";
 
 import type { UUIDTypes } from "uuid";
 
-// Define the shape of your JWT payload
+// Define the shape of your JWT payload and user object
 declare module "@fastify/jwt" {
   interface FastifyJWT {
     payload: {
@@ -13,7 +12,6 @@ declare module "@fastify/jwt" {
       email: string;
       role: "admin" | "vendor";
     };
-    // The 'user' type is what gets attached to request.user after verification
     user: {
       id: UUIDTypes;
       roleId: UUIDTypes;
@@ -25,13 +23,16 @@ declare module "@fastify/jwt" {
 
 // Extend Fastify's core types to include properties from @fastify/jwt and @fastify/cookie
 declare module "fastify" {
-  interface FastifyReply {
-    // reply.jwtSign() method is added by @fastify/jwt
+  interface FastifyRequest {
+    // FIX: jwtSign is attached to the Request object
     jwtSign: (
-      payload: FastifyJWT["payload"], // Use the payload type defined above
-      options?: import("@fastify/jwt").SignOptions, // Optional: for sign options like expiresIn
+      payload: FastifyJWT["payload"],
+      options?: import("@fastify/jwt").SignOptions,
     ) => Promise<string>;
+  }
 
+  interface FastifyReply {
+    // setCookie and clearCookie remain correctly on the Reply object
     setCookie: (
       name: string,
       value: string,

@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 
-const propertyId = process.env.GA4_PROPERTY_ID;
-const saJson = process.env.GA_SA_JSON;
-const CACHE_TTL = Number(process.env.ANALYTICS_CACHE_TTL || '300');
+const propertyId = process.env.NEXT_PUBLIC_GA4_PROPERTY_ID;
+const saJson = process.env.NEXT_PUBLIC_GA_SA_JSON;
+const CACHE_TTL = Number(process.env.NEXT_PUBLIC_ANALYTICS_CACHE_TTL || '300');
 
 type Row = { date: string; views: number };
 type AnalyticsCacheData = {
