@@ -29,7 +29,6 @@ const go_to_categories = [
 ];
 
 function Page() {
-  // ------------location access of lat and long-----------------
   const { locationStatus, nearbyVendors, nearbyVendorsLoading, selectedCity } =
     useCustomerContext();
   const [pagination, setPagination] = useState({
@@ -39,7 +38,6 @@ function Page() {
 
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  //Getting Stock based on City
   const { data: stocks, isLoading: loadingStocks } = useQuery(
     trpcHttp.customer.getStockDisplay.queryOptions(
       {
@@ -54,7 +52,6 @@ function Page() {
     )
   );
 
-  // getting promotional banners
   const { data: bannerData, isLoading: isLoadingBanners } = useQuery(
     trpcHttp.banner.getAllBanners.queryOptions()
   );
@@ -66,8 +63,6 @@ function Page() {
       id: b.id,
       alt: `Banner for ${b.websiteUrl || 'Promotion'}`
     })) || [];
-
-  console.log('banners data ', banners);
 
   const myDivRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +78,6 @@ function Page() {
 
   return (
     <div className="flex w-full flex-col items-center gap-8 sm:gap-15">
-      {/* PROMOTIONAL BANNERS */}
       {isLoadingBanners ? (
         <div className="flex h-40 w-full items-center justify-center">
           <div className="flex items-center gap-2">
@@ -95,7 +89,6 @@ function Page() {
         <PromotionalBanners banners={banners} intervalMs={4000} pauseOnHover />
       )}
 
-      {/* STORES NEAR YOU */}
       <div className="mb-[-3] flex w-full flex-col gap-5 overflow-hidden px-5 md:gap-8 lg:px-25">
         <div className="flex flex-col items-center gap-0 md:gap-1">
           <h1 className="text-center text-2xl font-bold md:text-3xl">
@@ -123,7 +116,7 @@ function Page() {
                     info={{
                       id: info.id,
                       name: info.martName,
-                      distance: (info.distanceMeters / 1000).toFixed(1), // Convert meters to kilometers
+                      distance: (info.distanceMeters / 1000).toFixed(1),
                       storeStatus: info.storeStatus,
                       martLat: info.martLat,
                       martLng: info.martLng,

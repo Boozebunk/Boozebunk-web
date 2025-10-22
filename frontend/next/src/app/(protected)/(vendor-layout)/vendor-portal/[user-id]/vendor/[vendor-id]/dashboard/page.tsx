@@ -18,7 +18,6 @@ export default function Page() {
 
   // fetching if vendor is frozen
   const { data: vendorActiveFroozen } = useQuery(trpcHttp.vendor.isVendorFrozen.queryOptions());
-  console.log('Is account frozen ', vendorActiveFroozen?.isFrozen);
 
   // fetching vendor stock overviews
   const { data, isLoading } = useQuery(trpcHttp.analytics.getStockOverview.queryOptions());
@@ -34,8 +33,7 @@ export default function Page() {
         toast.success('Successfully Updated');
       },
       onError: (err) => {
-        toast.error('Error Updating');
-        console.log('Error Updating QuickActions ', err.message);
+        toast.error(err.message);
       }
     })
   );

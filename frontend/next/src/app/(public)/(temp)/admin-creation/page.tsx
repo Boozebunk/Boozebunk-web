@@ -38,17 +38,14 @@ function Page() {
     trpcHttp.auth.createAdmin.mutationOptions({
       onSuccess: () => {
         toast.success('Admin created Successfully');
-        console.log('Admin created successfully');
       },
-      onError: (err: unknown) => {
-        toast.error('Admin creation failed');
-        console.error('Error creating admin:', err);
+      onError: (err) => {
+        toast.error(err.message);
       }
     })
   );
 
   const handleFormSubmit = async () => {
-    console.log('creating and admin');
     await createAdmin(form.getValues());
   };
 
@@ -57,7 +54,6 @@ function Page() {
       <h1>Temporarily Adding an ADMIN account</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-          {/* Name Field */}
           <FormField
             control={form.control}
             name="name"
@@ -71,7 +67,6 @@ function Page() {
               </FormItem>
             )}
           />
-          {/* Email Field */}
           <FormField
             control={form.control}
             name="email"
@@ -99,7 +94,6 @@ function Page() {
               </FormItem>
             )}
           />
-          {/* Role Field */}
           <FormField
             control={form.control}
             name="role"

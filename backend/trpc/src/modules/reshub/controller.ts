@@ -1,3 +1,7 @@
+import { TRPCError } from "@trpc/server";
+import { desc, eq, sql } from "drizzle-orm";
+import z from "zod";
+
 import db from "@boozebunk-trpc/db";
 import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
@@ -5,10 +9,6 @@ import { FeedbackTable } from "@boozebunk-trpc/db/schema/feedback";
 import { VendorQueryTable } from "@boozebunk-trpc/db/schema/query";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@boozebunk-trpc/server/trpc";
-import { TRPCError } from "@trpc/server";
-import { desc, eq, sql } from "drizzle-orm";
-// import { v4 as uuidv4 } from "uuid";
-import z from "zod";
 
 export const responseHubRouter = createTRPCRouter({
   createVendorQuery: protectedProcedure
@@ -28,12 +28,12 @@ export const responseHubRouter = createTRPCRouter({
 
         return {
           success: true,
-          message: "Query Created Successfully",
         };
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error Writing Query ${err}`,
+          message: "Error Writing Query.",
+          cause: err,
         });
       }
     }),
@@ -77,7 +77,8 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error getting vendor queries ${err}`,
+          message: "Error getting vendor queries.",
+          cause: err,
         });
       }
     }),
@@ -90,12 +91,12 @@ export const responseHubRouter = createTRPCRouter({
 
         return {
           success: true,
-          message: "Query Successfully Deleted",
         };
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error deleting query ${err}`,
+          message: "Error deleting query.",
+          cause: err,
         });
       }
     }),
@@ -106,12 +107,12 @@ export const responseHubRouter = createTRPCRouter({
 
       return {
         success: true,
-        message: "Queries Deletion Successfull",
       };
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Error deleting all queries: ${err}`,
+        message: "Error deleting all queries.",
+        cause: err,
       });
     }
   }),
@@ -134,12 +135,12 @@ export const responseHubRouter = createTRPCRouter({
 
         return {
           success: true,
-          message: "Feedback saved successfully",
         };
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Feedback Failed ${err}`,
+          message: "Feedback Failed.",
+          cause: err,
         });
       }
     }),
@@ -174,7 +175,8 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error getting feedbacks ${err}`,
+          message: "Error getting feedbacks.",
+          cause: err,
         });
       }
     }),
@@ -203,12 +205,12 @@ export const responseHubRouter = createTRPCRouter({
 
       return {
         success: true,
-        message: "Feedbacks Deletion Successfull",
       };
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Error deleting Feedbacks: ${err}`,
+        message: "Error deleting Feedbacks.",
+        cause: err,
       });
     }
   }),

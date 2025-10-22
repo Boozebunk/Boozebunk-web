@@ -37,13 +37,10 @@ export function AuthGuard({ children }: AuthGuardProps) {
     trpcHttp.auth.getSession.queryOptions<SessionTypes>()
   );
 
-  console.log('Session Data:', session);
-
   useEffect(() => {
     if (isLoading) return;
 
     if (isProtectedRoute) {
-      console.log('in authGuard session', session);
       if (!session) {
         if (isAdminRoute) {
           router.push('/admin-authentication/sign-in');

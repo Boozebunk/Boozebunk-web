@@ -35,7 +35,7 @@ export function VendorsOverview({
       icon: Ban,
       value: frozenVendors,
       subtitle: 'Avg logins per week',
-      growth: '25% from previous month'
+      growth: '25% from previous week'
     }
   ];
   return (

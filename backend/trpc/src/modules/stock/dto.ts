@@ -22,7 +22,7 @@ export const bulkUploadStockSchema = z.array(
     z.string().min(1, "Brand Name is required."),
     z.string().min(1, "Product Name is required."),
     z.string().min(1, "Category is required."),
-    z.string().optional(), // 'type' can be an empty string, so it's optional
+    z.string().optional(),
     z.string().min(1, "Size is required."),
     z.string().min(1, "Price is required."),
   ]),

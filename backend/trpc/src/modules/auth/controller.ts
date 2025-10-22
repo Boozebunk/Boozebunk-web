@@ -1,3 +1,8 @@
+import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import z from "zod";
+
 import db from "@boozebunk-trpc/db";
 import { adminTable } from "@boozebunk-trpc/db/schema/admin";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
@@ -6,10 +11,6 @@ import { env } from "@boozebunk-trpc/env";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { hashPassword, verifyPassword } from "@boozebunk-trpc/utils/authUtils";
 import { sendEmail } from "@boozebunk-trpc/utils/ses-sender";
-import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
-import z from "zod";
 
 import { createAdminSchema, loginCredentialSchema } from "./dto";
 
@@ -21,13 +22,13 @@ export const authRouter = createTRPCRouter({
       });
 
       if (!user || user.role != input.role) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid Email Account" });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Email Account Not Found" });
       }
 
       const isPasswordValid = await verifyPassword(input.password, user.password);
 
       if (!isPasswordValid) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Password is Wrong" });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Password is Incorrect" });
       }
 
       // Generating JWT token
@@ -52,20 +53,20 @@ export const authRouter = createTRPCRouter({
 
       return {
         success: true,
-        message: `${input.role} logged in successfully`,
         user: { id: user.id, roleId: user.roleId, email: user.email, role: user.role },
       };
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `An error occurred while loggin in ${error}`,
+        message: `An error occurred while logging in`,
+        cause: error,
       });
     }
   }),
 
   logout: publicProcedure.mutation(async ({ ctx }) => {
     ctx.res.clearCookie("token", { path: "/" });
-    return { success: true, message: "Logged out Successfully" };
+    return { success: true };
   }),
 
   createAdmin: publicProcedure.input(createAdminSchema).mutation(async ({ input }) => {
@@ -107,12 +108,12 @@ export const authRouter = createTRPCRouter({
 
       return {
         success: true,
-        message: `User (${input.role} created successfully)`,
       };
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `An error occurred while creating admin ${error}`,
+        message: `An error occurred while creating admin`,
+        cause: error,
       });
     }
   }),
@@ -123,7 +124,8 @@ export const authRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `An error occurred while fetching session ${error}`,
+        message: `An error occurred while fetching session`,
+        cause: error,
       });
     }
   }),
@@ -164,19 +166,18 @@ export const authRouter = createTRPCRouter({
 
         const resetLink = `${env.FRONTEND_URL}/accounts/${resetToken}/reset-password`;
 
-        console.log("send email being called");
         await sendEmail(input.email, "Password Reset for Boozebunk", "reset-password", {
           resetLink,
         });
 
         return {
           success: true,
-          message: "Password reset email sent. Please check your inbox.",
         };
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `An error occurred while requesting password reset: ${error}`,
+          message: `An error occurred while requesting password reset`,
+          cause: error,
         });
       }
     }),
@@ -198,7 +199,6 @@ export const authRouter = createTRPCRouter({
 
         const hashedPassword = await hashPassword(input.password);
 
-        //changing password
         await db
           .update(userTable)
           .set({
@@ -214,13 +214,13 @@ export const authRouter = createTRPCRouter({
 
         return {
           success: true,
-          message: "Password Changed Successfully",
           userRole: user?.role || "vendor",
         };
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `An error occurred while changing password: ${err}`,
+          message: `An error occurred while changing password`,
+          cause: err,
         });
       }
     }),

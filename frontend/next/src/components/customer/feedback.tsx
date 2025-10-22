@@ -34,7 +34,7 @@ const feedbackFormSchema = z.object({
 type feedbackFormValues = z.infer<typeof feedbackFormSchema>;
 
 type WriteFeedbackProps = {
-  onClose: () => void; // NEW: Prop to close the parent dialog
+  onClose: () => void;
 };
 
 export function WriteFeedback({ onClose }: WriteFeedbackProps) {
@@ -48,8 +48,7 @@ export function WriteFeedback({ onClose }: WriteFeedbackProps) {
         onClose();
       },
       onError: (err) => {
-        toast.error('Feedback Failed');
-        console.log(`feedback failed: ${err.message}`);
+        toast.error(err.message);
       }
     })
   );
@@ -66,7 +65,6 @@ export function WriteFeedback({ onClose }: WriteFeedbackProps) {
   });
 
   const onFormSubmit = async (values: feedbackFormValues) => {
-    console.log('on form submitssion');
     await sendFeedback(values);
   };
   const [hover, setHover] = useState<number | null>(null);

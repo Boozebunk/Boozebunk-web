@@ -1,5 +1,3 @@
-// frontend/next/src/shared/components/data-table.tsx
-
 import * as React from 'react';
 
 import {
@@ -43,7 +41,7 @@ type DataTableProps<TData> = {
   data: TData[];
   pagination: { pageIndex: number; pageSize: number };
   onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
-  totalRowCount: number; // NEW: Only totalRowCount is needed from backend
+  totalRowCount: number;
 };
 
 export function DataTable<TData>({
@@ -78,8 +76,8 @@ export function DataTable<TData>({
       pagination
     },
     manualPagination: true,
-    pageCount: pageCount, // Use the frontend-calculated pageCount
-    rowCount: totalRowCount // Provide totalRowCount
+    pageCount: pageCount,
+    rowCount: totalRowCount
   });
 
   return (

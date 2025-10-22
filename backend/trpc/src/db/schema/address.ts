@@ -12,7 +12,7 @@ export const vendorAddressesTable = pgTable(
       .unique()
       .references(() => vendorTable.id, { onDelete: "cascade" }),
 
-    addressFormatted: text("address_formatted").notNull(), // "123 Main St, City, State..."
+    addressFormatted: text("address_formatted").notNull(),
     addressArea: text("address_area").notNull(),
     addressCity: text("address_city").notNull(),
     addressState: text("address_state").notNull(),
@@ -25,7 +25,7 @@ export const vendorAddressesTable = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
-    index("vendor_address_vendor_id_idx").on(table.vendorId), // Index for quick lookup by vendor_id
+    index("vendor_address_vendor_id_idx").on(table.vendorId),
     sql`CREATE INDEX vendor_addresses_search_idx ON ${table} USING gin(
         setweight(to_tsvector('english', coalesce(${table.addressArea}, '')), 'D') ||
         setweight(to_tsvector('english', coalesce(${table.addressCity}, '')), 'C') ||

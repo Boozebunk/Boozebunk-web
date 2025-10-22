@@ -1,17 +1,14 @@
-import { env } from "@boozebunk-trpc/env";
-import { logger } from "@boozebunk-trpc/fastify.ts";
 import { SQL } from "bun";
 import { drizzle } from "drizzle-orm/bun-sql";
 
-import schema from "./schema"; // Importing the schema from the index file
+import { env } from "@boozebunk-trpc/env";
+import { logger } from "@boozebunk-trpc/fastify.ts";
+
+import schema from "./schema";
 
 import type { SQLOptions } from "bun";
 import type { Logger } from "drizzle-orm/logger";
 
-/**
- * Cache the database connection in development. This avoids creating a new connection on every HMR
- * update.
- */
 const globalForDb = globalThis as unknown as {
   conn: SQL | undefined;
 };

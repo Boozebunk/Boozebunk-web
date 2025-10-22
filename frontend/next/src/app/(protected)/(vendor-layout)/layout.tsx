@@ -19,7 +19,6 @@ export default async function VendorLayout({
     // 1. Fetch vendor status using a server-side API call
     const statusData = await api.vendor.isVendorDeleted.query();
     isVendorDeleted = statusData.isDeleted;
-    console.log('Checking for vendor deletion :- ', isVendorDeleted);
   } catch (error) {
     console.error('Failed to fetch vendor status in layout:', error);
     isVendorDeleted = true;

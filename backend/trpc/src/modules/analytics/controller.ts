@@ -1,3 +1,7 @@
+import { TRPCError } from "@trpc/server";
+import { and, desc, eq, sql } from "drizzle-orm";
+import z from "zod";
+
 import db from "@boozebunk-trpc/db";
 import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { userTable } from "@boozebunk-trpc/db/schema/auth/user";
@@ -5,9 +9,6 @@ import { popularSearchTable } from "@boozebunk-trpc/db/schema/popsearch";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
-import { TRPCError } from "@trpc/server";
-import { and, desc, eq, sql } from "drizzle-orm";
-import z from "zod";
 
 export const analyticsRouter = createTRPCRouter({
   getStockOverview: protectedProcedure.query(async ({ ctx }) => {
@@ -47,7 +48,8 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Error getting stockOverview ${err}`,
+        message: `Failed to get Stock Overview`,
+        cause: err,
       });
     }
   }),
@@ -87,12 +89,12 @@ export const analyticsRouter = createTRPCRouter({
 
         return {
           code: "success",
-          message: "Quick Actions Successfully Updated",
         };
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error Quick Actions ${err}`,
+          message: `Failed to update Quick Actions`,
+          cause: err,
         });
       }
     }),
@@ -114,7 +116,8 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `getting PopularBrands Failed ${err}`,
+        message: "Failed to get Popular Brands",
+        cause: err,
       });
     }
   }),
@@ -123,19 +126,15 @@ export const analyticsRouter = createTRPCRouter({
     try {
       const now = new Date();
 
-      // Date of last 30 days from current (today).
       const last30Days = new Date(now);
       last30Days.setDate(now.getDate() - 30);
 
-      // Date of previous 30 days from the last 30 days (month before the last month).
       const previous30Days = new Date(last30Days);
       previous30Days.setDate(last30Days.getDate() - 30);
 
-      // date of last 7 days from current (today).
       const last7Days = new Date(now);
       last7Days.setDate(now.getDate() - 7);
 
-      // Date of previous 7 days from the last 7 days (week before the last week).
       const previous7Days = new Date(last7Days);
       previous7Days.setDate(last7Days.getDate() - 7);
 
@@ -159,7 +158,6 @@ export const analyticsRouter = createTRPCRouter({
           loginsPrev7Days: 0,
         };
 
-      // Calculating (vendors registered) the % change with respect to the previous month.
       let newVendorsChange = 0;
       if (newVendorsPrev30Days > 0) {
         newVendorsChange =
@@ -168,7 +166,6 @@ export const analyticsRouter = createTRPCRouter({
         newVendorsChange = 100;
       }
 
-      // Calculating (vendor login frequency) the % change with respect to the previous week.
       let loginFrequencyChange = 0;
       if (loginsPrev7Days > 0) {
         loginFrequencyChange = ((loginsLast7Days - loginsPrev7Days) / loginsPrev7Days) * 100;
@@ -190,7 +187,8 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `getting VendorActivity Failed ${err}`,
+        message: "Failed to get Vendor Activity",
+        cause: err,
       });
     }
   }),
@@ -217,7 +215,8 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `getting PopularMarts Failed ${err}`,
+        message: "Failed to get Popular Marts",
+        cause: err,
       });
     }
   }),
@@ -240,7 +239,8 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `getting UserOverview Failed ${err}`,
+        message: "Failed to get User Overview",
+        cause: err,
       });
     }
   }),
@@ -267,7 +267,8 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Error getting vendor quick actions ${err}`,
+        message: "Failed to get vendor quick actions",
+        cause: err,
       });
     }
   }),

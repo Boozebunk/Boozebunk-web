@@ -7,7 +7,7 @@ export function PageLoader() {
     <div>
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
         <Loader2 className="text-primary h-15 w-15 animate-spin" />
-        <h1>boozebunk...</h1>
+        <h1>Boozebunk...</h1>
       </div>
     </div>
   );

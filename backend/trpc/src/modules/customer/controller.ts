@@ -1,3 +1,7 @@
+import { TRPCError } from "@trpc/server";
+import { and, eq, inArray, or, sql } from "drizzle-orm";
+import z from "zod";
+
 import db from "@boozebunk-trpc/db";
 import { vendorAddressesTable } from "@boozebunk-trpc/db/schema/address";
 import { customerTable } from "@boozebunk-trpc/db/schema/customer";
@@ -5,9 +9,6 @@ import { popularSearchTable } from "@boozebunk-trpc/db/schema/popsearch";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, publicProcedure } from "@boozebunk-trpc/server/trpc";
-import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, or, sql } from "drizzle-orm";
-import z from "zod";
 
 import { stockDisplaySchema } from "./dto";
 
@@ -58,16 +59,14 @@ export const customerRouter = createTRPCRouter({
             viewCount: sql`${vendorTable.viewCount} + 1`,
             updatedAt: new Date(),
           })
-          .where(inArray(vendorTable.id, vendorIds))
-          .catch((err) => {
-            console.error("ASYNC DB ERROR: Failed to increment vendor view count:", err);
-          });
+          .where(inArray(vendorTable.id, vendorIds));
 
         return vendors;
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error getting nearby vendors ${err}`,
+          message: "Error getting nearby vendors.",
+          cause: err,
         });
       }
     }),
@@ -140,14 +139,12 @@ export const customerRouter = createTRPCRouter({
 
             if (foundBrandNames.length > 0) {
               try {
-                console.log("Found brand names:", foundBrandNames);
                 const ilikeConditions = foundBrandNames.map(
                   (brand) => sql`${popularSearchTable.brandName} ILIKE ${"%" + brand + "%"}`,
                 );
 
                 const combinedIlikeWhere = or(...ilikeConditions);
 
-                // Find all existing popular_searches rows that contain the found brand names
                 const matchingPopularBrands = await db
                   .select({ id: popularSearchTable.id })
                   .from(popularSearchTable)
@@ -155,13 +152,7 @@ export const customerRouter = createTRPCRouter({
 
                 const matchingIds = matchingPopularBrands.map((b) => b.id);
 
-                console.log(matchingIds);
-
-                // --- END: Dynamic ILIKE Check ---
-
                 if (matchingIds.length > 0) {
-                  console.log("----------------------Doing the duty----------------------");
-                  // Update the search count for all matching IDs
                   await db
                     .update(popularSearchTable)
                     .set({
@@ -178,7 +169,7 @@ export const customerRouter = createTRPCRouter({
             }
           };
 
-          // CRITICAL: Call the async function without 'await' to decouple the process
+          // Calling the async function without 'await' to decouple the process - background running process
           logSearchActivity();
         }
 
@@ -186,7 +177,8 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error searching stock ${err}`,
+          message: "Searching stock failed.",
+          cause: err,
         });
       }
     }),
@@ -206,7 +198,8 @@ export const customerRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Error fetching cities ${err}`,
+        message: "Fetching cities failed.",
+        cause: err,
       });
     }
   }),
@@ -256,7 +249,8 @@ export const customerRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Error getting stock-display ${err}`,
+        message: "Error getting stock-display.",
+        cause: err,
       });
     }
   }),
@@ -281,7 +275,8 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error saving customer email ${err}`,
+          message: "Error saving customer email.",
+          cause: err,
         });
       }
     }),
@@ -317,10 +312,7 @@ export const customerRouter = createTRPCRouter({
             clickCount: sql`${vendorTable.clickCount} + 1`,
             updatedAt: new Date(),
           })
-          .where(eq(vendorTable.id, vendorId))
-          .catch((err) => {
-            console.error("ASYNC DB ERROR: Failed to increment vendor view count:", err);
-          });
+          .where(eq(vendorTable.id, vendorId));
 
         return {
           success: true,
@@ -329,7 +321,8 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error getting mart details ${err}`,
+          message: "Error getting mart details.",
+          cause: err,
         });
       }
     }),
@@ -399,7 +392,8 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error getting mart stock ${err}`,
+          message: "Error getting mart stock.",
+          cause: err,
         });
       }
     }),

@@ -31,19 +31,18 @@ export function Blog() {
 
   // Function to start scrolling
   const startScrolling = () => {
-    if (scrollInterval.current) return; // already scrolling
+    if (scrollInterval.current) return;
     scrollInterval.current = setInterval(() => {
       if (!scrollRef.current) return;
 
       const el = scrollRef.current;
 
-      // If reached end, reset instantly without smooth
       if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 1) {
         el.scrollLeft = 0;
       } else {
-        el.scrollLeft += 1; // move by 2px
+        el.scrollLeft += 1;
       }
-    }, 10); // smaller = smoother
+    }, 10);
   };
 
   const stopScrolling = () => {
@@ -67,7 +66,7 @@ export function Blog() {
   };
 
   const handleMouseLeave = () => {
-    // resume scrolling after 4 seconds
+    // resume scrolling after   seconds
     hoverTimeout.current = setTimeout(() => {
       startScrolling();
     }, 1000);

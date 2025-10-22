@@ -27,7 +27,6 @@ function Page() {
 
   const { location } = useCustomerContext();
 
-  //fetching martDetails
   const { data: martDetails, isLoading: loadingMartDetails } = useQuery(
     trpcHttp.customer.getMartDetailsById.queryOptions({
       vendorId: vendorId,
@@ -36,7 +35,6 @@ function Page() {
     })
   );
 
-  //fetching martStocks
   const { data: martStocks, isLoading: loadingMartStocks } = useQuery(
     trpcHttp.customer.getMartStockById.queryOptions({
       vendorId: vendorId,

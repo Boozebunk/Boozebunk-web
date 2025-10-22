@@ -47,8 +47,7 @@ export function SideBar() {
         toast.success('Query Created Successfully');
       },
       onError: (err) => {
-        console.log('Error while creating query ', err.message);
-        toast.error('Creating Query Failed');
+        toast.error(err.message);
       }
     })
   );

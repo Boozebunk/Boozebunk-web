@@ -34,7 +34,6 @@ export default function AuthAdminLayout({
     if (isLoading) return;
 
     if (session) {
-      console.log('in layout.tsx sign-in sesssion ', session);
       if (session.role === 'admin') {
         router.push(`/admin-portal/${session.id}/admin/${session.roleId}/dashboard`);
       } else if (session.role === 'vendor') {

@@ -58,7 +58,6 @@ export default function AgeVerificationDialog() {
       setHasEmailConsent(true);
     }
     if (ageVerified && !email) {
-      console.log('should hit');
       setOpenEmailForm(true);
     }
   }, []);
@@ -68,8 +67,8 @@ export default function AgeVerificationDialog() {
       onSuccess: () => {
         toast.success('Email Received Successfully');
       },
-      onError: () => {
-        toast.error('Enter a valid email');
+      onError: (error) => {
+        toast.error(error.message);
       }
     })
   );

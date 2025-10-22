@@ -227,14 +227,12 @@ export default function Page() {
   const { mutateAsync: EditVendorActivity } = useMutation(
     trpcHttp.vendor.editVendorActivity.mutationOptions({
       onSuccess: () => {
-        console.log('Successfully Edited');
         toast.success('successfully updated vendor activity');
         refetchVendorsList();
         refetchVendorOverview();
       },
       onError: (err) => {
         toast.error(err.message);
-        console.log(`Error while updating vendor activity ${err}`);
       }
     })
   );
@@ -247,8 +245,7 @@ export default function Page() {
         refetchVendorsList();
       },
       onError: (err) => {
-        toast.error('Details Updation Failed');
-        console.log('Details updation failed ', err);
+        toast.error(err.message);
       }
     })
   );
@@ -257,14 +254,12 @@ export default function Page() {
   const { mutateAsync: DeleteVendor } = useMutation(
     trpcHttp.vendor.deleteVendor.mutationOptions({
       onSuccess: () => {
-        console.log('Vendor Deleted Successfully');
         toast.success('vendor deleted Successfully');
         refetchVendorsList();
         refetchVendorOverview();
       },
       onError: (err) => {
         toast.error(err.message);
-        console.log('Vendor deletion error ', err);
       }
     })
   );
@@ -384,7 +379,6 @@ export default function Page() {
         </form>
       </CustomDialog>
 
-      {/* Vendors Overview (Total Vendors, Active Vendors, Frozen Vendors) */}
       <VendorsOverview
         totalVendors={vendorsOverview?.totalVendors ?? 0}
         activeVendors={vendorsOverview?.activeVendors ?? 0}

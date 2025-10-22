@@ -47,29 +47,21 @@ export default function Page() {
   const { mutateAsync: AdminLogin, isPending } = useMutation(
     trpcHttp.auth.login.mutationOptions({
       onSuccess: async (data) => {
-        console.log('Logged-In Successfully');
         toast.success('Logged In Successfully');
-        // 1. Invalidate the old 'null' session query to mark it as stale
         await queryClient.invalidateQueries({
           queryKey: trpcHttp.auth.getSession.queryOptions().queryKey
         });
 
-        // 2. Manually re-fetch the session query to get the new session data
-        //    before proceeding to the next page. This guarantees the AuthGuard
-        //    will have the correct, non-null session.
         await queryClient.fetchQuery(trpcHttp.auth.getSession.queryOptions());
         router.push(`/admin-portal/${data.user.id}/admin/${data.user.roleId}/dashboard`);
       },
       onError: (err) => {
         toast.error(err.message);
-        console.log('Error while loggin in -> frontend/next ', err);
       }
     })
   );
 
   const handleFormSubmit = async () => {
-    console.log('logging in as admin');
-    console.log('Form Values:', form.getValues());
     await AdminLogin(form.getValues());
   };
 

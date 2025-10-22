@@ -1,9 +1,10 @@
-import db from "@boozebunk-trpc/db";
-import { BlogsTable } from "@boozebunk-trpc/db/schema/blogs";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@boozebunk-trpc/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { desc, eq } from "drizzle-orm";
 import z from "zod";
+
+import db from "@boozebunk-trpc/db";
+import { BlogsTable } from "@boozebunk-trpc/db/schema/blogs";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@boozebunk-trpc/server/trpc";
 
 export const blogRouter = createTRPCRouter({
   createBlog: protectedProcedure
@@ -28,7 +29,8 @@ export const blogRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Failed to create blog post ${err}`,
+          message: "Failed to create blog post.",
+          cause: err,
         });
       }
     }),
@@ -44,7 +46,8 @@ export const blogRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Failed to fetch blog posts ${err}`,
+        message: "Failed to fetch blog posts.",
+        cause: err,
       });
     }
   }),
@@ -76,7 +79,8 @@ export const blogRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Failed to edit blog post ${err}`,
+          message: "Failed to edit blog post.",
+          cause: err,
         });
       }
     }),
@@ -94,7 +98,8 @@ export const blogRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Failed to delete blog post ${err}`,
+          message: "Failed to delete blog post.",
+          cause: err,
         });
       }
     }),

@@ -1,12 +1,13 @@
+import { TRPCError } from "@trpc/server";
+import { and, eq, inArray, sql } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import z from "zod";
+
 import db from "@boozebunk-trpc/db";
 import { vendorStockTable } from "@boozebunk-trpc/db/schema/stock";
 import { vendorTable } from "@boozebunk-trpc/db/schema/vendor";
 import { createTRPCRouter, protectedProcedure } from "@boozebunk-trpc/server/trpc";
 import { getImageUrlAndCache } from "@boozebunk-trpc/utils/imageService";
-import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, sql } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
-import z from "zod";
 
 import {
   bulkUploadStockSchema,
@@ -29,14 +30,14 @@ export const vendorStockRouter = createTRPCRouter({
       if (!vendor) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "Vendor Account Does not exists",
+          message: "Vendor account does not exist!",
         });
       }
 
       if (!vendor?.isActive) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Account is froozen.",
+          message: "Account is frozen.",
         });
       }
 
@@ -66,25 +67,24 @@ export const vendorStockRouter = createTRPCRouter({
         .returning();
 
       if (!finalImageUrl) {
-        // If the image wasn't ready immediately, run the full promise asynchronously
+        // If the image isn't ready immediately, we'll run the full promise asynchronously
         imagePromise.then((url) => {
           if (url) {
             db.update(vendorStockTable)
               .set({ productImageUrl: url })
-              .where(eq(vendorStockTable.id, randomUUID))
-              .catch((e) => console.error("ASYNC IMAGE UPDATE FAILED:", e));
+              .where(eq(vendorStockTable.id, randomUUID));
           }
         });
       }
 
       return {
         success: true,
-        message: "Stock Updated Successfully",
       };
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Error in StockAddition ${err}`,
+        message: "Error adding stock item.",
+        cause: err,
       });
     }
   }),
@@ -154,7 +154,8 @@ export const vendorStockRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error fetching stock details ${err}`,
+          message: "Error fetching stock details.",
+          cause: err,
         });
       }
     }),
@@ -189,7 +190,8 @@ export const vendorStockRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Stock edit failed ${err}`,
+        message: "Stock edit failed.",
+        cause: err,
       });
     }
   }),
@@ -197,7 +199,7 @@ export const vendorStockRouter = createTRPCRouter({
   updateVendorStockAvailability: protectedProcedure
     .input(
       z.object({
-        stockIds: z.array(z.string()).min(1, "At least one stock ID is required."),
+        stockIds: z.array(z.string()).min(1, "Select at least one stock."),
         availability: z.boolean(),
       }),
     )
@@ -232,12 +234,12 @@ export const vendorStockRouter = createTRPCRouter({
 
         return {
           success: true,
-          message: `Successfully updated for ${input.stockIds.length} item(s).`,
         };
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error while updating Stock ${err}`,
+          message: "Error while updating stock.",
+          cause: err,
         });
       }
     }),
@@ -275,7 +277,6 @@ export const vendorStockRouter = createTRPCRouter({
           const stockId = uuidv4();
 
           return {
-            // These properties are required for the DB insert
             id: stockId,
             vendorId: existingVendor.id,
             productName: productName,
@@ -291,7 +292,7 @@ export const vendorStockRouter = createTRPCRouter({
           };
         });
 
-        // 1. Perform the BULK INSERT (Awaited - must be done first)
+        // 1. BULK INSERT WITHOUT IMAGES
         await db.insert(vendorStockTable).values(itemsToInsert);
 
         // 2. Initiate ASYNCHRONOUS IMAGE FETCH AND UPDATE (Fire-and-Forget)
@@ -302,7 +303,6 @@ export const vendorStockRouter = createTRPCRouter({
             const externalImageUrl = await getImageUrlAndCache(item._brand, item._product);
 
             if (externalImageUrl) {
-              // Perform a quick update to the specific stock item
               await db
                 .update(vendorStockTable)
                 .set({ productImageUrl: externalImageUrl })
@@ -313,7 +313,6 @@ export const vendorStockRouter = createTRPCRouter({
           // Use allSettled to ensure all promises run to completion (success or failure)
           // We DO NOT await Promise.allSettled here because we want the response to be instant.
           await Promise.allSettled(updatePromises);
-          console.log(`[BULK IMAGE JOB] Completed updates for ${itemsToInsert.length} items.`);
         };
 
         // CRITICAL: Call the entire job without 'await'
@@ -327,10 +326,10 @@ export const vendorStockRouter = createTRPCRouter({
           message: `Successfully uploaded ${itemsToInsert.length} stock item(s). Images are loading in the background.`,
         };
       } catch (err) {
-        // ... (Error handling)
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Failed to bulk uplaod ${err}`,
+          message: "Failed to bulk upload stock.",
+          cause: err,
         });
       }
     }),
@@ -366,12 +365,12 @@ export const vendorStockRouter = createTRPCRouter({
 
         return {
           success: true,
-          message: "Stock Deleted Successfully",
         };
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error deleting stock ${err}`,
+          message: "Error deleting stock.",
+          cause: err,
         });
       }
     }),

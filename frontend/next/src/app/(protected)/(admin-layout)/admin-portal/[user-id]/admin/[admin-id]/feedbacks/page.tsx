@@ -70,8 +70,7 @@ export default function Page() {
         refetchFeedbacks();
       },
       onError: (err) => {
-        toast.error('Feedback Deletion Failed');
-        console.log('Feedback Deletion Failed ', err.message);
+        toast.error(err.message);
       }
     })
   );
@@ -83,8 +82,7 @@ export default function Page() {
         refetchFeedbacks();
       },
       onError: (err) => {
-        toast.error('Feedbacks Deletion Failed');
-        console.log('Feedbacks Deletion Failed ', err.message);
+        toast.error(err.message);
       }
     })
   );
@@ -181,7 +179,7 @@ export default function Page() {
         </Button>
       </div>
       <div className="gap-2 py-0">
-        {/* Queries Table */}
+        {/* Feedback Table */}
         {isLoading ? (
           <ComponentLoader />
         ) : (

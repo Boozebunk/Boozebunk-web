@@ -32,7 +32,6 @@ export function PromotionalBanners({
   const isHoveringRef = React.useRef(false);
   const total = banners.length;
 
-  // start autoplay interval (uses api.scrollNext())
   const startAutoplay = React.useCallback(() => {
     if (!api || total < 2) return;
     // clear existing

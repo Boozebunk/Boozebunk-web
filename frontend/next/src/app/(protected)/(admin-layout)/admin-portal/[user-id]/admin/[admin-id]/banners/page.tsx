@@ -56,7 +56,7 @@ function BannersPage() {
         setNewWebsiteLink('');
       },
       onError: (err) => {
-        toast.error(`Failed to save banner metadata: ${err.message}`);
+        toast.error(err.message);
       }
     })
   );
@@ -69,7 +69,7 @@ function BannersPage() {
         refetchBanners();
       },
       onError: (err) => {
-        toast.error(`Failed to delete banner metadata: ${err.message}`);
+        toast.error(err.message);
       }
     })
   );
@@ -100,7 +100,6 @@ function BannersPage() {
       // -----------------------------------------------------
       // STEP B (Native Fetch): Direct Upload to S3 using the Presigned URL
       // -----------------------------------------------------
-      console.log('Starting direct S3 upload to:', uploadUrl);
       const uploadResponse = await fetch(uploadUrl, {
         method: 'PUT',
         body: newImageFile,
@@ -112,8 +111,6 @@ function BannersPage() {
       if (!uploadResponse.ok) {
         throw new Error(`S3 Upload failed with status: ${uploadResponse.status} - Check network.`);
       }
-
-      console.log('S3 Upload successful. Final URL:', s3Url);
 
       // -----------------------------------------------------
       // STEP C (tRPC Mutation): Save the Metadata to the Database
@@ -136,7 +133,6 @@ function BannersPage() {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
-  console.log(newImageFile);
   return (
     <main className="w-full space-y-5 px-3 py-5 md:space-y-8 lg:px-7">
       <Card className="w-full rounded-2xl border p-4 lg:w-[600px]">
@@ -161,7 +157,7 @@ function BannersPage() {
             <Image
               src={previewUrl}
               alt="Selected preview"
-              width={96} // 24px * 4 (h-24)
+              width={96}
               height={96}
               className="w-full rounded-md object-cover shadow-sm"
               unoptimized // Since we're using object URL for preview
@@ -181,8 +177,7 @@ function BannersPage() {
             type="button"
             onClick={handleUploadAndSave}
             className="mt-2 w-full cursor-pointer px-3 py-2 text-sm"
-            disabled={isSaving || !newImageFile} // Disable button if saving or if no file is selected
-          >
+            disabled={isSaving || !newImageFile}>
             {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Upload & Save'}
           </Button>
         </CardContent>

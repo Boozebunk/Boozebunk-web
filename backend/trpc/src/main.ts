@@ -1,5 +1,3 @@
-// The entry point of the backend
-
 import { createServer } from "@boozebunk-trpc/server";
 
 import { env } from "./env";
@@ -14,7 +12,6 @@ async function bootstrap() {
 
     await server.start();
 
-    // Handle graceful shutdown
     const signals = ["SIGINT", "SIGTERM"] as const;
     for (const signal of signals) {
       process.on(signal, async () => {

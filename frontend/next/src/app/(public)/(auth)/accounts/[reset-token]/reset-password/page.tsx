@@ -53,7 +53,6 @@ export default function Page() {
   const { mutateAsync: ResetPassword, isPending } = useMutation(
     trpcHttp.auth.changePassword.mutationOptions({
       onSuccess: (data) => {
-        console.log('Password Successfully Changed');
         toast.success('Password Changed successfully');
 
         if (data.userRole === 'admin') {
@@ -64,13 +63,11 @@ export default function Page() {
       },
       onError: (err) => {
         toast.error(err.message);
-        console.error(err);
       }
     })
   );
 
   const handleSubmit = async (data: PasswordForm) => {
-    console.log('Submitting new password');
     await ResetPassword({ token_id: resetToken, password: data.confirmPassword });
   };
 

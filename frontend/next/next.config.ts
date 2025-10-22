@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     domains: [
       'via.placeholder.com',
       'bb-vendor-stock-images.s3.ap-south-1.amazonaws.com'
-      // aws s3 bucket name || or any image storing platform link (eg: Cloudinary, Imgix, etc.  )
+      // aws s3 bucket name || or any image storing platform link (eg: Cloudinary  )
     ]
   }
 };

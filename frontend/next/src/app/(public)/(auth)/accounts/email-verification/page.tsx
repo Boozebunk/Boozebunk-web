@@ -30,7 +30,6 @@ import { Input } from '~/shared/shadcn/input';
 
 import { trpcHttp } from '~/utils/trpc';
 
-// Email validation schema
 const emailSchema = z.object({
   email: z.email('Please enter a valid email address.').min(1, 'Email is required.')
 });
@@ -51,22 +50,18 @@ export default function Page() {
 
   const { mutateAsync: VerifyEmail, isPending } = useMutation(
     trpcHttp.auth.requestPasswordReset.mutationOptions({
-      onSuccess: (data) => {
-        console.log(data.message);
+      onSuccess: () => {
         toast.success('Email successfully verified');
         setEmailSent(true);
       },
       onError: (err) => {
         toast.error(err.message);
-        console.log(err);
       }
     })
   );
 
   const handleSubmit = async () => {
-    console.log('submitting the email for verification');
     await VerifyEmail(form.getValues());
-    console.log('Email submitted:');
   };
 
   return (

@@ -2,13 +2,10 @@ import { NextResponse } from 'next/server';
 
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 
-// --- Configuration ---
 const propertyId = process.env.GA4_PROPERTY_ID;
 const saJson = process.env.GA_SA_JSON;
-// The cache Time-To-Live (TTL) in seconds. Defaults to 300 seconds (5 minutes).
 const CACHE_TTL = Number(process.env.ANALYTICS_CACHE_TTL || '300');
 
-// --- Types ---
 type Row = { date: string; views: number };
 type AnalyticsCacheData = {
   yesterday: number;
@@ -22,8 +19,6 @@ type AnalyticsCacheData = {
 
 let cache: { ts: number; data: AnalyticsCacheData } | null = null;
 
-// --- Helper Functions ---
-
 /**
  * Generates an array of dates (YYYY-MM-DD) starting from 'days' ago up to today.
  * @param days The number of days to look back (e.g., 61 for 62 total days including today).
@@ -33,17 +28,13 @@ function getReportDateRange(days: number): string[] {
   const dates: string[] = [];
   const today = new Date();
 
-  // Iterate from the oldest day (days - 1 days ago) up to today (0 days ago)
   for (let i = days; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    // Format as YYYY-MM-DD
     dates.push(d.toISOString().split('T')[0]);
   }
   return dates;
 }
-
-// --- Main Logic ---
 
 async function getReport(): Promise<AnalyticsCacheData> {
   // 1. Cache Check (Efficiency)
@@ -66,7 +57,6 @@ async function getReport(): Promise<AnalyticsCacheData> {
 
   // 3. Pre-Process and Initialize Data Structures (Efficiency & Accuracy)
 
-  // Creates an array of 62 dates (YYYY-MM-DD) from oldest to newest
   const dateRange = getReportDateRange(DAYS_TOTAL);
 
   // Initialize rows with all required dates and 0 views

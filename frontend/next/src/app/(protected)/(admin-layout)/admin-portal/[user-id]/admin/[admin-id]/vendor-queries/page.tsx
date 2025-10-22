@@ -62,8 +62,7 @@ export default function Page() {
         vendorQueriesRefetch();
       },
       onError: (err) => {
-        toast.error('Query Deletion Failed');
-        console.log('Error deleting Query ', err.message);
+        toast.error(err.message);
       }
     })
   );
@@ -75,8 +74,7 @@ export default function Page() {
         vendorQueriesRefetch();
       },
       onError: (err) => {
-        toast.error('Deletion Queries Failed');
-        console.log('Error deleting Queries ', err.message);
+        toast.error(err.message);
       }
     })
   );

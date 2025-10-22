@@ -16,8 +16,8 @@ export const verificationTokensTable = pgTable(
     createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull(),
   },
   (table) => [
-    uniqueIndex("verification_token_user_id_type_index").on(table.userId, table.type), // Optional: ensure only one active token of a type per user
-    uniqueIndex("verification_token_token_index").on(table.token), // Ensure token is unique
+    uniqueIndex("verification_token_user_id_type_index").on(table.userId, table.type),
+    uniqueIndex("verification_token_token_index").on(table.token),
   ],
 );
 

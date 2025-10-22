@@ -1,14 +1,14 @@
-import db from "@boozebunk-trpc/db";
-import { productImagesTable } from "@boozebunk-trpc/db/schema/productImages";
+import { TRPCError } from "@trpc/server";
 import { sql } from "drizzle-orm";
 
-// --- SERP API CALL FUNCTION ---
+import db from "@boozebunk-trpc/db";
+import { productImagesTable } from "@boozebunk-trpc/db/schema/productImages";
+
 async function fetchImageFromSerp(brand: string, productName: string): Promise<string | undefined> {
   const query = `${brand} ${productName} bottle`;
   const url = `https://serpapi.com/search.json?q=${encodeURIComponent(query)}&tbm=isch&ijn=0&api_key=${process.env.SERPAPI_KEY}`;
 
   try {
-    console.log(`[SERP API CALL] Searching for: ${query}`);
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -20,7 +20,6 @@ async function fetchImageFromSerp(brand: string, productName: string): Promise<s
       images_results?: Array<{ original?: string; thumbnail?: string }>;
     };
 
-    // Check for results and return the original URL of the first image
     if (data.images_results && data.images_results.length > 0) {
       const result = data.images_results[0];
       if (result) {
@@ -30,33 +29,18 @@ async function fetchImageFromSerp(brand: string, productName: string): Promise<s
 
     return undefined;
   } catch (err) {
-    console.error("Failed to execute SERP API call:", err);
-    return undefined;
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch image from SERP API",
+      cause: err,
+    });
   }
 }
 
-/**
- * Retrieves the image URL from cache or fetches it from SERP API and caches it.
- * This function is non-blocking to the main application flow.
- * @returns The direct external image URL, or undefined if not found.
- */
 export async function getImageUrlAndCache(
   brand: string,
   product: string,
 ): Promise<string | undefined> {
-  // 1. CHECK CACHE (Database)
-  // const cachedImage = await db.query.images.findFirst({
-  //   where: and(
-  //     eq(productImagesTable.brandName, brand),
-  //     eq(productImagesTable.productName, product),
-  //   ),
-  // });
-
-  // if (cachedImage) {
-  //   console.log(`[CACHE HIT] Found external URL for ${product}.`);
-  //   return cachedImage.imageUrl; // Cache hit: Use stored URL
-  // }
-
   // CASE - 1. Fuzzy Search for similar entries in case of minor typos
   const inputSearchPhrase = (brand + " " + product).toLowerCase().trim();
 
@@ -72,15 +56,13 @@ export async function getImageUrlAndCache(
     .limit(1);
 
   if (fuzzyMatches.length > 0) {
-    console.log(`[CACHE FUZZY HIT] Found similar external URL for ${product}.`);
-    return fuzzyMatches[0]?.imageUrl; // Cache hit: Use stored URL
+    return fuzzyMatches[0]?.imageUrl;
   }
 
   // CASE - 2. CACHE MISS: Call external API (Costly Operation)
   const externalImageUrl = await fetchImageFromSerp(brand, product);
 
   if (!externalImageUrl) {
-    console.log(`[SERP FAIL] No image found for ${product}.`);
     return undefined;
   }
 
@@ -95,11 +77,12 @@ export async function getImageUrlAndCache(
       .onConflictDoNothing({
         target: [productImagesTable.brandName, productImagesTable.productName],
       });
-
-    console.log("[CACHE WRITE] Stored new URL.");
-  } catch (e) {
-    // This catch handles conflicts if two users try to upload the same product image simultaneously
-    console.warn("Conflict occurred while saving image URL, continuing with the fetched URL. ", e);
+  } catch (err) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to cache image URL in the database",
+      cause: err,
+    });
   }
 
   return externalImageUrl;

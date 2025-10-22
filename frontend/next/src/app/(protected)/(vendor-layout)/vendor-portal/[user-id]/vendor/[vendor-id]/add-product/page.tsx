@@ -87,7 +87,7 @@ function ComboboxInput({ label, placeholder, value, onChange, options }: Combobo
                   key={opt}
                   value={opt}
                   onMouseDown={(e) => {
-                    e.preventDefault(); // ensures onBlur doesn't close first
+                    e.preventDefault();
                     onChange(opt);
                     setOpen(false);
                   }}
@@ -109,12 +109,11 @@ export default function VendorRegistrationPage() {
   const [type, setType] = React.useState('');
   const [size, setSize] = React.useState('');
   const [productName, setProductName] = React.useState('');
-  const [price, setPrice] = React.useState<string>(''); // Change to string state
+  const [price, setPrice] = React.useState<string>('');
   const [openBulkUpload, setOpenBulkUpload] = React.useState(false);
 
   const brandOptions = liquorData.brands;
   const categoryOptions = liquorData.categories.map((cat) => cat.name);
-  // find selected category object
   const selectedCategory = liquorData.categories.find((cat) => cat.name === category);
   const typeOptions = selectedCategory ? selectedCategory.types : [];
   const sizeOptions = selectedCategory ? selectedCategory.sizes : [];
@@ -123,7 +122,6 @@ export default function VendorRegistrationPage() {
     trpcHttp.stock.addStock.mutationOptions({
       onSuccess: () => {
         toast.success('Stock Added Successfully');
-        // Reset all form fields
         setBrand('');
         setCategory('');
         setType('');
@@ -138,8 +136,7 @@ export default function VendorRegistrationPage() {
         });
       },
       onError: (err) => {
-        toast.error('Error Occurred');
-        console.log(err);
+        toast.error(err.message);
       }
     })
   );
@@ -147,7 +144,7 @@ export default function VendorRegistrationPage() {
   const { mutateAsync: BulkUploadStock, isPending: isBulkUploadPending } = useMutation(
     trpcHttp.stock.bulkUploadStock.mutationOptions({
       onSuccess: () => {
-        toast.success('Bulk Uploaded Successfully');
+        toast.success('Stock Bulk-Uploaded Successfully');
         queryClient.removeQueries({ queryKey: [['stock', 'getVendorStock']] });
         queryClient.removeQueries({
           queryKey: [['analytics', 'getStockOverview']]
@@ -156,7 +153,6 @@ export default function VendorRegistrationPage() {
       },
       onError: (err) => {
         toast.error(err.message);
-        console.log(err);
       }
     })
   );
@@ -170,15 +166,13 @@ export default function VendorRegistrationPage() {
       category,
       type,
       size,
-      price: price || '0', // Use price string directly, fallback to '0' if empty
+      price: price || '0',
       availability: true
     };
-    console.log(payload);
     await AddStock(payload);
   }
 
   const handleBulkUpload = async (data: string[][]) => {
-    console.log(data);
     BulkUploadStock({ data: data as BulkUploadStockType });
   };
 
@@ -272,7 +266,7 @@ export default function VendorRegistrationPage() {
                     placeholder="e.g. 2000"
                     value={price}
                     onChange={(e) => {
-                      setPrice(e.target.value); // Store as string
+                      setPrice(e.target.value);
                     }}
                     required
                   />

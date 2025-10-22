@@ -272,8 +272,7 @@ export default function Page() {
         refetchVendorStocks();
       },
       onError: (err) => {
-        toast.error('Stock Updation Failed');
-        console.log('Stock Updation failed ', err.message);
+        toast.error(err.message);
       }
     })
   );
@@ -281,7 +280,7 @@ export default function Page() {
   const { mutateAsync: updateStock, isPending: isUpdatingStock } = useMutation(
     trpcHttp.stock.updateVendorStockAvailability.mutationOptions({
       onSuccess: () => {
-        toast.success('Successfully Updated Stock(s)');
+        toast.success('Successfully Updated Stock');
         refetchVendorStocks();
         queryClient.removeQueries({
           queryKey: [['analytics', 'getStockOverview']]
@@ -290,8 +289,7 @@ export default function Page() {
       },
       onError: (err) => {
         setSelectedRowIds([]);
-        toast.error('Error While Updating Stock');
-        console.error('Failed to update stock:', err);
+        toast.error(err.message);
       }
     })
   );
@@ -307,8 +305,7 @@ export default function Page() {
         });
       },
       onError: (err) => {
-        toast.error('Stock Deletion Failed');
-        console.log(err);
+        toast.error(err.message);
       }
     })
   );
@@ -318,7 +315,6 @@ export default function Page() {
       toast.error('Please select at least one item to update.');
       return;
     }
-    console.log(selectedRowIds);
     await updateStock({ stockIds: selectedRowIds, availability: newStatus });
   };
 

@@ -1,4 +1,3 @@
-// app/vendor-registration/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -34,7 +33,6 @@ import { trpcHttp } from '~/utils/trpc';
 
 import type { GooglePlacesResponse, VendorRegistration } from '@boozebunk-trpc/modules/vendor/dto';
 
-// Extend Event type for gmp-select event
 interface GMPSelectEvent extends Event {
   placePrediction: {
     toPlace: () => {
@@ -57,7 +55,6 @@ export default function VendorRegistrationPage() {
   const { mutateAsync: registerVendor, isPending } = useMutation(
     trpcHttp.vendor.createVendor.mutationOptions({
       onSuccess: () => {
-        console.log('Vendor Registration Successful');
         toast.success('Vendor created successfully');
         form.reset();
 
@@ -70,7 +67,6 @@ export default function VendorRegistrationPage() {
       },
       onError: (error) => {
         toast.error(error.message);
-        console.error('Vendor Registration Error:', error);
       }
     })
   );
@@ -152,9 +148,7 @@ export default function VendorRegistrationPage() {
       form.setValue('locationCoordinates.lng', place?.location?.longitude || 0);
 
       const addressArray = place?.formattedAddress.split(',').reverse();
-      console.log(addressArray);
       const CityCodeArr = addressArray[1].split(' ');
-      console.log(CityCodeArr);
       const area = addressArray.slice(3).reverse().join(',');
 
       form.setValue('addressPostalCode', CityCodeArr[2].trim());
@@ -164,10 +158,7 @@ export default function VendorRegistrationPage() {
     }
   }, [place, form]);
 
-  console.log(place);
-
   const handleSubmit = async () => {
-    console.log('Creating new Vendor');
     await registerVendor(form.getValues());
   };
 

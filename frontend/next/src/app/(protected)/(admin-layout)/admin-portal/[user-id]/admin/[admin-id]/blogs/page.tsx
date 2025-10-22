@@ -64,8 +64,7 @@ function BlogsPage() {
         refetchBlogs();
       },
       onError: (error) => {
-        toast.error('Blog creation failed');
-        console.log(error);
+        toast.error(error.message);
       }
     })
   );
@@ -78,8 +77,7 @@ function BlogsPage() {
         setEditingBlog(null);
       },
       onError: (error) => {
-        toast.error('Blog update failed');
-        console.log(error);
+        toast.error(error.message);
       }
     })
   );
@@ -91,8 +89,7 @@ function BlogsPage() {
         refetchBlogs();
       },
       onError: (error) => {
-        toast.error('Blog deletion failed');
-        console.log(error);
+        toast.error(error.message);
       }
     })
   );
@@ -108,7 +105,6 @@ function BlogsPage() {
 
   const handleUpdate = async () => {
     if (editingBlog) {
-      console.log('Updated blog:', editingBlog);
       await updateBlog(editingBlog);
       setEditingBlog(null);
     }

@@ -35,27 +35,21 @@ export function Navbar() {
   const { mutateAsync: logout, isPending } = useMutation(
     trpcHttp.auth.logout.mutationOptions({
       onSuccess: async () => {
-        console.log('Logged out successfully');
         toast.success('Logged out Successfully');
-        // 1. Invalidate the old session data to mark it as stale
         await queryClient.invalidateQueries({
           queryKey: trpcHttp.auth.getSession.queryOptions().queryKey
         });
-
-        // 2. Force a re-fetch of the session data, which should now return null
         await queryClient.fetchQuery(trpcHttp.auth.getSession.queryOptions());
         router.push('/admin-authentication/sign-in');
       },
       onError: (err) => {
         toast.error(err.message);
-        console.error('Error while logging out:', err);
       }
     })
   );
 
   const handleLogout = async () => {
     await logout();
-    console.log('Logging out...');
   };
 
   return (

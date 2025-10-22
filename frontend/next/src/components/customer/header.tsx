@@ -46,7 +46,6 @@ export function Header({ cities, isLoadingCities }: headerProps) {
     }
   });
 
-  // The search bar should be disabled if location is denied, unsupported, or if nearby vendors are still loading
   const isSearchDisabled = locationStatus !== 'granted' || nearbyVendorsLoading;
   return (
     <div className="sticky top-0 z-20 flex w-full transform-gpu flex-col gap-5 bg-[#fff5cb] px-5 py-4 shadow-md lg:px-25 lg:py-5">
