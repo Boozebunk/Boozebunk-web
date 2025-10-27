@@ -5,92 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1756506382870,
-      "tag": "20250829222622_wild_praxagora",
+      "when": 1761564076757,
+      "tag": "20251027112116_sturdy_tarantula",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1756506399241,
-      "tag": "20250829222639_fantastic_stick",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1757339154478,
-      "tag": "20250908134554_spooky_mastermind",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1758443877575,
-      "tag": "20250921083757_tearful_roughhouse",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1758984509406,
-      "tag": "20250927144829_late_the_hand",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1758984683973,
-      "tag": "20250927145123_neat_the_liberteens",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1759073884207,
-      "tag": "20250928153804_tranquil_doctor_strange",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1759322308402,
-      "tag": "20251001123828_solid_sleepwalker",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1759408722091,
-      "tag": "20251002123842_wide_skin",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1760013677049,
-      "tag": "20251009124117_melodic_hitman",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1760032057354,
-      "tag": "20251009174737_yellow_jimmy_woo",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "7",
-      "when": 1760093669312,
-      "tag": "20251010105429_brainy_tony_stark",
-      "breakpoints": true
-    },
-    {
-      "idx": 12,
-      "version": "7",
-      "when": 1760171877387,
-      "tag": "20251011083757_wandering_newton_destine",
+      "when": 1761566947212,
+      "tag": "20251027120907_military_stranger",
       "breakpoints": true
     }
   ]

@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX "customers_email_idx" ON "customer" USING btree ("email");

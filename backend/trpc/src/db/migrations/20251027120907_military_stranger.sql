@@ -22,3 +22,6 @@ setweight(to_tsvector('english', coalesce("category", '')), 'C') ||
 setweight(to_tsvector('english', coalesce("type", '')), 'D') ||
 setweight(to_tsvector('english', coalesce("size", '')), 'D')
 ));
+
+CREATE INDEX IF NOT EXISTS "product_images_fuzzy_trgm_idx" ON "product_images" 
+USING gin (LOWER(TRIM("brand_name" || ' ' || "product_name")) gin_trgm_ops);
