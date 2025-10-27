@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { env } from "@boozebunk-trpc/env";
 
-const BUCKET_NAME = "bb-vendor-stock-images";
+const BUCKET_NAME = "boozebunk-images";
 const FILE_EXPIRY_SECONDS = 3600;
 
 const s3Client = new S3Client({
