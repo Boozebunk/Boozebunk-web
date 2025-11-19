@@ -185,11 +185,14 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
               ref={dropdownRef}
               className="absolute z-10 mt-1 max-h-[55vh] w-full space-y-2 overflow-auto rounded-md border bg-white p-2 shadow-md">
               {searchResults.stockItems.map((item, index) => (
-                <>
+                <React.Fragment
+                  key={`${(item.productName || '').replace(/\s+/g, '-')}-${(
+                    item.martName || ''
+                  ).replace(/\s+/g, '-')}-${index}`}>
                   <div
                     className={clsx('bg-foreground flex h-[1px] w-full', index === 0 && 'hidden')}
                   />
-                  <Card key={index} className="gap-2 overflow-hidden border-none p-5 shadow-none">
+                  <Card className="gap-2 overflow-hidden border-none p-5 shadow-none">
                     <CardContent className="p-0">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between gap-2">
@@ -276,7 +279,7 @@ export default function LiquorSearch({ isSearchDisabled }: LiquorSearchProps) {
                       </Button>
                     </CardFooter>
                   </Card>
-                </>
+                </React.Fragment>
               ))}
             </div>
           )
