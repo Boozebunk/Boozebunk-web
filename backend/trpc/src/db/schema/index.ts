@@ -1,5 +1,27 @@
-// Aliasing all the imports from the schema file
+import { vendorAddressesTable } from "./address";
+import { adminTable } from "./admin";
+import { userTable } from "./auth/user";
+import { verificationTokensTable } from "./auth/verification";
+import { customerTable } from "./customer";
+import { FeedbackTable } from "./feedback";
+import { productImagesTable } from "./productImages";
+import { VendorQueryTable } from "./query";
+import { vendorTable } from "./vendor";
 
-const AllSchemas = {};
+const tables = {
+  // auth tables
+  user: userTable,
+  verification: verificationTokensTable,
 
-export default AllSchemas;
+  //General tables
+  admin: adminTable,
+  vendor: vendorTable,
+  address: vendorAddressesTable,
+  query: VendorQueryTable,
+  customer: customerTable,
+  feedback: FeedbackTable,
+  images: productImagesTable,
+};
+
+export type Tables = typeof tables;
+export default tables;

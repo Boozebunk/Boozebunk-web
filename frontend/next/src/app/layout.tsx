@@ -1,21 +1,14 @@
 import * as React from 'react';
-import { Geist, Geist_Mono } from 'next/font/google';
+
+import { ThemeProvider } from 'next-themes';
+
+import { Toaster } from '~/shared/shadcn/sonner';
 
 import Providers from '~/providers';
 
 import type { Metadata, Viewport } from 'next';
 
 import '../styles/globals.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin']
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin']
-});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -24,6 +17,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: 'Boozebunk - Liquor Management and Information Platform',
+  icons: {
+    icon: '/favicon.ico'
+  },
   description:
     'Find your favorite drinks fast! Our platform helps customers locate nearby liquor marts and empowers mart owners to easily manage their stock.',
   keywords: [
@@ -60,12 +56,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      suppressHydrationWarning>
-      <body className={'font-sans'}>
-        <Providers>{children}</Providers>
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans" suppressHydrationWarning={true}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange>
+          <Providers>{children}</Providers>
+          <Toaster position="top-right" offset={50} richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

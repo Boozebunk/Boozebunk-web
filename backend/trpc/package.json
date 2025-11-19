@@ -12,10 +12,11 @@
     "lint:fix": "eslint . --fix",
     "pre-commit": "lint-staged",
     "migration:generate": "bun --bun run drizzle-kit generate",
-    "migration:custom": "bun --bun run drizzle-kit generate --custom --name",
+    "migration:custom": "bun drizzle-kit generate --custom",
     "migration:run": "bun --bun run src/db/migrate.ts",
     "migration:push": "drizzle-kit push",
-    "db:seed": "bun --bun run src/db/seed"
+    "db:seed": "bun --bun run src/db/seed",
+    "db:brandSeed": "bun --bun run src/db/brandSeed.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
@@ -33,17 +34,24 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.907.0",
+    "@aws-sdk/client-ses": "^3.864.0",
+    "@aws-sdk/s3-request-presigner": "^3.907.0",
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.0.1",
+    "@fastify/jwt": "^9.1.0",
     "@trpc/client": "^11.4.3",
     "@trpc/server": "^11.4.3",
     "@types/uuid": "^10.0.0",
+    "bcrypt": "^6.0.0",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.4",
     "fastify": "^5.4.0",
+    "handlebars": "^4.7.8",
     "postgres": "^3.4.7",
     "superjson": "^2.2.2",
     "uuid": "^11.1.0",
-    "zod": "^4.0.8"
+    "zod": "^4.0.17"
   },
   "lint-staged": {
     "*.{js,ts}": [

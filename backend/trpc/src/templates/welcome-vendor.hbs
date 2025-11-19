@@ -1,0 +1,107 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Boozebunk</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Google Sans", "Segoe UI", Arial, sans-serif;
+        color: #333;
+        background-color: #f5f5f5;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow:
+          0 4px 6px rgba(0, 0, 0, 0.05),
+          0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        padding: 30px 30px 20px 30px;
+        text-align: center;
+        background-color: #fff5cb;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+      .title {
+        color: #442816;
+        margin: 0;
+        font-size: 24px;
+        font-weight: 500;
+      }
+      .content {
+        padding: 30px;
+        text-align: center;
+      }
+      .text {
+        margin-bottom: 25px;
+        line-height: 1.6;
+        font-size: 16px;
+      }
+      .credentials {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        margin-bottom: 20px;
+        word-break: break-all;
+        font-size: 14px;
+        text-align: left;
+      }
+      .credentials strong {
+        display: inline-block;
+        min-width: 80px;
+        color: #555;
+      }
+      .footer {
+        padding: 20px;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        border-top: 1px solid #e9ecef;
+      }
+      .footer-text {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+      }
+      .signature {
+        margin: 5px 0 0 0;
+        font-weight: bold;
+        color: #444;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1 class="title">Welcome on board, {{vendorName}}!</h1>
+      </div>
+      <div class="content">
+        <p class="text">Here are your account credentials:</p>
+        <p class="credentials">
+          <strong>Email:</strong>
+          {{email}}
+        </p>
+        <p class="credentials">
+          <strong>Password:</strong>
+          {{password}}
+        </p>
+        <p class="text" style="margin-bottom: 0;">We recommend changing your password after your
+          first login to keep your account secure.</p>
+      </div>
+      <div class="footer">
+        <p class="footer-text">Thank you,</p>
+        <p class="signature">The Boozebunk Team</p>
+      </div>
+    </div>
+  </body>
+</html>
