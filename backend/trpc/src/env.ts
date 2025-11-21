@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.string(),
     PORT: z.string().default("80"),
     API_PREFIX: z.string().default("/api/trpc"),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

@@ -172,7 +172,6 @@ export const seedData = [
   { brandName: "Bacardi Breezer", category: "Cocktails" },
   { brandName: "Smirnoff Ice", category: "Cocktails" },
   { brandName: "Magic Moments Vodka Spritz", category: "Cocktails" },
-  { brandName: "Old Monk Rum & Cola", category: "Cocktails" },
   { brandName: "Ritaq Margarita", category: "Cocktails" },
   { brandName: "Maaza Vodka Cocktails", category: "Cocktails" },
   { brandName: "Wai Wai Frozen Daiquiris", category: "Cocktails" },
