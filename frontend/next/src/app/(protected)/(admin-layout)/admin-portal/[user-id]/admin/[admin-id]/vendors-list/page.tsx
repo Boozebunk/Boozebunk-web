@@ -70,6 +70,14 @@ export default function Page() {
     phoneNumber: ''
   });
 
+  const [debouncedSearch, setDebouncedSearch] = React.useState('');
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500); // 500ms debounce
+    return () => clearTimeout(handler);
+  }, [search]);
+
   const columns: ColumnDef<VendorsDataType>[] = [
     {
       id: 'sno',
@@ -207,7 +215,7 @@ export default function Page() {
     refetch: refetchVendorsList
   } = useQuery(
     trpcHttp.vendor.getVendorsList.queryOptions({
-      search,
+      search: debouncedSearch,
       isActive: isActiveToggle,
       fromDate: dateRange?.from,
       toDate: dateRange?.to,
