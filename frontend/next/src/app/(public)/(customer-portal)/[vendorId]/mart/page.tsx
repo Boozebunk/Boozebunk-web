@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
@@ -27,6 +27,14 @@ function Page() {
 
   const { location } = useCustomerContext();
 
+  const [debouncedSearchStock, setDebouncedSearchStock] = useState('');
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchStock(searchStock);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchStock]);
+
   const { data: martDetails, isLoading: loadingMartDetails } = useQuery(
     trpcHttp.customer.getMartDetailsById.queryOptions({
       vendorId: vendorId,
@@ -38,7 +46,7 @@ function Page() {
   const { data: martStocks, isLoading: loadingMartStocks } = useQuery(
     trpcHttp.customer.getMartStockById.queryOptions({
       vendorId: vendorId,
-      search: searchStock,
+      search: debouncedSearchStock,
       pageIndex: pagination.pageIndex,
       pageSize: pagination.pageSize
     })

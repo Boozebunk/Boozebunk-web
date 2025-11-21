@@ -42,6 +42,14 @@ type StockItem = {
 export default function Page() {
   const [stockFilter, setStockFilter] = React.useState<'all' | 'in' | 'out'>('all');
   const [search, setSearch] = React.useState('');
+  // Debounced search value
+  const [debouncedSearch, setDebouncedSearch] = React.useState('');
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500); // 500ms debounce
+    return () => clearTimeout(handler);
+  }, [search]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10
@@ -258,7 +266,7 @@ export default function Page() {
     refetch: refetchVendorStocks
   } = useQuery(
     trpcHttp.stock.getVendorStock.queryOptions({
-      search,
+      search: debouncedSearch,
       stockFilter,
       pageIndex: pagination.pageIndex,
       pageSize: pagination.pageSize
