@@ -82,9 +82,9 @@ function ComboboxInput({ label, placeholder, value, onChange, options }: Combobo
             {filteredOptions.length === 0 ? (
               <CommandEmpty>No results found.</CommandEmpty>
             ) : (
-              filteredOptions.map((opt) => (
+              filteredOptions.map((opt, idx) => (
                 <CommandItem
-                  key={opt}
+                  key={`${opt}-${idx}`}
                   value={opt}
                   onMouseDown={(e) => {
                     e.preventDefault();

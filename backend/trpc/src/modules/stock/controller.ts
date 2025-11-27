@@ -43,13 +43,10 @@ export const vendorStockRouter = createTRPCRouter({
 
       const randomUUID = uuidv4();
 
-      const imagePromise = getImageUrlAndCache(input.brand, input.productName);
+      // 1. Get image URL (from cache or fetch and cache)
+      const imageUrl = await getImageUrlAndCache(input.brand, input.productName);
 
-      const finalImageUrl = (await Promise.race([
-        imagePromise,
-        new Promise((resolve) => setTimeout(() => resolve(undefined), 100)),
-      ])) as string | undefined;
-
+      // 2. Insert stock with productImageUrl set
       await db
         .insert(vendorStockTable)
         .values({
@@ -62,20 +59,9 @@ export const vendorStockRouter = createTRPCRouter({
           size: input.size,
           price: input.price,
           availability: input.availability,
-          productImageUrl: finalImageUrl,
+          productImageUrl: imageUrl ?? null,
         })
         .returning();
-
-      if (!finalImageUrl) {
-        // If the image isn't ready immediately, we'll run the full promise asynchronously
-        imagePromise.then((url) => {
-          if (url) {
-            db.update(vendorStockTable)
-              .set({ productImageUrl: url })
-              .where(eq(vendorStockTable.id, randomUUID));
-          }
-        });
-      }
 
       return {
         success: true,

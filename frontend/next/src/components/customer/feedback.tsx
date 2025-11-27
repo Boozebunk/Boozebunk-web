@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
+import Cookies from 'js-cookie';
 import { Loader2, Star } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -22,7 +23,6 @@ import {
 } from '~/shared/shadcn/form';
 import { Textarea } from '~/shared/shadcn/textarea';
 
-import { useCustomerContext } from '~/providers/customer-provider';
 import { trpcHttp } from '~/utils/trpc';
 
 const feedbackFormSchema = z.object({
@@ -37,8 +37,17 @@ type WriteFeedbackProps = {
   onClose: () => void;
 };
 
+const EMAIL_COOKIE_NAME = 'c_e';
+
 export function WriteFeedback({ onClose }: WriteFeedbackProps) {
-  const { customerEmail } = useCustomerContext();
+  const [customerEmail, setCustomerEmail] = useState('Anonymous');
+
+  useEffect(() => {
+    const email = Cookies.get(EMAIL_COOKIE_NAME);
+    setCustomerEmail(email ?? 'Anonymous');
+  }, []);
+
+  console.log('Customer Email ', customerEmail);
 
   const { mutateAsync: sendFeedback, isPending } = useMutation(
     trpcHttp.reshub.saveCustomerFeedback.mutationOptions({

@@ -18,7 +18,7 @@ export const customerRouter = createTRPCRouter({
       z.object({
         customerLat: z.number(),
         customerLon: z.number(),
-        radiusKm: z.number().default(10),
+        radiusKm: z.number().default(20),
       }),
     )
     .query(async ({ input }) => {
@@ -54,12 +54,14 @@ export const customerRouter = createTRPCRouter({
           .orderBy(sql`distance_meters`);
 
         const vendorIds = vendors.map((v) => v.id);
-        db.update(vendorTable)
+        await db
+          .update(vendorTable)
           .set({
             viewCount: sql`${vendorTable.viewCount} + 1`,
             updatedAt: new Date(),
           })
-          .where(inArray(vendorTable.id, vendorIds));
+          .where(inArray(vendorTable.id, vendorIds))
+          .execute();
 
         return vendors;
       } catch (err) {
@@ -307,12 +309,14 @@ export const customerRouter = createTRPCRouter({
           .leftJoin(vendorAddressesTable, eq(vendorTable.id, vendorAddressesTable.vendorId))
           .where(eq(vendorTable.id, vendorId));
 
-        db.update(vendorTable)
+        await db
+          .update(vendorTable)
           .set({
             clickCount: sql`${vendorTable.clickCount} + 1`,
             updatedAt: new Date(),
           })
-          .where(eq(vendorTable.id, vendorId));
+          .where(eq(vendorTable.id, vendorId))
+          .execute();
 
         return {
           success: true,

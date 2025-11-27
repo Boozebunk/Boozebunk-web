@@ -171,7 +171,14 @@ function Page() {
               className="flex w-fit cursor-pointer flex-col items-center gap-2 md:gap-3">
               <div className="relative h-[80px] w-[80px] rounded-full bg-gradient-to-tr from-yellow-400 to-orange-400 p-[2px] transition-transform hover:scale-105 sm:h-[100px] sm:w-[100px] lg:h-[150px] lg:w-[150px]">
                 <div className="relative h-full w-full overflow-hidden rounded-full bg-white">
-                  <Image src={image} alt={name} fill className="object-cover" />
+                  <Image
+                    src={image}
+                    alt={name}
+                    fill
+                    sizes="(max-width: 640px) 80px, (max-width: 1024px) 100px, 150px"
+                    className="object-cover"
+                    {...(idx === 0 ? { priority: true } : {})}
+                  />
                 </div>
               </div>
 
