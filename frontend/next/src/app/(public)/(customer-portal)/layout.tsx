@@ -43,7 +43,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
             Feedback
           </Button>
         </div>
-        <CustomDialog open={openFeedback} onOpenChange={setFeedback}>
+        <CustomDialog header={false} open={openFeedback} onOpenChange={setFeedback}>
           {<WriteFeedback onClose={() => setFeedback(false)} />}
         </CustomDialog>
         <AgeVerificationDialog />

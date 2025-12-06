@@ -203,82 +203,80 @@ export default function VendorRegistrationPage() {
           </CardHeader>
 
           <CardContent className="w-full">
-            <section className="grid grid-cols-1 sm:grid-cols-[1fr_2fr_1fr] sm:gap-10">
-              {/* Right column: product details */}
-              <div className="col-span-2 mt-8 flex flex-col gap-5 sm:mt-0">
-                <div className="flex flex-col gap-2">
-                  <Label className="font-semibold" htmlFor="productName">
-                    Product Name*
-                  </Label>
-                  <Input
-                    id="productName"
-                    className="text-sm"
-                    type="text"
-                    value={productName}
-                    onChange={(e) => {
-                      setProductName(e.target.value);
-                    }}
-                    placeholder="e.g. Jack Daniel's Old No. 7"
-                    required
-                  />
-                </div>
-
-                {/* Combobox fields */}
-                <ComboboxInput
-                  label="Brand*"
-                  placeholder="e.g. Jack Daniel's"
-                  value={brand}
-                  onChange={setBrand}
-                  options={brandOptions}
-                />
-
-                <ComboboxInput
-                  label="Category*"
-                  placeholder="e.g. Whiskey"
-                  value={category}
-                  onChange={(val) => {
-                    setCategory(val);
-                    setType('');
-                    setSize('');
+            {/* Right column: product details */}
+            <div className="col-span-2 mt-8 flex flex-col gap-5 sm:mt-0">
+              <div className="flex flex-col gap-2">
+                <Label className="font-semibold" htmlFor="productName">
+                  Product Name*
+                </Label>
+                <Input
+                  id="productName"
+                  className="text-sm"
+                  type="text"
+                  value={productName}
+                  onChange={(e) => {
+                    setProductName(e.target.value);
                   }}
-                  options={categoryOptions}
+                  placeholder="e.g. Jack Daniel's Old No. 7"
+                  required
                 />
-
-                <ComboboxInput
-                  label="Type*"
-                  placeholder="e.g. Bourbon"
-                  value={type}
-                  onChange={setType}
-                  options={typeOptions}
-                />
-
-                <ComboboxInput
-                  label="Size*"
-                  placeholder="e.g. 750ml"
-                  value={size}
-                  onChange={setSize}
-                  options={sizeOptions}
-                />
-
-                <div className="flex flex-col gap-2">
-                  <Label className="font-semibold" htmlFor="price">
-                    Price*
-                  </Label>
-                  <Input
-                    id="price"
-                    className="text-sm"
-                    type="number"
-                    min="0"
-                    placeholder="e.g. 2000"
-                    value={price}
-                    onChange={(e) => {
-                      setPrice(e.target.value);
-                    }}
-                    required
-                  />
-                </div>
               </div>
-            </section>
+
+              {/* Combobox fields */}
+              <ComboboxInput
+                label="Brand*"
+                placeholder="e.g. Jack Daniel's"
+                value={brand}
+                onChange={setBrand}
+                options={brandOptions}
+              />
+
+              <ComboboxInput
+                label="Category*"
+                placeholder="e.g. Whiskey"
+                value={category}
+                onChange={(val) => {
+                  setCategory(val);
+                  setType('');
+                  setSize('');
+                }}
+                options={categoryOptions}
+              />
+
+              <ComboboxInput
+                label="Type*"
+                placeholder="e.g. Bourbon"
+                value={type}
+                onChange={setType}
+                options={typeOptions}
+              />
+
+              <ComboboxInput
+                label="Size*"
+                placeholder="e.g. 750ml"
+                value={size}
+                onChange={setSize}
+                options={sizeOptions}
+              />
+
+              <div className="flex flex-col gap-2">
+                <Label className="font-semibold" htmlFor="price">
+                  Price*
+                </Label>
+                <Input
+                  id="price"
+                  className="text-sm"
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 2000"
+                  value={price}
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+                  }}
+                  required
+                />
+              </div>
+            </div>
           </CardContent>
 
           <CardFooter className="flex w-full flex-row gap-4">

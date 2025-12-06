@@ -30,7 +30,7 @@ export function OutOfStock({
       </div>
 
       {outOfStockCount == 0 ? (
-        <span>No Out of Stock Items</span>
+        <span className="sm:text-md text-center text-sm">No Out of Stock Items</span>
       ) : isLoadingStock ? (
         <Loader2 />
       ) : (

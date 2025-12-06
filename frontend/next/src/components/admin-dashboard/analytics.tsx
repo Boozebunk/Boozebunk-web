@@ -97,7 +97,7 @@ const TrafficCard = ({
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) - 16}
                           className="fill-foreground text-2xl font-bold">
-                          {totalVisitors.toLocaleString()}
+                          {(totalVisitors ?? 0).toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}

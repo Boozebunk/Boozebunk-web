@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { Analytics } from '~/components/admin-dashboard/analytics';
+// import { Analytics } from '~/components/admin-dashboard/analytics';
 import { TopVendors } from '~/components/admin-dashboard/topVendors';
 import { VendorsActivity } from '~/components/admin-dashboard/vendorsActivity';
 import { trpcHttp } from '~/utils/trpc';
@@ -18,7 +18,7 @@ export default function Page() {
 
   return (
     <div>
-      <Analytics />
+      {/* <Analytics /> */}
       <VendorsActivity
         loginFrequencyChange={data?.loginFrequency.change ?? 0}
         loginFrequencyCount={data?.loginFrequency.avgLoginsPerWeek ?? 0}
