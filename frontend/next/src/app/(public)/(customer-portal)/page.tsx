@@ -26,11 +26,17 @@ const go_to_categories = [
     name: 'Vodka',
     image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/vodka.jpg'
   },
-  { name: 'Rum', image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/rum.jpg' },
-  { name: 'Gin', image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/gin.jpg' },
+  {
+    name: 'Rum',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/rum.jpeg.jpg'
+  },
+  {
+    name: 'Gin',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/gin.jpeg.jpg'
+  },
   {
     name: 'Tequila',
-    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/tequila.jpg'
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/tecquila.jpg'
   },
   {
     name: 'Brandy',

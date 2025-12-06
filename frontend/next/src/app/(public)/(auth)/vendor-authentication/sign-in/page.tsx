@@ -68,9 +68,12 @@ export default function Page() {
   );
 
   const handleFormSubmit = async () => {
-    console.log('logging in as vendor');
-    console.log('Form Values:', form.getValues());
-    await VendorLogin(form.getValues());
+    const values = form.getValues();
+    await VendorLogin({
+      ...values,
+      email: values.email.trim(),
+      password: values.password.trim()
+    });
   };
 
   return (
