@@ -40,15 +40,17 @@ export const authRouter = createTRPCRouter({
         role: user.role,
       });
 
-      //Note: comment the sameSite and domain properties when testing in localhost
+      //Note: comment the sameSite domain properties when testing in localhost and also set the secure to false
       ctx.res.setCookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "none",
         domain: ".boozebunk.com",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       });
+
+      console.log("Added Cookie in browser ✅");
 
       //updating lastLoginAt timestamp
       await db.update(userTable).set({ lastLoginAt: new Date() }).where(eq(userTable.id, user.id));
@@ -67,7 +69,17 @@ export const authRouter = createTRPCRouter({
   }),
 
   logout: publicProcedure.mutation(async ({ ctx }) => {
-    ctx.res.clearCookie("token", { path: "/" });
+    // uncomment when testing on local testing
+    // ctx.res.clearCookie("token", { path: "/" });
+
+    ctx.res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      domain: ".boozebunk.com",
+      path: "/",
+    });
+
     return { success: true };
   }),
 
@@ -122,6 +134,7 @@ export const authRouter = createTRPCRouter({
 
   getSession: publicProcedure.query(({ ctx }) => {
     try {
+      console.log("getSession data ✅ ", ctx.user);
       return ctx.user;
     } catch (error) {
       throw new TRPCError({
