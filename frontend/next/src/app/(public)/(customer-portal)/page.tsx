@@ -16,16 +16,34 @@ import { useCustomerContext } from '~/providers/customer-provider';
 import { trpcHttp } from '~/utils/trpc';
 
 const go_to_categories = [
-  { name: 'Beer', image: '/assets/categories/beer.jpg' },
-  { name: 'Wine', image: '/assets/categories/wine.jpg' },
-  { name: 'Whiskey', image: '/assets/categories/whiskey.jpg' },
-  { name: 'Vodka', image: '/assets/categories/vodka.jpg' },
-  { name: 'Rum', image: '/assets/categories/rum.jpg' },
-  { name: 'Gin', image: '/assets/categories/gin.jpg' },
-  { name: 'Tequila', image: '/assets/categories/tequila.jpg' },
-  { name: 'Brandy', image: '/assets/categories/brandy.jpg' },
-  { name: 'Cocktails', image: '/assets/categories/cocktail.jpg' },
-  { name: 'Champagne', image: '/assets/categories/champagne.jpg' }
+  { name: 'Beer', image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/beer.jpg' },
+  { name: 'Wine', image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/wine.jpg' },
+  {
+    name: 'Whiskey',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/whiskey.jpg'
+  },
+  {
+    name: 'Vodka',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/vodka.jpg'
+  },
+  { name: 'Rum', image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/rum.jpg' },
+  { name: 'Gin', image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/gin.jpg' },
+  {
+    name: 'Tequila',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/tequila.jpg'
+  },
+  {
+    name: 'Brandy',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/brandy.jpg'
+  },
+  {
+    name: 'Cocktails',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/cocktail.jpg'
+  },
+  {
+    name: 'Champagne',
+    image: 'https://boozebunk-images.s3.ap-south-1.amazonaws.com/banners/champagne.jpg'
+  }
 ];
 
 function Page() {
