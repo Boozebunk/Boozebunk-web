@@ -3,6 +3,8 @@ import { type FastifyCorsOptions } from "@fastify/cors";
 export const CorsConfig: FastifyCorsOptions = {
   origin: [
     "http://localhost:3000",
+    "https://main.d1bkppae345wqt.amplifyapp.com",
+    "https://boozebunk.com",
     // Add your production frontend URL here
   ],
   credentials: true,
