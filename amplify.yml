@@ -1,0 +1,22 @@
+version: 1
+applications:
+  - appRoot: frontend/next
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm install -g bun
+            - cd ../..
+            - bun install --frozen-lockfile
+            - cd frontend/next
+        build:
+          commands:
+            - bun run build
+      artifacts:
+        baseDirectory: .next
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - .next/cache/**/*
+          - ../../node_modules/**/*

@@ -67,7 +67,7 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error getting nearby vendors.",
+          message: `Error getting nearby vendors. ${err}`,
           cause: err,
         });
       }
@@ -179,7 +179,7 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Searching stock failed.",
+          message: `Searching stock failed. ${err}`,
           cause: err,
         });
       }
@@ -200,7 +200,7 @@ export const customerRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Fetching cities failed.",
+        message: `Fetching cities failed. ${err}`,
         cause: err,
       });
     }
@@ -251,7 +251,7 @@ export const customerRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error getting stock-display.",
+        message: `Error getting stock-display. ${err}`,
         cause: err,
       });
     }
@@ -277,7 +277,7 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error saving customer email.",
+          message: `Error saving customer email. ${err}`,
           cause: err,
         });
       }
@@ -325,7 +325,7 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error getting mart details.",
+          message: `Error getting mart details. ${err}`,
           cause: err,
         });
       }
@@ -396,7 +396,7 @@ export const customerRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error getting mart stock.",
+          message: `Error getting mart stock. ${err}`,
           cause: err,
         });
       }

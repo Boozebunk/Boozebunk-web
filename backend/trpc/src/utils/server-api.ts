@@ -11,7 +11,8 @@ type AppRouter = typeof appRouter;
 export const api = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: "http://localhost:8080/api/trpc",
+      url: "https://api.boozebunk.com/api/trpc",
+      // url: "http://localhost:8080/api/trpc", Uncomment for local development
       transformer: superjson,
       async headers() {
         const headerStore = await nextHeaders();

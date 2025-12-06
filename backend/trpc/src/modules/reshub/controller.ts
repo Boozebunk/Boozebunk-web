@@ -32,7 +32,7 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error Writing Query.",
+          message: `Error Writing Query. ${err}`,
           cause: err,
         });
       }
@@ -77,7 +77,7 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error getting vendor queries.",
+          message: `Error getting vendor queries. ${err}`,
           cause: err,
         });
       }
@@ -95,7 +95,7 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error deleting query.",
+          message: `Error deleting query. ${err}`,
           cause: err,
         });
       }
@@ -111,7 +111,7 @@ export const responseHubRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error deleting all queries.",
+        message: `Error deleting all queries. ${err}`,
         cause: err,
       });
     }
@@ -139,7 +139,7 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Feedback Failed.",
+          message: `Feedback Failed. Please try again. ${err}`,
           cause: err,
         });
       }
@@ -175,7 +175,7 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error getting feedbacks.",
+          message: `Error getting feedbacks. Please try again. ${err}`,
           cause: err,
         });
       }
@@ -194,7 +194,7 @@ export const responseHubRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Error deleting feedback ${err}`,
+          message: `Error deleting feedback. Please try again. ${err}`,
         });
       }
     }),
@@ -209,7 +209,7 @@ export const responseHubRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error deleting Feedbacks.",
+        message: `Error deleting Feedbacks. Please try again. ${err}`,
         cause: err,
       });
     }
