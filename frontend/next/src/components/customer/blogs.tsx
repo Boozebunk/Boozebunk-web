@@ -40,7 +40,7 @@ export function Blog() {
       if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 1) {
         el.scrollLeft = 0;
       } else {
-        el.scrollLeft += 1;
+        el.scrollLeft += 0.5;
       }
     }, 10);
   };
@@ -75,7 +75,7 @@ export function Blog() {
   return (
     <>
       <AlertDialog open={openBlog} onOpenChange={setOpenBlog}>
-        <AlertDialogContent className="h-fit max-h-[90vh] w-fit !max-w-full overflow-auto">
+        <AlertDialogContent className="h-fit max-h-[90vh] !max-w-[99%] overflow-auto sm:!max-w-[600px] md:!max-w-[750px]">
           {currentPost && (
             <div className="flex w-full min-w-[330px] flex-col gap-5">
               <div className="flex flex-col gap-2">

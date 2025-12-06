@@ -354,6 +354,7 @@ export default function Page() {
   return (
     <>
       <CustomDialog
+        className="w-full sm:w-[600px]"
         title="Confirm Your Action?"
         description="Are you sure you want to delete this stock"
         actionText="Delete"
@@ -364,6 +365,7 @@ export default function Page() {
         }}
       />
       <CustomDialog
+        className="w-full sm:w-[600px]"
         title="Edit Your Stock Here"
         actionText="Edit"
         open={openStockEdit}
@@ -377,9 +379,9 @@ export default function Page() {
             handleEditStock();
           }}
           className="flex flex-col gap-3">
-          <div>
-            <label>Brand Name</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Brand Name</label>
+            <Input
               type="text"
               value={editableStock.brandName}
               onChange={(e) =>
@@ -388,12 +390,12 @@ export default function Page() {
                   brandName: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>Product Name</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Product Name</label>
+            <Input
               type="text"
               value={editableStock.productName}
               onChange={(e) =>
@@ -402,12 +404,12 @@ export default function Page() {
                   productName: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>Category</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Category</label>
+            <Input
               type="text"
               value={editableStock.category}
               onChange={(e) =>
@@ -416,12 +418,12 @@ export default function Page() {
                   category: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>Type</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Type</label>
+            <Input
               type="text"
               value={editableStock.type}
               onChange={(e) =>
@@ -430,12 +432,12 @@ export default function Page() {
                   type: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>Size</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Size</label>
+            <Input
               type="text"
               value={editableStock.size}
               onChange={(e) =>
@@ -444,12 +446,12 @@ export default function Page() {
                   size: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>Price</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Price</label>
+            <Input
               type="text"
               value={editableStock.price}
               onChange={(e) =>
@@ -458,7 +460,7 @@ export default function Page() {
                   price: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
         </form>

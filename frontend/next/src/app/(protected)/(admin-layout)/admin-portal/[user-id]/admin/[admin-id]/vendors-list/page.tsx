@@ -295,6 +295,7 @@ export default function Page() {
     <div>
       {/* Custom Dialog Boxes */}
       <CustomDialog
+        className="w-full sm:w-[600px]"
         title="Confirm Your Action?"
         description={`Are you sure you want to ${activeFroozenContext} this vendor Account?`}
         actionText={activeFroozenContext == 'Activate' ? 'Activate' : 'Freeze'}
@@ -305,6 +306,7 @@ export default function Page() {
         }}
       />
       <CustomDialog
+        className="w-full sm:w-[600px]"
         title="Confirm Your Action?"
         description={`Are you sure you want to Delete this vendor Account?, note that this action cannot be un-done`}
         actionText="Delete"
@@ -315,7 +317,8 @@ export default function Page() {
         }}
       />
       <CustomDialog
-        title="Can Edit the following details"
+        className="w-full sm:w-[600px]"
+        title="The following details can be edited"
         actionText="Edit"
         onOpenChange={setOpenVendorEdit}
         open={openVendorEdit}
@@ -328,9 +331,9 @@ export default function Page() {
             handleEditVendorDetails();
           }}
           className="flex flex-col gap-3">
-          <div>
-            <label>Mart Name</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Mart Name</label>
+            <Input
               type="text"
               value={editableVedorDetails.martName}
               onChange={(e) =>
@@ -339,12 +342,12 @@ export default function Page() {
                   martName: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>Vendor Name</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Vendor Name</label>
+            <Input
               type="text"
               value={editableVedorDetails.vendorName}
               onChange={(e) =>
@@ -353,12 +356,12 @@ export default function Page() {
                   vendorName: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>Phone Number</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">Phone Number</label>
+            <Input
               type="text"
               value={editableVedorDetails.phoneNumber}
               onChange={(e) =>
@@ -367,12 +370,12 @@ export default function Page() {
                   phoneNumber: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
-          <div>
-            <label>License Number</label>
-            <input
+          <div className="flex flex-col gap-1">
+            <label className="font-medium">License Number</label>
+            <Input
               type="text"
               value={editableVedorDetails.licenseNumber}
               onChange={(e) =>
@@ -381,7 +384,7 @@ export default function Page() {
                   licenseNumber: e.target.value
                 }))
               }
-              className="w-full rounded border px-2 py-1"
+              className="w-full"
             />
           </div>
         </form>

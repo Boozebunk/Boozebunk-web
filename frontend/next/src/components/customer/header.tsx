@@ -91,7 +91,7 @@ export function Header({ cities, isLoadingCities }: headerProps) {
                       </>
                     )}
                   </div>
-                  <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 sm:ml-3" />
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 sm:ml-3" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[200px] p-0">
