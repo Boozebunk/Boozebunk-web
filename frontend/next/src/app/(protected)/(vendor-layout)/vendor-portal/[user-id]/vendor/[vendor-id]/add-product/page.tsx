@@ -160,6 +160,12 @@ export default function VendorRegistrationPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    // Validation: Only 'type' is optional
+    if (!productName.trim() || !brand.trim() || !category.trim() || !size.trim()) {
+      toast.error('Please fill all required fields: Product Name, Brand, Category, and Size.');
+      return;
+    }
+
     const payload = {
       productName,
       brand,
@@ -286,7 +292,13 @@ export default function VendorRegistrationPage() {
               type="submit"
               onClick={handleSubmit}
               className="flex w-full flex-1 items-center justify-center gap-2 bg-[#6B0F1A] text-white hover:bg-[#44101b]"
-              disabled={isPending}>
+              disabled={
+                isPending ||
+                !productName.trim() ||
+                !brand.trim() ||
+                !category.trim() ||
+                !size.trim()
+              }>
               {isPending ? <Loader2 /> : 'Add Product'}
               <PackagePlus />
             </Button>
