@@ -59,6 +59,10 @@
         min-width: 80px;
         color: #555;
       }
+      .button-container {
+        margin-top: 30px;
+        margin-bottom: 30px;
+      }
       .footer {
         padding: 20px;
         text-align: center;
@@ -70,6 +74,16 @@
       .footer-text {
         margin: 0;
         color: #666;
+        font-size: 14px;
+      }
+      .button {
+        display: inline-block;
+        background-color: #6b0f1a;
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
         font-size: 14px;
       }
       .signature {
@@ -95,10 +109,14 @@
           <strong>Password:</strong>
           {{password}}
         </p>
+
+        <div class="button-container">
+          <a href="https://boozebunk.com/vendor-authentication/sign-in" style="color: white;" class="button">Sign-In</a>
+        </div>
+
         <p class="text" style="margin-bottom: 0;">We recommend changing your password after your
           first login to keep your account secure.</p>
       </div>
-      <a href="https://boozebunk.com/vendor-authentication/sign-in" style="color: white;" class="button">Sign-in Page</a>
       <div class="footer">
         <p class="footer-text">Thank you,</p>
         <p class="signature">The Boozebunk Team</p>
