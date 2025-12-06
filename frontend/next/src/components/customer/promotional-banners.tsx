@@ -146,6 +146,7 @@ export function PromotionalBanners({
                     fill
                     quality={100}
                     priority={i === 0}
+                    unoptimized
                   />
                 </a>
               </div>

@@ -43,7 +43,7 @@ export function CustomDialog({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
-      <AlertDialogContent className={clsx('h-fit w-fit !max-w-full overflow-auto', className)}>
+      <AlertDialogContent className={clsx('h-fit w-fit !max-w-[99%] overflow-auto', className)}>
         {header && (
           <AlertDialogHeader className="text-left">
             <AlertDialogTitle>{title}</AlertDialogTitle>

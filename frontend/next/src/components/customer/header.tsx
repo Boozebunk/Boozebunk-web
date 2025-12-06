@@ -52,7 +52,7 @@ export function Header({ cities, isLoadingCities }: headerProps) {
       <div className="flex w-full items-center justify-between gap-2 sm:gap-5">
         {/* LOGO */}
         <Button asChild className="w-fit bg-transparent p-0 shadow-none hover:bg-transparent">
-          <Link href="#" className="flex items-center justify-baseline p-0">
+          <Link href="/" className="flex items-center justify-baseline p-0">
             <Image src={Logo} alt="logo" className="w-5 sm:w-6" />
             <Image src={Logo2} alt="logo" className="ml-[-5px] w-30 sm:w-35" />
           </Link>
@@ -66,7 +66,7 @@ export function Header({ cities, isLoadingCities }: headerProps) {
           <Button
             onClick={() => setSearchBarOpen(!isSearchBarOpen)}
             variant={'ghost'}
-            className="active:bg-accent text-accent flex h-9 w-9 items-center justify-center rounded-full active:text-white md:hidden">
+            className="md:hover:bg-accent active:bg-accent text-accent flex h-9 w-9 items-center justify-center rounded-full active:text-white md:hidden md:hover:text-white">
             {!isSearchBarOpen ? <Search className="size-6" /> : <X className="size-6" />}
           </Button>
           {/* Cities dropdown */}
@@ -79,10 +79,12 @@ export function Header({ cities, isLoadingCities }: headerProps) {
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className="flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium shadow-sm transition sm:text-lg">
-                  <div className="flex items-center gap-2">
+                  className="md:hover:bg-accent active:bg-accent flex cursor-pointer items-center gap-0 rounded-full border px-4 py-2 text-sm font-medium shadow-sm transition active:text-white sm:text-lg md:hover:text-white">
+                  <div className="flex max-w-[100px] items-center gap-2 truncate sm:max-w-[150px] md:max-w-[200px]">
                     <MapPin className="text-yellow-600" />
-                    {selectedCity || (
+                    {selectedCity ? (
+                      <span className="min-w-0 truncate">{selectedCity}</span>
+                    ) : (
                       <>
                         <span className="hidden sm:inline">Select City</span>
                         <span className="inline sm:hidden">City</span>

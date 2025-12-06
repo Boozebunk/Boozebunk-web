@@ -59,7 +59,7 @@ export function SideBar() {
 
   return (
     <>
-      <CustomDialog open={openQuery} onOpenChange={setOpenQuery}>
+      <CustomDialog header={false} open={openQuery} onOpenChange={setOpenQuery}>
         {<WriteQuery onQuerySubmit={handleQueryCreate} isLoading={isPending} />}
       </CustomDialog>
       <Sidebar collapsible="icon">

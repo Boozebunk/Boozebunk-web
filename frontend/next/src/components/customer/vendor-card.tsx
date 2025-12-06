@@ -36,7 +36,7 @@ export const VendorCard = ({ info }: { info: VendorCardProps }) => {
   };
   return (
     <Card
-      className="p-5 transition-colors duration-200 hover:bg-gray-50 md:p-7"
+      className="p-5 transition-all duration-100 hover:bg-gray-50 active:scale-[0.97] md:p-7"
       onClick={() => {
         router.push(`/${info.id}/mart`);
       }}>

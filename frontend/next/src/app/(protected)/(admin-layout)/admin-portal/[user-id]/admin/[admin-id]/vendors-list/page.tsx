@@ -452,7 +452,7 @@ export default function Page() {
           {/* Search Bar */}
           <Input
             placeholder="Search for a vendor by any of his details..."
-            className="text-sm sm:w-[550px] md:text-lg"
+            className="text-sm sm:max-w-[550px] md:text-lg"
             onChange={(e) => {
               setSearch(e.target.value);
             }}
