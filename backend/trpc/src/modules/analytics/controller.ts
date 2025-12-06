@@ -48,7 +48,7 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Failed to get Stock Overview`,
+        message: `Failed to get Stock Overview for Vendor ${err}`,
         cause: err,
       });
     }
@@ -93,7 +93,7 @@ export const analyticsRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Failed to update Quick Actions`,
+          message: `Failed to update Quick Actions for Vendor ${err}`,
           cause: err,
         });
       }
@@ -116,7 +116,7 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get Popular Brands",
+        message: `Failed to get Popular Brands Data ${err}`,
         cause: err,
       });
     }
@@ -187,7 +187,7 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get Vendor Activity",
+        message: `Failed to get Vendor Activity Data ${err}`,
         cause: err,
       });
     }
@@ -215,7 +215,7 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get Popular Marts",
+        message: `Failed to get Popular Marts Data ${err}`,
         cause: err,
       });
     }
@@ -239,7 +239,7 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get User Overview",
+        message: `Failed to get User Overview data ${err}`,
         cause: err,
       });
     }
@@ -267,7 +267,7 @@ export const analyticsRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get vendor quick actions",
+        message: `Failed to get vendor quick actions data ${err}`,
         cause: err,
       });
     }

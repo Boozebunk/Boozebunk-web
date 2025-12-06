@@ -29,7 +29,7 @@ export const blogRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create blog post.",
+          message: `Failed to create blog post. ${err}`,
           cause: err,
         });
       }
@@ -46,7 +46,7 @@ export const blogRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch blog posts.",
+        message: `Failed to fetch blog posts. ${err}`,
         cause: err,
       });
     }
@@ -79,7 +79,7 @@ export const blogRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to edit blog post.",
+          message: `Failed to edit blog post. ${err}`,
           cause: err,
         });
       }
@@ -98,7 +98,7 @@ export const blogRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to delete blog post.",
+          message: `Failed to delete blog post. ${err}`,
           cause: err,
         });
       }

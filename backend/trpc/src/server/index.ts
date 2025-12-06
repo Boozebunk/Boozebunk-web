@@ -57,11 +57,11 @@ export async function createServer(server: FastifyInstance, opts: ServerOptions)
   });
 
   server.get("/", async () => {
-    return { message: "Hello, Developer!" };
+    return { message: "Hello, Developer 😁!" };
   });
 
   server.get("/health", async () => {
-    return { message: "I'm Healthy!" };
+    return { message: "I'm Healthy! Prod." };
   });
 
   void server.register(fastifyTRPCPlugin, {

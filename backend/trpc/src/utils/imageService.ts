@@ -31,7 +31,7 @@ async function fetchImageFromSerp(brand: string, productName: string): Promise<s
   } catch (err) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to fetch image from SERP API",
+      message: `Failed to fetch image from SERP API. Please try again later. ${err}`,
       cause: err,
     });
   }
@@ -80,7 +80,7 @@ export async function getImageUrlAndCache(
   } catch (err) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to cache image URL in the database",
+      message: `Failed to cache image URL in the database. Please try again later. ${err}`,
       cause: err,
     });
   }

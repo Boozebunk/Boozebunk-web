@@ -35,7 +35,7 @@ export const bannerRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to generate upload URL.",
+          message: `Failed to generate upload URL. ${error}`,
           cause: error,
         });
       }
@@ -62,7 +62,7 @@ export const bannerRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Creating Banner Failed.",
+        message: `Creating Banner Failed. ${error}`,
         cause: error,
       });
     }
@@ -79,7 +79,7 @@ export const bannerRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Fetching Banners Failed.",
+        message: `Fetching Banners Failed. ${error}`,
         cause: error,
       });
     }
@@ -110,7 +110,7 @@ export const bannerRouter = createTRPCRouter({
       } catch (s3Error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to delete banner image from S3.",
+          message: `Failed to delete banner image from S3. ${s3Error}`,
           cause: s3Error,
         });
       }
@@ -124,7 +124,7 @@ export const bannerRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error deleting banner.",
+        message: `Error deleting banner. ${error}`,
         cause: error,
       });
     }
