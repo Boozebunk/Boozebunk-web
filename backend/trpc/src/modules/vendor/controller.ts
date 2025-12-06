@@ -80,7 +80,7 @@ export const vendorRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Server not creating a vendor.",
+        message: `Server not creating a vendor. Please try again later. ${err}`,
         cause: err,
       });
     }
@@ -164,7 +164,7 @@ export const vendorRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error fetching vendors list",
+        message: `Error fetching vendors list. Please try again. ${error}`,
         cause: error,
       });
     }
@@ -198,7 +198,7 @@ export const vendorRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error Editing Vendor Activity Status",
+          message: `Error Editing Vendor Activity Status. Please try again. ${err}`,
           cause: err,
         });
       }
@@ -229,7 +229,7 @@ export const vendorRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error Deleting Vendor",
+          message: `Error Deleting Vendor Account. Please try again. ${err}`,
           cause: err,
         });
       }
@@ -252,7 +252,7 @@ export const vendorRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error Editing Vendor Details",
+        message: `Error Editing Vendor Details Please try again. ${err}`,
         cause: err,
       });
     }
@@ -280,7 +280,7 @@ export const vendorRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error Fetching Vendors Overview",
+        message: `Error Fetching Vendors Overview Data. Please try again. ${err}`,
         cause: err,
       });
     }
@@ -299,7 +299,7 @@ export const vendorRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error checking vendor deletion status",
+        message: `Error checking vendor deletion status. Please try again. ${err}`,
         cause: err,
       });
     }
@@ -318,7 +318,7 @@ export const vendorRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error checking vendor frozen status",
+        message: `Error checking vendor frozen status. Please try again. ${err}`,
         cause: err,
       });
     }

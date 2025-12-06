@@ -69,7 +69,7 @@ export const vendorStockRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Error adding stock item.",
+        message: `Error adding stock item. Please try again. ${err}`,
         cause: err,
       });
     }
@@ -140,7 +140,7 @@ export const vendorStockRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching stock details.",
+          message: `Error fetching stock details. Please try again. ${err}`,
           cause: err,
         });
       }
@@ -176,7 +176,7 @@ export const vendorStockRouter = createTRPCRouter({
     } catch (err) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Stock edit failed.",
+        message: `Stock edit failed. Please try again. ${err}`,
         cause: err,
       });
     }
@@ -224,7 +224,7 @@ export const vendorStockRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error while updating stock.",
+          message: `Error while updating stock. Please try again. ${err}`,
           cause: err,
         });
       }
@@ -314,7 +314,7 @@ export const vendorStockRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to bulk upload stock.",
+          message: `Failed to bulk upload stock. Please try again. ${err}`,
           cause: err,
         });
       }
@@ -355,7 +355,7 @@ export const vendorStockRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error deleting stock.",
+          message: `Error deleting stock. Please try again. ${err}`,
           cause: err,
         });
       }

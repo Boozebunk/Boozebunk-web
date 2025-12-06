@@ -40,10 +40,12 @@ export const authRouter = createTRPCRouter({
         role: user.role,
       });
 
-      // Setting up JWT as an HttpOnly Cookie in the response
+      //Note: comment the sameSite and domain properties when testing in localhost
       ctx.res.setCookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        domain: ".boozebunk.com",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       });
@@ -58,7 +60,7 @@ export const authRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `An error occurred while logging in`,
+        message: `An error occurred while logging in ${error}`,
         cause: error,
       });
     }
@@ -112,7 +114,7 @@ export const authRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `An error occurred while creating admin`,
+        message: `An error occurred while creating admin ${error}`,
         cause: error,
       });
     }
@@ -124,7 +126,7 @@ export const authRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `An error occurred while fetching session`,
+        message: `An error occurred while fetching session data ${error}`,
         cause: error,
       });
     }
@@ -176,7 +178,7 @@ export const authRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `An error occurred while requesting password reset`,
+          message: `An error occurred while requesting password reset ${error}`,
           cause: error,
         });
       }
@@ -219,7 +221,7 @@ export const authRouter = createTRPCRouter({
       } catch (err) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `An error occurred while changing password`,
+          message: `An error occurred while changing password ${err}`,
           cause: err,
         });
       }
