@@ -40,7 +40,7 @@ export const authRouter = createTRPCRouter({
         role: user.role,
       });
 
-      //Note: comment the sameSite domain properties when testing in localhost and also set the secure to false
+      //TODO: comment the sameSite & domain properties when testing in localhost and also set the secure to false
       ctx.res.setCookie("token", token, {
         httpOnly: true,
         secure: true,
@@ -72,6 +72,7 @@ export const authRouter = createTRPCRouter({
     // uncomment when testing on local testing
     // ctx.res.clearCookie("token", { path: "/" });
 
+    //TODO: for local testing comment the whole code below and uncomment the above line
     ctx.res.clearCookie("token", {
       httpOnly: true,
       secure: true,
