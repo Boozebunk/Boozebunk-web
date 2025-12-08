@@ -42,13 +42,6 @@ const EMAIL_COOKIE_NAME = 'c_e';
 export function WriteFeedback({ onClose }: WriteFeedbackProps) {
   const [customerEmail, setCustomerEmail] = useState('Anonymous');
 
-  useEffect(() => {
-    const email = Cookies.get(EMAIL_COOKIE_NAME);
-    setCustomerEmail(email ?? 'Anonymous');
-  }, []);
-
-  console.log('Customer Email ', customerEmail);
-
   const { mutateAsync: sendFeedback, isPending } = useMutation(
     trpcHttp.reshub.saveCustomerFeedback.mutationOptions({
       onSuccess: () => {
@@ -72,6 +65,12 @@ export function WriteFeedback({ onClose }: WriteFeedbackProps) {
       rating: 0
     }
   });
+
+  useEffect(() => {
+    const email = Cookies.get(EMAIL_COOKIE_NAME);
+    setCustomerEmail(email ?? 'Anonymous');
+    form.setValue('email', email ?? 'Anonymous');
+  }, []);
 
   const onFormSubmit = async (values: feedbackFormValues) => {
     await sendFeedback(values);
