@@ -458,6 +458,7 @@ export default function Page() {
             className="text-sm sm:max-w-[550px] md:text-lg"
             onChange={(e) => {
               setSearch(e.target.value);
+              setPagination((prev) => ({ ...prev, pageIndex: 0 }));
             }}
           />
         </div>

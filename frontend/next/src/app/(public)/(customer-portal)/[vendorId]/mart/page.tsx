@@ -9,7 +9,6 @@ import { Check, Clock, Loader2, MapPin, Search, Store, X } from 'lucide-react';
 
 import { Badge } from '~/shared/shadcn/badge';
 import { Input } from '~/shared/shadcn/input';
-import { ComponentLoader } from '~/shared/components/componentLoader';
 
 import CatalogDisplay from '~/components/customer/catalog';
 import { useCustomerContext } from '~/providers/customer-provider';
@@ -65,9 +64,14 @@ function Page() {
 
   return (
     <div className="mt-[-20px] flex w-full flex-col justify-center gap-8 md:gap-10">
-      <div className="flex w-full flex-col items-center justify-center gap-8 rounded-2xl border border-amber-100 bg-gradient-to-r from-yellow-50 via-white to-yellow-50 p-8 shadow-md transition hover:shadow-xl sm:flex-row sm:gap-15 lg:gap-20">
+      <div className="flex w-full flex-col items-center justify-center gap-8 rounded-2xl border border-amber-100 bg-gradient-to-r from-yellow-50 via-white to-yellow-50 p-8 shadow-md transition sm:flex-row sm:gap-15 lg:gap-20 lg:hover:shadow-xl">
         {loadingMartDetails ? (
-          <ComponentLoader />
+          <div className="flex h-40 w-full items-center justify-center">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="text-lg font-medium">Loading mart...</span>
+            </div>
+          </div>
         ) : (
           <>
             <div className="flex flex-col items-center gap-4">
@@ -161,13 +165,19 @@ function Page() {
             value={searchStock}
             onChange={(e) => {
               setSearchStock(e.target.value);
+              setPagination((prev) => ({ ...prev, pageIndex: 0 }));
             }}
           />
         </div>
       </div>
 
       {loadingMartStocks ? (
-        <Loader2 />
+        <div className="flex h-40 w-full items-center justify-center">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="text-lg font-medium">Loading...</span>
+          </div>
+        </div>
       ) : (
         <CatalogDisplay
           liquorItems={martStocks?.martStocks ?? []}

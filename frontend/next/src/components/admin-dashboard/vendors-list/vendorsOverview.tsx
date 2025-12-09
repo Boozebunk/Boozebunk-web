@@ -62,7 +62,7 @@ export function VendorsOverview({
               <CardContent className="p-0">
                 <div className="flex items-center justify-between">
                   <span className="fill-foreground text-sm font-bold sm:text-2xl">
-                    {isLoading ? <Loader2 /> : data.value}
+                    {isLoading ? <Loader2 className="animate-spin" /> : data.value}
                   </span>
                 </div>
               </CardContent>
