@@ -522,6 +522,7 @@ export default function Page() {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
+              setPagination((prev) => ({ ...prev, pageIndex: 0 }));
             }}
           />
           {isLoading ? (

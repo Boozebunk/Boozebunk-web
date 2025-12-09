@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleUserRound, Loader2, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
@@ -25,6 +25,13 @@ import { trpcHttp } from '~/utils/trpc';
 import Logo2 from '../../../public/Assets/Logo-main-2.png';
 import Logo from '../../../public/Assets/Logo-main.png';
 import { Greeting } from '../greeting';
+
+interface SessionTypes {
+  id: string;
+  roleId: string;
+  email: string;
+  role: 'admin' | 'vendor';
+}
 
 export function Navbar() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -48,6 +55,8 @@ export function Navbar() {
     })
   );
 
+  const { data: session } = useQuery(trpcHttp.auth.getSession.queryOptions<SessionTypes>());
+
   const handleLogout = async () => {
     await logout();
   };
@@ -65,7 +74,9 @@ export function Navbar() {
       <Button
         asChild
         className="absolute left-1/2 block w-fit -translate-x-1/2 transform bg-[#fff5cb] p-3 py-5 hover:bg-[#fff5cb] active:bg-[#fff5cb] sm:p-5 md:hidden">
-        <Link href="/" className="flex items-center justify-baseline text-2xl">
+        <Link
+          href={`/vendor-portal/${session?.id}/vendor/${session?.roleId}/dashboard`}
+          className="flex items-center justify-baseline text-2xl">
           <Image src={Logo} alt="logo" className="w-6" />
           <Image src={Logo2} alt="logo" className="ml-[-5px] hidden w-35 sm:block" />
         </Link>

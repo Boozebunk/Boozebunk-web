@@ -37,6 +37,9 @@ export function Blog() {
 
       const el = scrollRef.current;
 
+      const hasOverflow = el.scrollWidth - el.clientWidth > 80;
+      if (!hasOverflow) return;
+
       if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 1) {
         el.scrollLeft = 0;
       } else {
@@ -126,21 +129,21 @@ export function Blog() {
             blogsData?.blogs.map((post) => (
               <Card
                 key={post.id}
-                className="group relative flex w-[330px] shrink-0 flex-col gap-2 overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 shadow-sm transition-all duration-300 hover:shadow-xl md:w-[400px] lg:w-[500px] dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-800">
-                <CardHeader>
+                className="group relative flex w-[330px] shrink-0 flex-col justify-between gap-3 overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 shadow-sm transition-all duration-300 hover:shadow-xl md:w-[400px] lg:w-[500px] dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-800">
+                <CardHeader className="gap-0">
                   <CardTitle className="text-md text-foreground line-clamp-2 max-w-[330px] font-semibold sm:max-w-[450px] sm:text-lg lg:max-w-[500px] lg:text-xl">
                     ✨ {post.title}
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className="flex-1 text-gray-600 dark:text-gray-300">
+                <CardContent className="text-gray-600 dark:text-gray-300">
                   <p className="sm:text-md line-clamp-4 max-w-[330px] text-sm sm:max-w-[450px] lg:max-w-[500px] lg:text-lg">
                     {post.description}
                   </p>
                 </CardContent>
 
-                <CardFooter>
-                  <div className="mt-4 flex w-full items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <CardFooter className="">
+                  <div className="flex w-full items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="max-w-[300px] truncate rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
                       🍂 {post.tag}
                     </span>
