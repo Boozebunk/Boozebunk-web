@@ -130,21 +130,37 @@ export function PromotionalBanners({
         <CarouselContent>
           {banners.map((banner, i) => (
             <CarouselItem key={banner.id} className="w-full">
-              <div className="relative aspect-video w-full cursor-pointer sm:aspect-[9/4] lg:aspect-[9/2.5]">
+              {/* Container with overflow hidden to clip the blurred background */}
+              <div className="relative aspect-video max-h-[400px] w-full overflow-hidden sm:aspect-[9/4] lg:aspect-[9/2.5]">
                 <a
                   href={banner.website_link || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="absolute inset-0 block h-full w-full"
                   aria-label={banner.alt || `Open link for banner ${i + 1}`}>
+                  {/* Layer 1: Blurred Background (Fills the space) */}
                   <Image
                     src={
                       banner.image_url ||
-                      '/placeholder.svg?height=640&width=1200&query=missing%20banner%20image'
+                      '/placeholder.svg?height=640&width=1200&query=missing%20banner'
+                    }
+                    alt=""
+                    fill
+                    aria-hidden="true"
+                    priority={false}
+                    className="scale-110 object-cover opacity-50 blur-lg"
+                  />
+
+                  {/* Layer 2: Actual Banner (Fits without stretching) */}
+                  <Image
+                    src={
+                      banner.image_url ||
+                      '/placeholder.svg?height=640&width=1200&query=missing%20banner'
                     }
                     alt={banner.alt || 'Promotional banner'}
                     fill
                     quality={100}
+                    className="z-10 object-contain"
                     priority={i === 0}
                   />
                 </a>
@@ -167,7 +183,7 @@ export function PromotionalBanners({
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={isActive ? 'true' : 'false'}
                 className={cn(
-                  'h-2.5 w-2.5 rounded-full transition-all',
+                  'h-2 w-2 rounded-full transition-all sm:h-2.5 sm:w-2.5',
                   isActive ? 'bg-foreground/90 w-5' : 'bg-foreground/40 hover:bg-foreground/60'
                 )}
               />

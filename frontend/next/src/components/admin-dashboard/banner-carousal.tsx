@@ -152,26 +152,41 @@ export function BannerCarousel({
             ) : (
               banners.map((banner, i) => (
                 <CarouselItem key={banner.id} className="w-full">
-                  <div className="relative aspect-video w-full cursor-pointer sm:aspect-[9/4] lg:aspect-[9/2.5]">
+                  <div className="relative aspect-video max-h-[400px] w-full overflow-hidden sm:aspect-[9/4] lg:aspect-[9/2.5]">
                     <a
                       href={banner.website_link || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="absolute inset-0 block h-full w-full"
                       aria-label={banner.alt || `Open link for banner ${i + 1}`}>
+                      {/* Layer 1: Blurred Background (Fills the space) */}
                       <Image
                         src={
                           banner.image_url ||
-                          '/placeholder.svg?height=640&width=1200&query=missing%20banner%20image'
+                          '/placeholder.svg?height=640&width=1200&query=missing%20banner'
+                        }
+                        alt=""
+                        fill
+                        aria-hidden="true"
+                        priority={false}
+                        className="scale-110 object-cover opacity-50 blur-lg"
+                      />
+
+                      {/* Layer 2: Actual Banner (Fits without stretching) */}
+                      <Image
+                        src={
+                          banner.image_url ||
+                          '/placeholder.svg?height=640&width=1200&query=missing%20banner'
                         }
                         alt={banner.alt || 'Promotional banner'}
                         fill
                         quality={100}
+                        className="z-10 object-contain"
                         priority={i === 0}
                       />
                     </a>
                     <div className="absolute bottom-8 z-30 flex w-full items-center justify-center gap-2">
-                      <span className="bg-background/60 supports-[backdrop-filter]:bg-background/40 w-fit max-w-[50%] truncate rounded-sm p-1 px-3 text-xs shadow-xl backdrop-blur sm:p-2 sm:text-[15px]">
+                      <span className="bg-background/90 supports-[backdrop-filter]:bg-background/90 w-fit max-w-[50%] truncate rounded-sm p-1 px-3 text-xs shadow-xl backdrop-blur sm:p-2 sm:text-[15px]">
                         <strong>Link: </strong> {banner.website_link}
                       </span>
                       <Button
