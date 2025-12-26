@@ -18,8 +18,7 @@ This project is built with a modern, high-performance, and scalable technology s
     * **Geospatial Extension:** [PostGIS]
 * **Authentication:** [BetterAuth]
 * **Email Services:** [AWS SES (Simple Email Service)]
-* **Email Validation:** [Mailgun Email Validation API]
-* **Location Data:** [Google Places API]
+* **Location Data:** [Google Places AutoComplete API]
 * **Website Analytics:** [Google Analytics 4 (GA4)] & [Google Analytics Data API]
 
 ---
@@ -93,9 +92,3 @@ backend/
       ├─ eslint.config.mjs
       └─ ...
 ```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
