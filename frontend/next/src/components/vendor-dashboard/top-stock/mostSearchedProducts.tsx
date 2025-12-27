@@ -42,7 +42,18 @@ export function MostSearchedProducts({ popularBrands = [], isLoading }: products
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <Loader2 />
+          <div className="flex h-40 w-full items-center justify-center">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          </div>
+        ) : popularBrands.length === 0 ? (
+          <div className="flex h-40 w-full flex-col items-center justify-center gap-2 text-center">
+            <p className="text-muted-foreground text-sm font-medium">No search data available</p>
+            <p className="text-muted-foreground text-xs">
+              Brand search activity will appear here once available.
+            </p>
+          </div>
         ) : (
           <ChartContainer
             config={chartConfig}
