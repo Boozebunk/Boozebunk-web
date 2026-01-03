@@ -5,6 +5,7 @@ export const CorsConfig: FastifyCorsOptions = {
     "http://localhost:3000",
     "https://main.d1bkppae345wqt.amplifyapp.com",
     "https://boozebunk.com",
+    "https://www.boozebunk.com",
     // Add your production frontend URL here
   ],
   credentials: true,
