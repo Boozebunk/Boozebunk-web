@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 import { AlertTriangle } from 'lucide-react';
 
@@ -20,6 +21,24 @@ function CustomerFooter() {
           Please drink responsibly and at your own risk. Know your limits, and never drink and
           drive.
         </p>
+      </div>
+
+      <div className="mt-1 flex w-full items-center justify-center gap-1 text-sm">
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href="/privacypolicy"
+          className="hover:text-primary text-xs font-medium underline transition-colors sm:text-sm">
+          Privacy Policy
+        </Link>
+        <span className="text-muted-foreground">&</span>
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href="/terms&conditions"
+          className="hover:text-primary text-xs font-medium underline transition-colors sm:text-sm">
+          Terms & Conditions
+        </Link>
       </div>
 
       <div className="flex items-center justify-center gap-5 text-xs sm:text-sm">

@@ -26,7 +26,7 @@ export function TotalStock({
           <BottleWine className="size-10 shrink-0 rounded-full bg-amber-100 p-2 text-amber-600 sm:size-12" />
           <div className="flex flex-col items-start">
             <span className="fill-foreground text-sm font-bold sm:text-2xl">
-              {isLoadingCount ? <Loader2 /> : totalStockListed}
+              {isLoadingCount ? <Loader2 className="animate-spin" /> : totalStockListed}
             </span>
             <span className="text-muted-foreground text-[10px] sm:text-xs">No of bottles.</span>
           </div>

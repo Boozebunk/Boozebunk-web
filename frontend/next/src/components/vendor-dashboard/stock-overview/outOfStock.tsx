@@ -25,7 +25,7 @@ export function OutOfStock({
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold sm:text-xl">Out of Stock Items</h2>
         <span className="rounded-md bg-red-100 px-3 py-1 text-sm font-semibold text-red-600 sm:text-xl">
-          {isLoadingStock ? <Loader2 /> : outOfStockCount} Items
+          {isLoadingStock ? <Loader2 className="animate-spin" /> : outOfStockCount} Items
         </span>
       </div>
 

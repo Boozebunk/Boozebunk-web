@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -144,9 +145,28 @@ export default function AgeVerificationDialog() {
             <AlertDialogTitle className="text-center text-xl">
               Please enter your email
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              Please confirm your age.
+            <AlertDialogDescription className="text-muted-foreground text-center text-sm leading-relaxed">
+              By continuing, you confirm that you have read and agree to our
             </AlertDialogDescription>
+
+            <div className="mt-1 flex w-full items-center justify-center gap-1 text-sm">
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href="/privacypolicy"
+                className="hover:text-primary font-medium underline transition-colors">
+                Privacy Policy
+              </Link>
+              <span className="text-muted-foreground">&</span>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href="/terms&conditions"
+                className="hover:text-primary font-medium underline transition-colors">
+                Terms & Conditions
+              </Link>
+            </div>
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
