@@ -9,7 +9,7 @@ module.exports = {
       cwd: '/home/booze/frontend/Boozebunk-web',
       env: {
         // This forces PM2 to load your local .env file
-        DOTENV_CONFIG_PATH: './.env' 
+        DOTENV_CONFIG_PATH: '/home/booze/frontend/Boozebunk-web/backend/trpc/.env' 
       }
     },
     {
