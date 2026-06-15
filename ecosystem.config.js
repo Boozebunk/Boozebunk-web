@@ -7,8 +7,9 @@ module.exports = {
       interpreter: "bun",
       watch: false,
       env: {
-        NODE_ENV: "production",
-      },
+        // This forces PM2 to load your local .env file
+        DOTENV_CONFIG_PATH: './.env' 
+      }
     },
     {
       name: "boozebunk-frontend",
