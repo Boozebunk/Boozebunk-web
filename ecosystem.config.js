@@ -6,6 +6,7 @@ module.exports = {
       args: "--port 8080", // 👈 Passes --port 8080 to your script
       interpreter: "bun",
       watch: false,
+      cwd: '/home/booze/frontend/Boozebunk-web',
       env: {
         // This forces PM2 to load your local .env file
         DOTENV_CONFIG_PATH: './.env' 
