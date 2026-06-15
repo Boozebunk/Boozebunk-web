@@ -3,20 +3,21 @@ module.exports = {
     {
       name: "boozebunk-backend",
       script: "backend/trpc/src/main.ts",
-      args: "--port 8080", // 👈 Passes --port 8080 to your script
+      args: "--port 8080", 
       interpreter: "bun",
       watch: false,
       cwd: '/home/booze/frontend/Boozebunk-web',
+      // 👇 This tells PM2 to read this file and inject its variables into Bun
+      env_file: '/home/booze/frontend/Boozebunk-web/backend/trpc/.env', 
       env: {
-        // This forces PM2 to load your local .env file
-        DOTENV_CONFIG_PATH: '/home/booze/frontend/Boozebunk-web/backend/trpc/.env' 
+        NODE_ENV: "production"
       }
     },
     {
       name: "boozebunk-frontend",
       script: "node_modules/next/dist/bin/next",
-      args: "start frontend/next --port 3000", // Serves the built Next.js app
-      interpreter: "bun", // Using bun to serve or standard node
+      args: "start frontend/next --port 3000", 
+      interpreter: "bun", 
       watch: false,
       env: {
         NODE_ENV: "production",
