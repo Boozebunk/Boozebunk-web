@@ -45,7 +45,7 @@ export const authRouter = createTRPCRouter({
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        domain: ".boozebunk.com",
+        domain: ".boozebunk.in",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       });
@@ -77,7 +77,7 @@ export const authRouter = createTRPCRouter({
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: ".boozebunk.com",
+      domain: ".boozebunk.in",
       path: "/",
     });
 
